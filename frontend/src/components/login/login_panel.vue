@@ -13,7 +13,7 @@
                 </el-form>
                 <el-row style="margin-bottom: 20px; margin-top: 20px;">
                     <el-col :span="4" :offset="19">
-                        <el-button type="primary" style="font-size: 25px;">Login</el-button>
+                        <el-button type="primary" style="font-size: 25px;" @click="login" >Login</el-button>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -30,7 +30,7 @@
                 <div id="avater_container">
                     <el-row justify="space-between">
                         <el-col :span="6" v-for="(item, index) in third_login_src" :key="index" style="border: 1px solid black; border; border-radius: 10px;">
-                            <el-avatar shape="square" :size="100" fit="fill" :src="item" @click="test" style="background-color: white;"></el-avatar>
+                            <el-avatar shape="square" :size="100" fit="fill" :src="item" style="background-color: white;"></el-avatar>
                         </el-col>
                     </el-row>
                 </div>
@@ -58,9 +58,14 @@ export default {
         }
     },
     methods: {
-        test(){
-            console.log(123123123)
-        }
+        login(){
+            this.$router.push({
+                name: 'tags',
+                params: {
+
+                }
+            })
+        },
     }
 }
 </script>

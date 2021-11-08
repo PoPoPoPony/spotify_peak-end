@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div >
         <div id='bg'/>
-        <navBar/>
+        <navBar class="animate__animated animate__fadeInDown"/>
         <el-row>
             <el-col :span="10" :offset='2'>
                 <slogan/>
@@ -16,7 +16,7 @@
 <script>
 import slogan from '@/components/login/slogan'
 import loginPanel from '@/components/login/login_panel'
-import navBar from '@/components/nav'
+import navBar from '@/components/navBar'
 
 export default {
     name: 'login',
