@@ -86,11 +86,11 @@ export default {
     font-size: 25px;
 }
 
-::v-deep .el-input .el-input__inner {
+.el-input :deep .el-input__inner {
     height: 50px
 }
 
-::v-deep .el-form-item .el-form-item__label {
+.el-form-item :deep .el-form-item__label {
     font-size: 25px
 }
 
@@ -104,14 +104,3 @@ export default {
     border: 1px solid black;
     border-radius:20px; */
 </style>
-
-
-
-// /* spotify_icon 1 */
-
-// position: absolute;
-// width: 158px;
-// height: 158px;
-
-// background: url(.png);
-// filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.5));

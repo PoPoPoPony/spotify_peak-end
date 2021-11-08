@@ -1,11 +1,7 @@
 <template>
     <div>
         <div id='bg'/>
-        <el-row :offset="1">
-            <el-col :span="4">
-                <img id="spotify_nav" :src="spotify_icon_with_text" alt="">
-            </el-col>
-        </el-row>
+        <navBar/>
         <el-row>
             <el-col :span="10" :offset='2'>
                 <slogan/>
@@ -20,16 +16,18 @@
 <script>
 import slogan from '@/components/login/slogan'
 import loginPanel from '@/components/login/login_panel'
+import navBar from '@/components/nav'
 
 export default {
     name: 'login',
     components: {
         slogan,
         loginPanel,
+        navBar,
     },
     data(){
         return {
-            spotify_icon_with_text: require('../assets/login/spotify_logo_with_text.png')
+            
         }
     }
 }
@@ -46,10 +44,5 @@ export default {
     top: 0px;
 	left: 0px;
     z-index: -100;
-}
-
-#spotify_nav {
-    width: 300px;
-
 }
 </style>
