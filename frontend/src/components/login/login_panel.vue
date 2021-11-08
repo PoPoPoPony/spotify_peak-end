@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="animate__animated animate__fadeInDown">
         <div id="panel">
             <img id="panel_logo" :src="spotify_logo" alt="">
             <div id="panel_elem">
