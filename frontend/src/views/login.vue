@@ -7,8 +7,11 @@
             </el-col>
         </el-row>
         <el-row>
-            <el-col :span="16" :offset='2'>
-                <slogan></slogan>
+            <el-col :span="10" :offset='2'>
+                <slogan/>
+            </el-col>
+            <el-col :span="7" :offset='3'>
+                <loginPanel/>
             </el-col>
         </el-row>
     </div>
@@ -16,12 +19,13 @@
 
 <script>
 import slogan from '@/components/login/slogan'
-
+import loginPanel from '@/components/login/login_panel'
 
 export default {
     name: 'login',
     components: {
         slogan,
+        loginPanel,
     },
     data(){
         return {

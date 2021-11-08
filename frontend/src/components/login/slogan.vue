@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>
+        <h1 class="animate__animated animate__fadeInLeft">
             YOU ARE <br>WHAT <br>YOU LISTEN TO
         </h1>
     </div>

@@ -5,6 +5,7 @@ import store from './store'
 import 'element-plus/dist/index.css'
 import ElementPlus from 'element-plus'
 import '@/css/font/font.css'
+import 'animate.css'
 
 
 const app = createApp(App)
