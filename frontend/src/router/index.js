@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import login from '@/views/login'
 import tags from '@/views/tags'
+import song_list from '@/views/song_list'
 
 const routes = [
 	{
@@ -12,6 +13,11 @@ const routes = [
 		path: '/tags',
 		name: 'tags',
 		component: tags
+	},
+	{
+		path: '/songList' ,
+		name: 'song_list',
+		component: song_list
 	},
 
 ]

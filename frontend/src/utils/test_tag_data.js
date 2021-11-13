@@ -5,6 +5,6 @@ export let tag_data = [{
     'class': 'tone',
     'tags': ['tone1', 'tone2', 'tone3'],
 }, {
-    'class': 'contray',
+    'class': 'country',
     'tags': ['America', 'Taiwan', 'Japan', 'Korea']
 }]
