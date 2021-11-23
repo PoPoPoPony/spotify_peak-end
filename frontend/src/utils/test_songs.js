@@ -6,7 +6,7 @@ export let song_lst = [{
     spend: '4:30',
     like: 0,
     splendid: 0,
-    add_song_lst: 0
+    add: 0,
 }, {
     listened: 0,
     title: 'song2',
@@ -15,7 +15,7 @@ export let song_lst = [{
     spend: '3:54',
     like: 0,
     splendid: 0,
-    add_song_lst: 0
+    add: 0,
 }, {
     listened: 0,
     title: 'song3',
@@ -24,5 +24,5 @@ export let song_lst = [{
     spend: '4:09',
     like: 0,
     splendid: 0,
-    add_song_lst: 0
+    add: 0,
 }]
