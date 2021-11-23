@@ -59,6 +59,8 @@ export default {
     },
     methods: {
         login(){
+            var random_seed = Math.floor(Math.random() * 1)
+            console.log(random_seed)
             this.$router.push({
                 name: 'tags',
                 params: {
