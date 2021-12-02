@@ -14,6 +14,7 @@
                 <el-row style="margin-bottom: 20px; margin-top: 20px;">
                     <el-col :span="4" :offset="19">
                         <el-button type="primary" style="font-size: 25px;" @click="login" >Login</el-button>
+                        <el-button type="primary" style="font-size: 25px;" @click="redirect" >Redirect</el-button>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -40,6 +41,8 @@
 </template>
 
 <script>
+// import {LoginRedirect} from '@/apis/token.js'
+
 export default {
     name: 'login_panel',
     data() {
@@ -68,6 +71,27 @@ export default {
                 }
             })
         },
+        redirect() {
+            var headers = {
+                "user-agent": 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36',
+            }
+            // var url='https://accounts.spotify.com/authorize?client_id=5e3c611726d54d488fb918a4c8a8739c&response_type=token&redirect_uri=http://127.0.0.1:8000/show_token/&scope=user-read-private'
+
+            var url='https://accounts.spotify.com/zh-TW/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize/'
+            // var url = 'api/login/'
+
+            this.axios.get(url, headers)
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error))
+            // LoginRedirect()
+            // .then((response) => console.log(response))
+            // .catch((error) => console.log(error))
+
+            // window.location = 'https://accounts.spotify.com/zh-TW/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize'
+
+
+
+        }
     }
 }
 </script>
