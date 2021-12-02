@@ -43,8 +43,6 @@ export default {
 	left: 0px;
     z-index: -100;
 }
-<<<<<<< HEAD
-=======
 
 #credit_container {
     width: 800px;
@@ -72,5 +70,4 @@ export default {
     margin-top: 60px;
 }
 
->>>>>>> 74829667b3518148e6461f516a56017ec627daff
 </style>
