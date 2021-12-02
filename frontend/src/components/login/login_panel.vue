@@ -93,11 +93,11 @@ export default {
     font-size: 25px;
 }
 
-.el-input :deep .el-input__inner {
+.el-input :deep(.el-input__inner) {
     height: 50px
 }
 
-.el-form-item :deep .el-form-item__label {
+.el-form-item :deep(.el-form-item__label) {
     font-size: 25px
 }
 

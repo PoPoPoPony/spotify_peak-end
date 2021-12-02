@@ -95,7 +95,7 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .el-table .cell { 
+:deep(.el-table .cell) { 
     line-height: 40px; 
 }
 

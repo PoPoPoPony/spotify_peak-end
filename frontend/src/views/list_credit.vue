@@ -62,7 +62,7 @@ export default {
 
 }
 
-::v-deep .el-rate__icon {
+:deep(.el-rate__icon) {
     font-size: 50px;
 }
 
