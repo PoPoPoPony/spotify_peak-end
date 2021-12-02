@@ -4,3 +4,10 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'HYZhengYuan';
+    src: url('HYZhengYuan-75W.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
