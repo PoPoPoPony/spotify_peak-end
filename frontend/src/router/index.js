@@ -5,6 +5,7 @@ import song_list from '@/views/song_list'
 import list_credit from '@/views/list_credit'
 import create_list from '@/views/create_list'
 
+
 const routes = [
 	{
 		path: '/',

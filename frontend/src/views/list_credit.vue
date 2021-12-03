@@ -3,7 +3,11 @@
         <div id='bg'/>
         <div id="credit_container" class="animate__animated animate__fadeInUp">
             <span id="title">請為整體歌單評分</span>
-            <el-rate v-model="credit" allow-half style="line-height: 100px;" @change="credit_change"/>
+            <el-row justify="center">
+                <el-col :span="16">
+                    <el-slider v-model="credit" @change='credit_change' style='padding-top: 20px'></el-slider>
+                </el-col>
+            </el-row>
             <el-button id="send_btn" type="primary" :disabled='send_disable'>Success</el-button>
         </div>
     </div>
@@ -67,7 +71,7 @@ export default {
 }
 
 #send_btn {
-    margin-top: 60px;
+    margin-top: 30px;
 }
 
 </style>
