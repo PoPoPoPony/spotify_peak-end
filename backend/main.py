@@ -1,11 +1,22 @@
 from typing import Optional
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from user import user_token
 import httpx
+from utils.authToken import auth
 
 
 app = FastAPI()
-
+origins = [
+    "http://127.0.0.1:8080"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get('/')
 def root():
@@ -59,14 +70,14 @@ async def get_token():
     httpx.get(response.next_request.url)
 
 
-@app.get("/login/")
-async def login():
-    URL = "https://accounts.spotify.com/zh-TW/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize"
-    headers = {
-        "user-agent": 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36'
-    }
-    response = httpx.get(URL, headers = headers)
-    print(response.text)
+@app.get("/api/login")
+def login():
+    retv = auth()
+    print(retv.values())
+
+    return {'res': 'backend response!'}
 
 
-    return {'template': response.text}
+@app.get("/api/login2")
+def login2():
+    return 0

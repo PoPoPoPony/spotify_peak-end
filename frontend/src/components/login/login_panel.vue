@@ -41,7 +41,8 @@
 </template>
 
 <script>
-// import {LoginRedirect} from '@/apis/token.js'
+import {Login} from '@/apis/login.js'
+
 
 export default {
     name: 'login_panel',
@@ -72,24 +73,29 @@ export default {
             })
         },
         redirect() {
-            var headers = {
-                "user-agent": 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36',
-            }
+            // var headers = {
+            //     "user-agent": 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36',
+            // }
             // var url='https://accounts.spotify.com/authorize?client_id=5e3c611726d54d488fb918a4c8a8739c&response_type=token&redirect_uri=http://127.0.0.1:8000/show_token/&scope=user-read-private'
 
-            var url='https://accounts.spotify.com/zh-TW/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize/'
-            // var url = 'api/login/'
+            // var url='https://accounts.spotify.com/zh-TW/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize/'
+            // // var url = 'api/login/'
 
-            this.axios.get(url, headers)
-            .then((response) => console.log(response))
-            .catch((error) => console.log(error))
+            // this.axios.get(url, headers)
+            // .then((response) => console.log(response))
+            // .catch((error) => console.log(error))
             // LoginRedirect()
             // .then((response) => console.log(response))
             // .catch((error) => console.log(error))
 
             // window.location = 'https://accounts.spotify.com/zh-TW/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize'
 
-
+            Login().then((res)=>{
+                console.log("call login api success")
+                console.log(res['data']['res'])
+            }).catch((error)=>{
+                console.log("call login api failed", error)
+            })
 
         }
     }

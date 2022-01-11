@@ -9,7 +9,6 @@ import '@/../node_modules/animate.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
-axios.defaults.baseUrl = '/api'
 
 const app = createApp(App)
 
