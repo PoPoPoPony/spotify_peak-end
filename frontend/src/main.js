@@ -11,7 +11,6 @@ import VueAxios from 'vue-axios'
 import qs from'qs'
 
 
-axios.defaults.baseUrl = '/api'
 
 const app = createApp(App)
 
