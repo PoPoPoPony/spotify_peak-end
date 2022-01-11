@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import FastAPI
 from user import user_token
 import httpx
-
+from fastapi.responses import RedirectResponse
 
 app = FastAPI()
 
@@ -27,12 +27,10 @@ def root():
 #     return d
 
 
-@app.get("/show_token")
-def show_token():
-    print()
-
-    return {"1": "1"}
-
+@app.get("/show_token/{token}")
+def show_token(token:str):
+    print(token)
+    return RedirectResponse('http://localhost:8080/tags')
 
 client_id = '5e3c611726d54d488fb918a4c8a8739c'
 URL = 'https://accounts.spotify.com/authorize?client_id=5e3c611726d54d488fb918a4c8a8739c&response_type=token&redirect_uri=http://127.0.0.1:8000/show_token/&scope=user-read-private'

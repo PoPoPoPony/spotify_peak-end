@@ -25,7 +25,6 @@
                 </el-button>
             </el-col>
         </el-row>
-        <el-icon><close-bold /></el-icon>
     </div>
 </template>
 <script>

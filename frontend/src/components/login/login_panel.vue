@@ -14,7 +14,9 @@
                 <el-row style="margin-bottom: 20px; margin-top: 20px;">
                     <el-col :span="4" :offset="19">
                         <el-button type="primary" style="font-size: 25px;" @click="login" >Login</el-button>
-                        <el-button type="primary" style="font-size: 25px;" @click="redirect" >Redirect</el-button>
+                        <el-button type="primary" style="font-size: 25px;" >
+                            <el-link :href="url" :underline="false" style="color: white; font-size: 30px">Login2</el-link>
+                        </el-button>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -57,7 +59,8 @@ export default {
                 require('@/assets/login/google.png'),
                 require('@/assets/login/facebook.png'),
                 require('@/assets/login/apple.png')
-            ]
+            ],
+            url: 'https://accounts.spotify.com/authorize?client_id=5e3c611726d54d488fb918a4c8a8739c&response_type=code&scope=user-read-playback-position user-read-email playlist-modify-private playlist-read-private user-library-modify playlist-read-collaborative user-follow-read user-read-playback-state user-read-currently-playing user-read-private playlist-modify-public user-library-read user-top-read ugc-image-upload user-follow-modify user-modify-playback-state user-read-recently-played&redirect_uri=http://localhost:8080/tags',
         }
     },
     methods: {

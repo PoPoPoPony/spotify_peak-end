@@ -3,9 +3,9 @@
         <div id='bg'/>
         <navBar/>
         <div id="credit_container" class="animate__animated animate__fadeInUp">
-            <span id="title">請為整體歌單評分</span>
+            <span id="title">Weekly discovery</span>
             <el-image style="width: 200px; height: 200px; margin-top: 50px; display: block; left: 30%" :src="album_src" fit='cover'></el-image>
-            <el-button type="primary" style="margin-top: 50px" @click="create">建立</el-button>
+            <el-button type="primary" style="margin-top: 50px; font-size: 30px" @click="create">建立歌單</el-button>
         </div>
     </div>
 </template>
