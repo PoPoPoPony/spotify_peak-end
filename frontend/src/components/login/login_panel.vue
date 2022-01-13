@@ -15,7 +15,7 @@
                     <el-col :span="4" :offset="19">
                         <el-button type="primary" style="font-size: 25px;" @click="login" >Login</el-button>
                         <el-button type="primary" style="font-size: 25px;" >
-                            <el-link :href="url" :underline="false" style="color: white; font-size: 30px">Login2</el-link>
+                            <el-link href="http://localhost:8888/login" :underline="false" style="color: white; font-size: 30px" >Redirect</el-link>
                         </el-button>
                     </el-col>
                 </el-row>
@@ -43,8 +43,7 @@
 </template>
 
 <script>
-import {Login} from '@/apis/login.js'
-
+// import {SignOut} from '@/apis/sign_out.js'
 
 export default {
     name: 'login_panel',
@@ -61,8 +60,10 @@ export default {
                 require('@/assets/login/facebook.png'),
                 require('@/assets/login/apple.png')
             ],
-            url: 'https://accounts.spotify.com/authorize?client_id=5e3c611726d54d488fb918a4c8a8739c&response_type=code&scope=user-read-playback-position user-read-email playlist-modify-private playlist-read-private user-library-modify playlist-read-collaborative user-follow-read user-read-playback-state user-read-currently-playing user-read-private playlist-modify-public user-library-read user-top-read ugc-image-upload user-follow-modify user-modify-playback-state user-read-recently-played&redirect_uri=http://localhost:8080/tags',
         }
+    },
+    created() {
+
     },
     methods: {
         login(){
@@ -76,31 +77,9 @@ export default {
             })
         },
         redirect() {
-            // var headers = {
-            //     "user-agent": 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36',
-            // }
-            // var url='https://accounts.spotify.com/authorize?client_id=5e3c611726d54d488fb918a4c8a8739c&response_type=token&redirect_uri=http://127.0.0.1:8000/show_token/&scope=user-read-private'
-
-            // var url='https://accounts.spotify.com/zh-TW/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize/'
-            // // var url = 'api/login/'
-
-            // this.axios.get(url, headers)
-            // .then((response) => console.log(response))
-            // .catch((error) => console.log(error))
-            // LoginRedirect()
-            // .then((response) => console.log(response))
-            // .catch((error) => console.log(error))
-
-            // window.location = 'https://accounts.spotify.com/zh-TW/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize'
-
-            Login().then((res)=>{
-                console.log("call login api success")
-                console.log(res['data']['res'])
-            }).catch((error)=>{
-                console.log("call login api failed", error)
-            })
-
+        
         }
+        
     }
 }
 </script>
