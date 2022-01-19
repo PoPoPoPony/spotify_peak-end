@@ -7,7 +7,7 @@ export function getMe(accessToken) {
         headers: { 
             "Authorization": "Bearer " + accessToken
         },
-        url: '/me/albums',
+        url: '/me',
         method: 'GET',
     }
 
