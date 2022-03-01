@@ -15,7 +15,7 @@
                     <el-col :span="4" :offset="19">
                         <el-button type="primary" style="font-size: 25px;" @click="login" >Login</el-button>
                         <el-button type="primary" style="font-size: 25px;" >
-                            <el-link href="http://localhost:8888/login" :underline="false" style="color: white; font-size: 30px" >Redirect</el-link>
+                            <el-link :href="backend_url" :underline="false" style="color: white; font-size: 30px" >Redirect</el-link>
                         </el-button>
                     </el-col>
                 </el-row>
@@ -60,10 +60,20 @@ export default {
                 require('@/assets/login/facebook.png'),
                 require('@/assets/login/apple.png')
             ],
+            backend_url: "http://localhost:8888/login"
         }
     },
     created() {
-
+        // 0, 1 for doing discover weekly first
+        // 2, 3 for doing seed first
+        if(["0", "1", 0, 1].includes(this.$store.within_subject_type)) {
+            this.backend_url+="?redirect_page=0"
+        } else {
+            this.backend_url+="?redirect_page=1"
+        }
+        let params="&between_subject_type=" + String(this.$store.between_subject_type)+"&within_subject_type=" + String(this.$store.within_subject_type)
+        this.backend_url+=params
+        console.log(this.backend_url)
     },
     methods: {
         login(){

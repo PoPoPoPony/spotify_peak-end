@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-table :data="song_lst" :style="table_style" :cell-style="{height: '40px', }" :header-cell-style="{height: '60px', padding: '5px'}">
+        <el-table :data="song_lst" :style="table_style" :cell-style="{height: '40px', }" :header-cell-style="{height: '60px', padding: '5px'}" :key="rerender">
             <el-table-column prop="listened" label="聽過" width="100">
                 <template #default="scope">
                     <el-checkbox-group v-model="listened_lst">
@@ -10,7 +10,6 @@
             </el-table-column>
             <el-table-column prop="title" label="標題"/>
             <el-table-column prop="artist" label="藝人"/>
-            <el-table-column prop="spend" label="時長" width="100"/>
             <el-table-column label="播放" width="100">
                 <template #default="scope">
                     <el-button :disabled='delete_not_complete' circle @click="play_song(scope)">
@@ -30,7 +29,7 @@
                     <el-slider v-model="song_lst[scope.$index]['splendid']" :disabled='delete_not_complete'   @change='changed=>splendid_change(scope.$index, changed)'   style='padding-left: 10px; padding-right: 10px'></el-slider>
                 </template>
             </el-table-column>
-            <el-table-column label="加入歌單" width="150">
+            <el-table-column label="加入歌單" width="150" v-if="show_add_song">
                 <template #default="scope">
                     <el-checkbox-group v-model="add_song_lst" @change='add_song_change' :max='2'>
                         <el-checkbox :label="scope.$index" border :disabled='delete_not_complete'>{{ }}</el-checkbox>
@@ -53,7 +52,13 @@ export default {
         CaretRight
     },
     created () {
-
+        if(this.$store.between_subject_type=="1") {
+            this.show_add_song = true
+        } else {
+            this.show_add_song = false
+        }
+        console.log("show_add_song", this.show_add_song)
+        this.rerender+=1
     },
     data() {
         return {
@@ -67,13 +72,15 @@ export default {
             add_song_lst: [],
             splendid_lst: new Array(this.table_data.length).fill(0),
             like_lst: new Array(this.table_data.length).fill(0),
-
+            show_add_song: true,
+            rerender:0,
         }
     },
     methods: {
         play_song(scope) {
             console.log(scope)
-            this.$emit("play_music", this.song_lst[scope.$index]['source'])
+            // this.$emit("play_music", this.song_lst[scope.$index]['source'])
+            this.$emit("play_music", this.song_lst[scope.$index]['song_preview_url'])
         },
         like_change(idx, val) {
             this.like_lst[idx] = val

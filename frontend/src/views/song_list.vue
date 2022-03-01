@@ -55,9 +55,12 @@
 </template>
 
 <script>
-import { song_lst } from '@/utils/test_songs'
+// import { song_lst } from '@/utils/test_songs'
 import songTable from '@/components/song_list/song_table'
 import player from '@/components/song_list/player'
+import {GetDiscoverWeekly} from '@/apis/get_discover_weekly'
+import {GetSongList} from '@/apis/get_song_list'
+
 
 export default {
     name: 'song_list',
@@ -66,15 +69,76 @@ export default {
         player,
     },
     created(){
-        this.song_lst = song_lst
+        let urlParams = new URLSearchParams(window.location.search)
+        this.list_type = urlParams.get('list_type')
+
+        if(this.list_type == 0) {
+            GetDiscoverWeekly(this.$store.access_token).then((res)=>{
+                console.log("Call GetDiscoverWeekly API successed!")
+                let retv = res.data
+                console.log(retv)
+                this.list_id = retv["playlists"]["items"][0]["id"]
+            }).then(() => {
+                GetSongList(this.$store.access_token, this.list_id).then((res2)=>{
+                    console.log("Call GetSongList API successed!")
+                    let retv2 = res2.data
+                    console.log(retv2.tracks)
+                    var temp_song_lst = retv2.tracks.items
+
+                    // 在0, 3的實驗組別中，weekly discovery是短歌單
+                    // 在1, 2的實驗組別中，weekly discovery是長歌單
+                    // 目前設定長歌單的歌曲數量為15，短歌單的歌曲數量為8
+
+                    if(["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
+                        this.song_limit = 8
+                        this.last_song_pointer = 7
+                    } else {
+                        this.song_limit = 15
+                        this.last_song_pointer = 14
+                    }
+
+                    for(var i=0; i<temp_song_lst.length; i++) {
+                        var temp_obj = {
+                            listened: 0,
+                            title: temp_song_lst[i].track.name,
+                            artist: temp_song_lst[i].track.artists[0].name,
+                            song_id: temp_song_lst[i].track.id,
+                            source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].track.id + "?utm_source=generator",
+                            song_preview_url: temp_song_lst[i].track.preview_url,
+                            like: 0,
+                            splendid: 0,
+                            add: 0,
+                        }
+                        // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
+                        this.all_song_lst.push(temp_obj)
+
+                        if(i<this.song_limit) {
+                            this.song_lst.push(temp_obj)
+                        }
+                    }
+                }).catch((err)=>{
+                    console.log("Call GetSongList API Failed!")
+                    console.log(err)
+                })
+            })
+
+        } else {
+            // for song list from seeds
+        }
+
     },
     data() {
         return {
+            // 0 for discover weekly
+            // 1 for seed
+            list_type:0,
+
             // for player
             current_song_source: '',
             
             // for song_table data
             song_lst: [],
+            all_song_lst: [],
 
             // store song_table return delete song
             delete_lst: [],
@@ -94,6 +158,11 @@ export default {
             splendid_sendable: false,
             add_song_sendable: false,
             send_dialog_visible: false,
+
+            // playlist 相關參數
+            list_id:'',
+            song_limit: 0,
+            last_song_pointer: 0
         }
     },
     methods: {
@@ -105,6 +174,13 @@ export default {
             while(this.delete_lst.length) {
                 this.song_lst.splice(this.delete_lst.pop(), 1);
             }
+            
+            for(var i=0; i<=this.song_limit-this.song_lst.length;i++) {
+                this.last_song_pointer+=1
+                this.song_lst.push(this.all_song_lst[this.last_song_pointer])
+            }
+            console.log(this.song_lst)
+
             this.rerender+=1
             
         },
@@ -162,7 +238,6 @@ export default {
                 name: 'list_credit', 
                 params: {},
             })
-
         },
     }
 }

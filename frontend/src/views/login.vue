@@ -29,6 +29,11 @@ export default {
         return {
             
         }
+    },
+    created(){
+        this.$store.commit("initial_exp_type")
+        console.log(this.$store.between_subject_type)
+        console.log(this.$store.within_subject_type)
     }
 }
 </script>

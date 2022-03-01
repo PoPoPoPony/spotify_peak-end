@@ -12,7 +12,7 @@
 
 <script>
 import navBar from '@/components/navBar'
-
+import {getMe} from '@/apis/get_genre'
 
 export default {
     name: 'create_list',
@@ -24,12 +24,27 @@ export default {
             album_src: require('@/assets/create_list/cover.jpeg'),
         }
     },
+    created() {
+        // set access token globel
+        let urlParams = new URLSearchParams(window.location.search)
+        this.$store.access_token = urlParams.get('access_token')
+        this.$store.between_subject_type = urlParams.get('between_subject_type')
+        this.$store.within_subject_type = urlParams.get('within_subject_type')
+
+        getMe(this.$store.access_token).then((res)=>{
+            console.log('call me success')
+            console.log(res.data)
+        }).catch((err)=>{
+            console.log('call me faild')
+            console.log(err)
+        })
+    },
     methods: {
         create() {
             this.$router.push({
                 name: 'song_list',
-                params: {
-
+                query: {
+                    list_type: 0
                 }
             })
         }

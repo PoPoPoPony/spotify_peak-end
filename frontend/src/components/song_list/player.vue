@@ -1,6 +1,6 @@
 <template>
     <div>
-        <iframe :src="source" width="100%" height="80" frameBorder="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        <iframe :src="source" width="700" height="100%" frameBorder="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" id="mediaplayer"></iframe>
     </div>
 </template>
 
