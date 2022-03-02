@@ -18,7 +18,7 @@ app.get('/login', function (req, res) {
   let params = new URLSearchParams([
     ['response_type', 'code'],
     ['client_id', process.env.SPOTIFY_CLIENT_ID],
-    ['scope', 'user-read-private user-read-email user-library-read'],
+    ['scope', 'user-read-private user-read-email user-library-read user-read-recently-played playlist-read-private user-follow-read'],
     ['redirect_uri', redirect_uri]
   ]).toString()
 
@@ -53,7 +53,10 @@ app.get('/callback', function (req, res) {
     } else {
       uri = 'http://localhost:8080/tags'
     }
-    params ="?access_token=" + access_token + "&between_subject_type=" + between_subject_type + "&within_subject_type=" + within_subject_type
+    params ="?access_token=" + access_token
+    params += "&between_subject_type=" + between_subject_type
+    params += "&within_subject_type=" + within_subject_type
+    params += "&pass_exp_num=" + String(0)
 
     res.redirect(uri + params)
   })

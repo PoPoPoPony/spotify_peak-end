@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="animate__animated animate__fadeIn">
         <el-table :data="song_lst" :style="table_style" :cell-style="{height: '40px', }" :header-cell-style="{height: '60px', padding: '5px'}" :key="rerender">
             <el-table-column prop="listened" label="聽過" width="100">
                 <template #default="scope">

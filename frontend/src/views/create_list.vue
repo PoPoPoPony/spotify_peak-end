@@ -30,7 +30,15 @@ export default {
         this.$store.access_token = urlParams.get('access_token')
         this.$store.between_subject_type = urlParams.get('between_subject_type')
         this.$store.within_subject_type = urlParams.get('within_subject_type')
+        this.$store.pass_exp_num = urlParams.get('pass_exp_num')
 
+        console.log("create list between", this.$store.between_subject_type)
+        console.log("create list within", this.$store.within_subject_type)
+
+        // 每到 create list 或 選擇 seed 頁面，就增加做過的實驗數量(每個人應做兩次)
+        this.$store.pass_exp_num+=1
+
+        // for test
         getMe(this.$store.access_token).then((res)=>{
             console.log('call me success')
             console.log(res.data)

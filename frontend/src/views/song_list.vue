@@ -72,6 +72,12 @@ export default {
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
 
+        if(this.$store.between_subject_type==0) {
+            this.add_song_sendable = true
+        }
+
+
+        // list type 決定此頁面會刷weekly discovery的歌單還是seed的歌單
         if(this.list_type == 0) {
             GetDiscoverWeekly(this.$store.access_token).then((res)=>{
                 console.log("Call GetDiscoverWeekly API successed!")
@@ -87,14 +93,15 @@ export default {
 
                     // 在0, 3的實驗組別中，weekly discovery是短歌單
                     // 在1, 2的實驗組別中，weekly discovery是長歌單
-                    // 目前設定長歌單的歌曲數量為15，短歌單的歌曲數量為8
+                    // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
+                    // 測試用長的先用5，短的先用3
 
                     if(["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
-                        this.song_limit = 8
-                        this.last_song_pointer = 7
+                        this.song_limit = 3
+                        this.last_song_pointer = 2
                     } else {
-                        this.song_limit = 15
-                        this.last_song_pointer = 14
+                        this.song_limit = 5
+                        this.last_song_pointer = 16
                     }
 
                     for(var i=0; i<temp_song_lst.length; i++) {
@@ -236,7 +243,9 @@ export default {
 
             this.$router.push({
                 name: 'list_credit', 
-                params: {},
+                query: {
+                    list_type: this.list_type
+                },
             })
         },
     }

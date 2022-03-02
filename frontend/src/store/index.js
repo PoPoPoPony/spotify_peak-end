@@ -33,6 +33,7 @@ const store = new Vuex.Store({
     between_subject_type: 0,
     within_subject_type:0,
     access_token:0,
+    pass_exp_num: 0,
   },
   mutations: {
     initial_exp_type() {
