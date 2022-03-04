@@ -16,6 +16,8 @@ import {getMe} from '@/apis/get_genre'
 import {GetRecentlyPlayed} from '@/apis/get_recently_played'
 import {GetUserPlaylists} from '@/apis/get_user_playlists'
 import {GetFollowedArtist} from '@/apis/get_followed_artist'
+import {GetLibraryTracks} from '@/apis/get_library_tracks'
+import {GetPlaylistTracks} from '@/apis/get_playlist_tracks'
 import axios from 'axios'
 
 
@@ -48,6 +50,8 @@ export default {
                 'tags': []
             }],
             rerender: 0,
+            related_songs:[],
+            library_playlist_id: [],
         }
     },
     created() {
@@ -56,9 +60,6 @@ export default {
         this.$store.between_subject_type = urlParams.get('between_subject_type')
         this.$store.within_subject_type = urlParams.get('within_subject_type')
         this.$store.pass_exp_num = urlParams.get('pass_exp_num')
-
-        console.log("tags between", this.$store.between_subject_type)
-        console.log("tags within", this.$store.within_subject_type)
 
         // 每到 create list 或 選擇 seed 頁面，就增加做過的實驗數量(每個人應做兩次)
         this.$store.pass_exp_num+=1
@@ -69,15 +70,6 @@ export default {
         }).catch((err)=>{
             console.log('call me faild')
             console.log(err)
-        })
-
-        
-
-        // 獲取使用者建立的播放清單
-        GetUserPlaylists(this.$store.access_token).then((res)=>{
-            console.log("Call GetUserPlaylists API successed!")
-            let retv = res.data
-            console.log(retv)
         })
 
         axios.all([this.WrapGetRecentlyPlayed(), this.WrapGetFollowedArtist()]).then(axios.spread(()=> {
@@ -112,10 +104,10 @@ export default {
             genere_freq_lst = genere_freq_lst.map((elem=>{
                 return elem[0]
             }))
-
             this.tags_data[0]['tags'] = genere_freq_lst
-
-        }))
+        })),
+        this.WrapGetLibraryTracks()
+        this.WrapGetPlaylistTracks()
 
     },
     methods: {
@@ -124,11 +116,11 @@ export default {
             return GetRecentlyPlayed(this.$store.access_token).then((res)=>{
                 console.log("Call GetRecentlyPlayed API successed!")
                 let retv = res.data
-                console.log(retv)
                 var temp_map = {}
                 for(var i=0; i<retv["items"].length; i++) {
                     var track_name = retv["items"][i]["track"]["name"]
                     var track_id = retv["items"][i]["track"]["id"]
+                    this.related_songs.push(track_id)
 
                     if(!(track_name in temp_map)) {
                         this.recently_played.push([track_name, track_id])
@@ -164,6 +156,44 @@ export default {
                             }
                         }
                     }
+                }
+            })
+        },
+        WrapGetLibraryTracks() {
+            // 獲取最近撥放的歌曲
+            return GetLibraryTracks(this.$store.access_token).then((res)=>{
+                console.log("Call GetLibraryTracks API successed!")
+                let retv = res.data
+                var items = retv['items']
+                var tracks_id = []
+                tracks_id = items.map((elem)=> {
+                    return elem['track']['id']
+                })
+                this.related_songs.push(...tracks_id)
+            })
+        },
+        WrapGetPlaylistTracks() {
+            // 獲取使用者建立的播放清單
+            GetUserPlaylists(this.$store.access_token).then((res)=>{
+                console.log("Call GetUserPlaylists API successed!")
+                let retv = res.data
+                var items = retv['items']
+                items = items.map((elem)=>{
+                    return elem['id']
+                })
+                this.library_playlist_id.push(...items)
+            }).then(()=>{
+                if(this.library_playlist_id.length>0) {
+                    GetPlaylistTracks(this.$store.access_token, this.library_playlist_id[0]).then((res)=>{
+                        console.log("Call GetPlaylistTracks API successed!")
+                        let retv = res.data
+                        var items = retv['tracks']['items']
+                        items = items.map((elem)=> {
+                            return elem['track']['id']
+                        })
+                        this.related_songs.push(...items)
+                        console.log(this.related_songs)
+                    })
                 }
             })
         },
