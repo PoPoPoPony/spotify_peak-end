@@ -60,6 +60,7 @@ import songTable from '@/components/song_list/song_table'
 import player from '@/components/song_list/player'
 import {GetDiscoverWeekly} from '@/apis/get_discover_weekly'
 import {GetSongList} from '@/apis/get_song_list'
+import {GetRecommendations} from '@/apis/get_recommendations'
 
 
 export default {
@@ -71,6 +72,10 @@ export default {
     created(){
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
+        this.tags_obj = JSON.parse(urlParams.get('tags_obj'))
+        // console.log(this.tags_obj['Genres'])
+        // console.log(this.tags_obj['Artists'])
+        // console.log(this.tags_obj['Tracks'])
 
         if(this.$store.between_subject_type==0) {
             this.add_song_sendable = true
@@ -101,7 +106,7 @@ export default {
                         this.last_song_pointer = 2
                     } else {
                         this.song_limit = 5
-                        this.last_song_pointer = 16
+                        this.last_song_pointer = 4
                     }
 
                     for(var i=0; i<temp_song_lst.length; i++) {
@@ -131,6 +136,47 @@ export default {
 
         } else {
             // for song list from seeds
+            var genres = this.tags_obj['Genres'].join()
+            var artists = this.tags_obj['Artists'].join()
+            var tracks = this.tags_obj['Tracks'].join()
+            GetRecommendations(this.$store.access_token, genres, artists, tracks).then((res)=>{
+                console.log("Call GetRecommendations API successed!")
+                let retv = res.data
+                var temp_song_lst = retv["tracks"]
+
+                // 在0, 3的實驗組別中，weekly discovery是短歌單
+                // 在1, 2的實驗組別中，weekly discovery是長歌單
+                // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
+                // 測試用長的先用5，短的先用3
+
+                if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
+                    this.song_limit = 3
+                    this.last_song_pointer = 2
+                } else {
+                    this.song_limit = 5
+                    this.last_song_pointer = 4
+                }
+
+                for(var i=0; i<temp_song_lst.length; i++) {
+                    var temp_obj = {
+                        listened: 0,
+                        title: temp_song_lst[i].name,
+                        artist: temp_song_lst[i].artists[0].name,
+                        song_id: temp_song_lst[i].id,
+                        source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].id + "?utm_source=generator",
+                        song_preview_url: temp_song_lst[i].preview_url,
+                        like: 0,
+                        splendid: 0,
+                        add: 0,
+                    }
+                    // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
+                    this.all_song_lst.push(temp_obj)
+
+                    if(i<this.song_limit) {
+                        this.song_lst.push(temp_obj)
+                    }
+                }
+            })
         }
 
     },
@@ -169,7 +215,8 @@ export default {
             // playlist 相關參數
             list_id:'',
             song_limit: 0,
-            last_song_pointer: 0
+            last_song_pointer: 0,
+            tags_obj: {},
         }
     },
     methods: {
@@ -181,11 +228,20 @@ export default {
             while(this.delete_lst.length) {
                 this.song_lst.splice(this.delete_lst.pop(), 1);
             }
-            
-            for(var i=0; i<=this.song_limit-this.song_lst.length;i++) {
+
+            console.log(123, this.song_limit)
+            console.log(456, this.song_lst.length)
+            var push_num = this.song_limit-this.song_lst.length
+
+            for(var i=0; i<push_num;i++) {
+                console.log("execute!")
                 this.last_song_pointer+=1
                 this.song_lst.push(this.all_song_lst[this.last_song_pointer])
             }
+
+            console.log(123, this.song_limit)
+            console.log(456, this.song_lst.length)
+
             console.log(this.song_lst)
 
             this.rerender+=1
