@@ -18,6 +18,7 @@ import {GetUserPlaylists} from '@/apis/get_user_playlists'
 import {GetFollowedArtist} from '@/apis/get_followed_artist'
 import {GetLibraryTracks} from '@/apis/get_library_tracks'
 import {GetPlaylistTracks} from '@/apis/get_playlist_tracks'
+import {GetAudiosFeatures} from '@/apis/get_audios_features'
 import axios from 'axios'
 
 
@@ -52,6 +53,7 @@ export default {
             rerender: 0,
             related_songs:[],
             library_playlist_id: [],
+            score_obj: {},
         }
     },
     created() {
@@ -59,7 +61,7 @@ export default {
         this.$store.access_token = urlParams.get('access_token')
         this.$store.between_subject_type = urlParams.get('between_subject_type')
         this.$store.within_subject_type = urlParams.get('within_subject_type')
-        this.$store.pass_exp_num = urlParams.get('pass_exp_num')
+        this.$store.pass_exp_num = parseInt(urlParams.get('pass_exp_num'))
 
         // 每到 create list 或 選擇 seed 頁面，就增加做過的實驗數量(每個人應做兩次)
         this.$store.pass_exp_num+=1
@@ -106,8 +108,93 @@ export default {
             }))
             this.tags_data[0]['tags'] = genere_freq_lst
         })),
-        this.WrapGetLibraryTracks()
-        this.WrapGetPlaylistTracks()
+        axios.all([this.WrapGetLibraryTracks(), this.WrapGetPlaylistTracks()]).then(axios.spread(()=> {
+            var top100songs = this.related_songs.slice(0, 100)
+            // 還有以下參數尚未使用
+            // time_signature、speechiness、popularity
+            var feature_obj = {
+                "danceability": [],
+                "acousticness": [],
+                "instrumentalness": [],
+                "energy": [],
+                "liveness": [],
+                "key": [],
+
+                // 加入loudness 容易推薦不到
+                // "loudness": [],
+
+                // mode的值域怪怪的
+                // "mode": [],
+
+                "tempo": [],
+                "valence": [],
+            }
+
+            var limit_obj = {
+                "danceability": [0, 1],
+                "acousticness": [0, 1],
+                "instrumentalness": [0, 1],
+                "energy": [0, 1],
+                "liveness": [0, 1],
+                "key": [0, 11],
+
+                // loudness 沒有限制值域
+                // "loudness": [],
+
+                // "mode": [0, 1],
+                
+                // tempo 沒有限制值域
+
+                "tempo": [-1000, 1000],
+                "valence": [0, 1],
+            }
+
+            var audiosString = ''
+            for(var i=0; i<top100songs.length;i++) {
+                audiosString+=top100songs[i]
+                if(i<top100songs.length-1) {
+                    audiosString+=','
+                }
+            }
+
+            GetAudiosFeatures(this.$store.access_token, audiosString).then((res)=>{
+                console.log("Call GetAudiosFeatures API successed!")
+                let retv = res.data
+                var feature_lst = retv['audio_features']
+
+                for(i=0; i<feature_lst.length;i++) {
+                    for(var j in feature_obj) {
+                        feature_obj[j].push(feature_lst[i][j])
+                    }
+                }
+                for(i in feature_obj) {
+                    var statistics = this.getStatistics(feature_obj[i])
+                    var target_score = statistics['avg']
+                    var std = statistics['std']
+                    var min_score = target_score-2*std
+                    var max_score = target_score+2*std
+
+                    if(min_score < limit_obj[i][0]) {
+                        min_score = limit_obj[i][0]
+                    }
+
+                    if(max_score > limit_obj[i][1]) {
+                        max_score = limit_obj[i][1]
+                    }
+
+                    // key 只允許整數
+                    if(i=='key') {
+                        min_score = parseInt(min_score)
+                        target_score = parseInt(target_score)
+                        max_score = parseInt(max_score)
+                    }
+
+                    this.score_obj['max_'+i] = max_score
+                    this.score_obj['min_'+i] = min_score
+                    this.score_obj['target_'+i] = target_score
+                }
+            })
+        }))
 
     },
     methods: {
@@ -192,7 +279,6 @@ export default {
                             return elem['track']['id']
                         })
                         this.related_songs.push(...items)
-                        console.log(this.related_songs)
                     })
                 }
             })
@@ -230,14 +316,30 @@ export default {
             // console.log(send_obj)
 
             var t = JSON.stringify(send_obj)
+            var s = JSON.stringify(this.score_obj)
             this.$router.push({
                 name: 'song_list', 
                 query: {
                     list_type: 1,
-                    tags_obj: t
+                    tags_obj: t,
+                    score_obj: s,
                 },
             })
-        }
+        },
+        getStatistics(numbers, digit = 2) {
+            const formulaCalc = function formulaCalc(formula, digit) {
+                let pow = Math.pow(10, digit);
+                return parseInt(formula * pow, 10) / pow;
+            };
+            let len = numbers.length;
+            let sum = (a, b) => formulaCalc(a + b, digit);
+            let avg = numbers.reduce(sum) / len;
+            let stdDev = Math.sqrt(numbers.map(n=> (n-avg) * (n-avg)).reduce(sum) / len);
+            return {
+                avg: parseFloat(avg.toFixed(digit)),
+                std : parseFloat(stdDev.toFixed(digit))
+            }
+        },
     },
 }
 </script>

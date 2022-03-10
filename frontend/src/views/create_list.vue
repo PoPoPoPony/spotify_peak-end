@@ -30,7 +30,7 @@ export default {
         this.$store.access_token = urlParams.get('access_token')
         this.$store.between_subject_type = urlParams.get('between_subject_type')
         this.$store.within_subject_type = urlParams.get('within_subject_type')
-        this.$store.pass_exp_num = urlParams.get('pass_exp_num')
+        this.$store.pass_exp_num = parseInt(urlParams.get('pass_exp_num'))
 
         console.log("create list between", this.$store.between_subject_type)
         console.log("create list within", this.$store.within_subject_type)

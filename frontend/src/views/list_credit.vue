@@ -1,7 +1,7 @@
 <template>
     <div>
         <div id='bg'/>
-        <div id="credit_container" class="animate__animated animate__fadeInUp">
+        <div id="credit_container" class="animate__animated animate__fadeInDown">
             <span id="title">請為整體歌單評分</span>
             <el-row justify="center">
                 <el-col :span="16">
@@ -9,6 +9,15 @@
                 </el-col>
             </el-row>
             <el-button id="send_btn" type="primary" :disabled='send_disable' @click="send_list_credit">送出</el-button>
+            <div v-if="unauth_show" class="animate__animated animate__fadeInDown">
+                <h1>
+                    Thank You!
+                    <br>
+                    You can unauthorize this app if you want : 
+                    <br>
+                    <v-html>https://www.spotify.com/tw/account/apps/</v-html>
+                </h1>
+            </div>
         </div>
     </div>
 </template>
@@ -29,6 +38,7 @@ export default {
             credit: 0,
             send_disable: true,
             list_type:0,
+            unauth_show: false
         }
     },
     methods: {
@@ -67,7 +77,9 @@ export default {
                 })
 
             } else if(this.$store.pass_exp_num == 2) {
+                this.unauth_show = true
                 console.log("Exp Finish. Thank you!")
+
             }
         }
     }

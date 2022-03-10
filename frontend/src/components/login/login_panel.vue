@@ -12,8 +12,7 @@
                     </el-form-item>
                 </el-form>
                 <el-row style="margin-bottom: 20px; margin-top: 20px;">
-                    <el-col :span="4" :offset="19">
-                        <el-button type="primary" style="font-size: 25px;" @click="login" >Login</el-button>
+                    <el-col :span="4" :offset="16">
                         <el-button type="primary" style="font-size: 25px;" >
                             <el-link :href="backend_url" :underline="false" style="color: white; font-size: 30px" >Redirect</el-link>
                         </el-button>

@@ -40,6 +40,8 @@ const store = new Vuex.Store({
       var result = get_exp_type()
       store.between_subject_type = result[0]
       store.within_subject_type = result[1]
+      store.access_token = 0
+      store.pass_exp_num = 0
     }
   },
   actions: {

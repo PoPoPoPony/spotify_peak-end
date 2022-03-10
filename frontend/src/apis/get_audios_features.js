@@ -1,16 +1,14 @@
 import request from '../utils/request'
 
-export function GetDiscoverWeekly(accessToken) {
+export function GetAudiosFeatures(accessToken, songIDs) {
     let config = {
         headers: { 
             "Authorization": "Bearer " + accessToken,
         },
-        url: '/search',
+        url: '/audio-features',
         method: 'GET',
         params: {
-            "q": "DiscoverWeekly",
-            "type": "playlist",
-            "limit": 1
+            "ids": songIDs
         }
     }
 

@@ -4,7 +4,7 @@
             <el-table-column prop="class" label="Class" width="180" />
             <el-table-column prop="tags" label="Tags">
                 <template #default="scope">
-                    <el-checkbox-group v-model="tag_lst" @change="tag_change" :max='10'>
+                    <el-checkbox-group v-model="tag_lst" @change="tag_change" :max='5'>
                         <el-checkbox v-for="(tag, index) in tags_table_data[scope.$index]['tags']" :key="index" :label="tag" border />
                     </el-checkbox-group>
                 </template>
@@ -12,7 +12,7 @@
         </el-table>
         <el-row style="margin-top: 100px">
             <el-col :span='9' :offset='1' style="font-size: 30px; color: white; text-align: left">
-                最多選取10個標籤，還剩 {{ 10 - current_tag_num }} 個
+                最多選取5個標籤，還剩 {{ 5 - current_tag_num }} 個
             </el-col>
             <el-col :span='4' :offset='10' style="font-size: 30px; color: white;">
                 <el-button type="danger" @click="on_clear" >

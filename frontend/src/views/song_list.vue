@@ -73,6 +73,7 @@ export default {
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
         this.tags_obj = JSON.parse(urlParams.get('tags_obj'))
+        this.score_obj = JSON.parse(urlParams.get('score_obj'))
         // console.log(this.tags_obj['Genres'])
         // console.log(this.tags_obj['Artists'])
         // console.log(this.tags_obj['Tracks'])
@@ -102,12 +103,11 @@ export default {
                     // 測試用長的先用5，短的先用3
 
                     if(["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
-                        this.song_limit = 3
-                        this.last_song_pointer = 2
+                        this.song_limit = 8
                     } else {
-                        this.song_limit = 5
-                        this.last_song_pointer = 4
+                        this.song_limit = 12
                     }
+                    this.last_song_pointer = this.song_limit-1
 
                     for(var i=0; i<temp_song_lst.length; i++) {
                         var temp_obj = {
@@ -128,6 +128,8 @@ export default {
                             this.song_lst.push(temp_obj)
                         }
                     }
+                    console.log(this.song_lst)
+                    this.rerender+=1
                 }).catch((err)=>{
                     console.log("Call GetSongList API Failed!")
                     console.log(err)
@@ -135,14 +137,17 @@ export default {
             })
 
         } else {
+            
             // for song list from seeds
             var genres = this.tags_obj['Genres'].join()
             var artists = this.tags_obj['Artists'].join()
             var tracks = this.tags_obj['Tracks'].join()
-            GetRecommendations(this.$store.access_token, genres, artists, tracks).then((res)=>{
+            
+            GetRecommendations(this.$store.access_token, genres, artists, tracks, this.score_obj).then((res)=>{
                 console.log("Call GetRecommendations API successed!")
                 let retv = res.data
                 var temp_song_lst = retv["tracks"]
+                console.log(temp_song_lst)
 
                 // 在0, 3的實驗組別中，weekly discovery是短歌單
                 // 在1, 2的實驗組別中，weekly discovery是長歌單
@@ -150,12 +155,11 @@ export default {
                 // 測試用長的先用5，短的先用3
 
                 if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
-                    this.song_limit = 3
-                    this.last_song_pointer = 2
+                    this.song_limit = 8
                 } else {
-                    this.song_limit = 5
-                    this.last_song_pointer = 4
+                    this.song_limit = 12
                 }
+                this.last_song_pointer = this.song_limit-1
 
                 for(var i=0; i<temp_song_lst.length; i++) {
                     var temp_obj = {
@@ -217,6 +221,7 @@ export default {
             song_limit: 0,
             last_song_pointer: 0,
             tags_obj: {},
+            score_obj: {},
         }
     },
     methods: {

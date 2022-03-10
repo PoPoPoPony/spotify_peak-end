@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
         <div id='bg'/>
         <navBar class="animate__animated animate__fadeInDown"/>
         <el-row>
