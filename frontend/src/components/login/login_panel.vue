@@ -11,6 +11,22 @@
                         <el-input v-model="user.pwd" show-password></el-input>
                     </el-form-item>
                 </el-form> -->
+                組別
+                <el-row>
+                    <el-col>
+                        <el-radio-button v-model="exp_type" label="1" size="large" border class="expTypeRadio">1</el-radio-button>
+                    </el-col>
+                    <el-col>
+                        <el-radio-button v-model="exp_type" label="2" size="large" border class="expTypeRadio">2</el-radio-button>
+                    </el-col>
+                    <el-col>
+                        <el-radio-button v-model="exp_type" label="3" size="large" border class="expTypeRadio">3</el-radio-button>
+                    </el-col>
+                    <el-col>
+                        <el-radio-button v-model="exp_type" label="4" size="large" border class="expTypeRadio">4</el-radio-button>
+                    </el-col>
+
+                </el-row>
                 <el-row style="margin-bottom: 100px; margin-top: 20px;">
                     <el-col :span="4" :offset="8">
                         <el-button type="primary" style="font-size: 25px;" >
@@ -59,7 +75,8 @@ export default {
                 require('@/assets/login/facebook.png'),
                 require('@/assets/login/apple.png')
             ],
-            backend_url: "http://localhost:8888/login"
+            backend_url: "http://localhost:8888/login",
+            exp_type: 1,
         }
     },
     created() {
@@ -125,6 +142,14 @@ export default {
 #avater_container {
     margin-top: 30px;
     padding-bottom: 10%;
+}
+
+::v-deep .el-radio-button__inner {
+    font-size:50px;
+}
+
+::v-deep .el-radio-button.is-bordered {
+    padding: 30px 20px 30px 20px
 }
 
 
