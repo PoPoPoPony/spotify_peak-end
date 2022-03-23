@@ -3,22 +3,22 @@
         <div id="panel">
             <img id="panel_logo" :src="spotify_logo" alt="">
             <div id="panel_elem">
-                <el-form label-position='top' label-width="100px" :model="user">
+                <!-- <el-form label-position='top' label-width="100px" :model="user">
                     <el-form-item label="Account">
                         <el-input v-model="user.account"></el-input>
                     </el-form-item>
                     <el-form-item label="Password">
                         <el-input v-model="user.pwd" show-password></el-input>
                     </el-form-item>
-                </el-form>
-                <el-row style="margin-bottom: 20px; margin-top: 20px;">
-                    <el-col :span="4" :offset="16">
+                </el-form> -->
+                <el-row style="margin-bottom: 100px; margin-top: 20px;">
+                    <el-col :span="4" :offset="8">
                         <el-button type="primary" style="font-size: 25px;" >
                             <el-link :href="backend_url" :underline="false" style="color: white; font-size: 30px" >Redirect</el-link>
                         </el-button>
                     </el-col>
                 </el-row>
-                <el-row>
+                <!-- <el-row>
                     <el-col :span="11">
                         <hr style="border: 1px solid black;"/>
                     </el-col>
@@ -28,14 +28,14 @@
                     <el-col :span="11">
                         <hr style="border: 1px solid black;"/>
                     </el-col>
-                </el-row>
-                <div id="avater_container">
+                </el-row> -->
+                <!-- <div id="avater_container">
                     <el-row justify="space-between">
                         <el-col :span="6" v-for="(item, index) in third_login_src" :key="index" style="border: 1px solid black; border; border-radius: 10px;">
                             <el-avatar shape="square" :size="100" fit="fill" :src="item" style="background-color: white;"></el-avatar>
                         </el-col>
                     </el-row>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
