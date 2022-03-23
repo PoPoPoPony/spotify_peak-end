@@ -81,14 +81,14 @@ export default {
             var followed_artist_name = this.followed_artist.map((elem)=> {
                 return elem[0]
             })
-            this.tags_data[1]['tags'] = followed_artist_name
+            this.tags_data[1]['tags'] = followed_artist_name.slice(0, 10)
 
             // 預設tracks丟前10個
             var track_name = this.recently_played.map((elem)=> {
                 return elem[0]
             })
 
-            this.tags_data[2]['tags'] = track_name.slice(0, 11)
+            this.tags_data[2]['tags'] = track_name.slice(0, 10)
 
             // 預設genres丟前10高的
             var genere_freq_lst = []
@@ -106,7 +106,7 @@ export default {
             genere_freq_lst = genere_freq_lst.map((elem=>{
                 return elem[0]
             }))
-            this.tags_data[0]['tags'] = genere_freq_lst
+            this.tags_data[0]['tags'] = genere_freq_lst.slice(0, 10)
         })),
         axios.all([this.WrapGetLibraryTracks(), this.WrapGetPlaylistTracks()]).then(axios.spread(()=> {
             var top100songs = this.related_songs.slice(0, 100)
