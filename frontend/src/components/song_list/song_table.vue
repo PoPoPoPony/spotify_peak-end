@@ -31,7 +31,7 @@
             </el-table-column>
             <el-table-column label="確認評分" width="150">
                 <template #default="scope">
-                    <el-button type="primary" @click="completeOneSong(scope)" :disabled='delete_not_complete || !splendid_changed[scope.$index] || !like_changed[scope.$index]'>完成</el-button>
+                    <el-button type="primary" @click="completeOneSong(scope)" :disabled='delete_not_complete || !splendid_changed[scope.$index] || !like_changed[scope.$index]'>確認</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="加入歌單" width="150" v-if="show_add_song">

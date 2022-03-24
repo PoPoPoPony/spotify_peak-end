@@ -61,6 +61,7 @@ import player from '@/components/song_list/player'
 import {GetDiscoverWeekly} from '@/apis/get_discover_weekly'
 import {GetSongList} from '@/apis/get_song_list'
 import {GetRecommendations} from '@/apis/get_recommendations'
+import {GetRecentlyPlayed} from '@/apis/get_recently_played'
 
 
 export default {
@@ -70,13 +71,12 @@ export default {
         player,
     },
     created(){
+        console.log("321", this.$store.between_subject_type)
+        console.log("321", this.$store.within_subject_type)
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
         this.tags_obj = JSON.parse(urlParams.get('tags_obj'))
         this.score_obj = JSON.parse(urlParams.get('score_obj'))
-        // console.log(this.tags_obj['Genres'])
-        // console.log(this.tags_obj['Artists'])
-        // console.log(this.tags_obj['Tracks'])
 
         if(this.$store.between_subject_type==0) {
             this.add_song_sendable = true
@@ -149,37 +149,71 @@ export default {
                 var temp_song_lst = retv["tracks"]
                 console.log(temp_song_lst)
 
-                // 在0, 3的實驗組別中，weekly discovery是短歌單
-                // 在1, 2的實驗組別中，weekly discovery是長歌單
-                // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
-                // 測試用長的先用5，短的先用3
 
-                if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
-                    this.song_limit = 8
-                } else {
-                    this.song_limit = 12
-                }
-                this.last_song_pointer = this.song_limit-1
 
-                for(var i=0; i<temp_song_lst.length; i++) {
-                    var temp_obj = {
-                        listened: 0,
-                        title: temp_song_lst[i].name,
-                        artist: temp_song_lst[i].artists[0].name,
-                        song_id: temp_song_lst[i].id,
-                        source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].id + "?utm_source=generator",
-                        song_preview_url: temp_song_lst[i].preview_url,
-                        like: 0,
-                        splendid: 0,
-                        add: 0,
+                GetRecentlyPlayed(this.$store.access_token).then((res2)=>{
+                    console.log("Call GetRecentlyPlayed API successed!")
+                    let retv = res2.data
+                    var temp_map = {}
+                    for(var i=0; i<retv["items"].length; i++) {
+                        var track_name = retv["items"][i]["track"]["name"]
+                        var track_id = retv["items"][i]["track"]["id"]
+
+                        if(!(track_name in temp_map)) {
+                            this.recently_played.push(track_id)
+                            // 隨便丟一個值(確認這個track_name有被記錄過而已)
+                            temp_map[track_name] = 0
+                        }
                     }
-                    // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
-                    this.all_song_lst.push(temp_obj)
-
-                    if(i<this.song_limit) {
-                        this.song_lst.push(temp_obj)
+                    console.log("recently_played", this.recently_played)
+                
+                    var d = []
+                    for(i=0; i<temp_song_lst.length; i++) {
+                        if(this.recently_played.includes(temp_song_lst[i]['id'])) {
+                            d.push(i)
+                        }
                     }
-                }
+
+                    while(d.length) {
+                        temp_song_lst.splice(d.pop(), 1);
+                    }
+
+                    console.log(temp_song_lst)
+
+
+                    // 在0, 3的實驗組別中，weekly discovery是短歌單
+                    // 在1, 2的實驗組別中，weekly discovery是長歌單
+                    // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
+                    // 測試用長的先用5，短的先用3
+
+                    if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
+                        this.song_limit = 8
+                    } else {
+                        this.song_limit = 12
+                    }
+                    this.last_song_pointer = this.song_limit-1
+
+                    for(i=0; i<temp_song_lst.length; i++) {
+                        var temp_obj = {
+                            listened: 0,
+                            title: temp_song_lst[i].name,
+                            artist: temp_song_lst[i].artists[0].name,
+                            song_id: temp_song_lst[i].id,
+                            source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].id + "?utm_source=generator",
+                            song_preview_url: temp_song_lst[i].preview_url,
+                            like: 0,
+                            splendid: 0,
+                            add: 0,
+                        }
+                        // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
+                        this.all_song_lst.push(temp_obj)
+
+                        if(i<this.song_limit) {
+                            this.song_lst.push(temp_obj)
+                        }
+                    }
+                })
+                
             })
         }
 
@@ -222,6 +256,7 @@ export default {
             last_song_pointer: 0,
             tags_obj: {},
             score_obj: {},
+            recently_played: [],
         }
     },
     methods: {
@@ -234,8 +269,6 @@ export default {
                 this.song_lst.splice(this.delete_lst.pop(), 1);
             }
 
-            console.log(123, this.song_limit)
-            console.log(456, this.song_lst.length)
             var push_num = this.song_limit-this.song_lst.length
 
             for(var i=0; i<push_num;i++) {
@@ -243,9 +276,6 @@ export default {
                 this.last_song_pointer+=1
                 this.song_lst.push(this.all_song_lst[this.last_song_pointer])
             }
-
-            console.log(123, this.song_limit)
-            console.log(456, this.song_lst.length)
 
             console.log(this.song_lst)
 

@@ -211,6 +211,7 @@ export default {
 
                     if(!(track_name in temp_map)) {
                         this.recently_played.push([track_name, track_id])
+                        // 隨便丟一個值(確認這個track_name有被記錄過而已)
                         temp_map[track_name] = 0
                     }
                 }
