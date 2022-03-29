@@ -8,7 +8,7 @@ export function GetDiscoverWeekly(accessToken) {
         url: '/search',
         method: 'GET',
         params: {
-            "q": "DiscoverWeekly",
+            "q": "Discover Weekly",
             "type": "playlist",
             "limit": 1
         }

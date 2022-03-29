@@ -6,7 +6,8 @@
                 <h2 style="color: white; font-size: 30px;">
                     播放列表
                 </h2>
-                <songTable :table_data='song_lst' :delete_not_complete='delete_not_complete' @play_music='play_music' @delete_song='get_delete_song_lst' @like_change='like_change' @splendid_change='splendid_change' @add_song_change='add_song_change' :key='rerender'/>
+                <songTable1 v-if="table1Show" :table_data='song_lst' :delete_not_complete='delete_not_complete' @play_music='play_music' @delete_song='get_delete_song_lst' @like_change='like_change' @splendid_change='splendid_change' @add_song_change='add_song_change' :key='rerender'/>
+                <songTable2 v-if="table2Show" :table2Idx='table2Idx' :table_data='table2Current' :delete_not_complete='delete_not_complete' @play_music='play_music' @delete_song='get_delete_song_lst' @add_song_change='add_song_change' @completeOneSong='completeOneSong'  :key='rerender'/>
             </el-col>
         </el-row>
         <el-row style="margin-top: 20px">
@@ -15,7 +16,7 @@
                 <el-button type="primary" :disabled='!delete_not_complete' @click="on_complete_delete">刪除完成</el-button>
             </el-col>
             <el-col :span='4' :offset='4'>
-                <el-button type="primary" :disabled='!(like_sendable && splendid_sendable && add_song_sendable)' @click="send_dialog_visible=true">送出</el-button>
+                <el-button v-if="table1Show" type="primary" :disabled='!(like_sendable && splendid_sendable && add_song_sendable)' @click="send_dialog_visible=true">送出</el-button>
             </el-col>
         </el-row>
         <el-row justify="center" style="margin-top: 50px">
@@ -56,30 +57,35 @@
 
 <script>
 // import { song_lst } from '@/utils/test_songs'
-import songTable from '@/components/song_list/song_table'
+import songTable1 from '@/components/song_list/song_table'
+import songTable2 from '@/components/song_list/song_table2'
 import player from '@/components/song_list/player'
 import {GetDiscoverWeekly} from '@/apis/get_discover_weekly'
 import {GetSongList} from '@/apis/get_song_list'
 import {GetRecommendations} from '@/apis/get_recommendations'
-import {GetRecentlyPlayed} from '@/apis/get_recently_played'
 
 
 export default {
     name: 'song_list',
     components: {
-        songTable,
+        songTable1,
+        songTable2,
         player,
     },
     created(){
-        console.log("321", this.$store.between_subject_type)
-        console.log("321", this.$store.within_subject_type)
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
         this.tags_obj = JSON.parse(urlParams.get('tags_obj'))
         this.score_obj = JSON.parse(urlParams.get('score_obj'))
+        // console.log(this.tags_obj['Genres'])
+        // console.log(this.tags_obj['Artists'])
+        // console.log(this.tags_obj['Tracks'])
 
         if(this.$store.between_subject_type==0) {
+            // add song column直接設定成可送出，代表不需要add song
             this.add_song_sendable = true
+        } else if(this.$store.between_subject_type==1) {
+            this.add_song_sendable = false
         }
 
 
@@ -149,71 +155,37 @@ export default {
                 var temp_song_lst = retv["tracks"]
                 console.log(temp_song_lst)
 
+                // 在0, 3的實驗組別中，weekly discovery是短歌單
+                // 在1, 2的實驗組別中，weekly discovery是長歌單
+                // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
+                // 測試用長的先用5，短的先用3
 
+                if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
+                    this.song_limit = 8
+                } else {
+                    this.song_limit = 12
+                }
+                this.last_song_pointer = this.song_limit-1
 
-                GetRecentlyPlayed(this.$store.access_token).then((res2)=>{
-                    console.log("Call GetRecentlyPlayed API successed!")
-                    let retv = res2.data
-                    var temp_map = {}
-                    for(var i=0; i<retv["items"].length; i++) {
-                        var track_name = retv["items"][i]["track"]["name"]
-                        var track_id = retv["items"][i]["track"]["id"]
-
-                        if(!(track_name in temp_map)) {
-                            this.recently_played.push(track_id)
-                            // 隨便丟一個值(確認這個track_name有被記錄過而已)
-                            temp_map[track_name] = 0
-                        }
+                for(var i=0; i<temp_song_lst.length; i++) {
+                    var temp_obj = {
+                        listened: 0,
+                        title: temp_song_lst[i].name,
+                        artist: temp_song_lst[i].artists[0].name,
+                        song_id: temp_song_lst[i].id,
+                        source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].id + "?utm_source=generator",
+                        song_preview_url: temp_song_lst[i].preview_url,
+                        like: 0,
+                        splendid: 0,
+                        add: 0,
                     }
-                    console.log("recently_played", this.recently_played)
-                
-                    var d = []
-                    for(i=0; i<temp_song_lst.length; i++) {
-                        if(this.recently_played.includes(temp_song_lst[i]['id'])) {
-                            d.push(i)
-                        }
+                    // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
+                    this.all_song_lst.push(temp_obj)
+
+                    if(i<this.song_limit) {
+                        this.song_lst.push(temp_obj)
                     }
-
-                    while(d.length) {
-                        temp_song_lst.splice(d.pop(), 1);
-                    }
-
-                    console.log(temp_song_lst)
-
-
-                    // 在0, 3的實驗組別中，weekly discovery是短歌單
-                    // 在1, 2的實驗組別中，weekly discovery是長歌單
-                    // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
-                    // 測試用長的先用5，短的先用3
-
-                    if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
-                        this.song_limit = 8
-                    } else {
-                        this.song_limit = 12
-                    }
-                    this.last_song_pointer = this.song_limit-1
-
-                    for(i=0; i<temp_song_lst.length; i++) {
-                        var temp_obj = {
-                            listened: 0,
-                            title: temp_song_lst[i].name,
-                            artist: temp_song_lst[i].artists[0].name,
-                            song_id: temp_song_lst[i].id,
-                            source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].id + "?utm_source=generator",
-                            song_preview_url: temp_song_lst[i].preview_url,
-                            like: 0,
-                            splendid: 0,
-                            add: 0,
-                        }
-                        // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
-                        this.all_song_lst.push(temp_obj)
-
-                        if(i<this.song_limit) {
-                            this.song_lst.push(temp_obj)
-                        }
-                    }
-                })
-                
+                }
             })
         }
 
@@ -256,7 +228,10 @@ export default {
             last_song_pointer: 0,
             tags_obj: {},
             score_obj: {},
-            recently_played: [],
+            table1Show: true,
+            table2Show: false,
+            table2Current:[],
+            table2Idx: 0,
         }
     },
     methods: {
@@ -289,6 +264,15 @@ export default {
             this.delete_dialog_visible = true
         },
         confirm_delete_complete() {
+            if(this.$store.between_subject_type==0) {
+                this.table1Show = false
+                this.table2Show = true
+                this.table2Current.push(this.song_lst[0])
+
+            } else if(this.$store.between_subject_type==1) {
+                this.table1Show = true
+                this.table2Show = false
+            }
             this.delete_dialog_visible = false
             this.delete_not_complete = false
             this.rerender+=1
@@ -338,6 +322,21 @@ export default {
                     list_type: this.list_type
                 },
             })
+        },
+        completeOneSong(val_lst) {
+            var like = val_lst[0]
+            var splendid = val_lst[1]
+
+            this.song_lst[this.table2Idx]["splendid"] = splendid
+            this.song_lst[this.table2Idx]["like"] = like
+            if(this.table2Idx<this.song_limit-1) {
+                this.table2Idx+=1
+                this.table2Current[0] = this.song_lst[this.table2Idx]
+                this.rerender+=1
+            } else {
+                this.confirm_send()
+            }
+            
         },
     }
 }
