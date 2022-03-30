@@ -6,7 +6,7 @@ services:
       args:
         FastAPIENV: "production"
 
-    image: peak-end_backend
+    image: popopopony/peak-end_backend:v1
 
     container_name: backendContainer
 
