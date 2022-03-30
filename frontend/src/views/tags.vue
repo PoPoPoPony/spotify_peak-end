@@ -39,6 +39,7 @@ export default {
 
             // [artist_name, artist_id] in followed_artist
             followed_artist: [],
+            recently_artist: [],
             recently_played:[],
             tags_data: [{
                 'class': 'Genres',
@@ -74,23 +75,65 @@ export default {
             console.log(err)
         })
 
-        axios.all([this.WrapGetRecentlyPlayed(), this.WrapGetFollowedArtist()]).then(axios.spread(()=> {
+        // 獲取最近撥放的歌曲
+        GetRecentlyPlayed(this.$store.access_token).then((res)=>{
+            console.log("Call GetRecentlyPlayed API successed!")
+            let retv = res.data
+            var temp_map = {}
+            var temp_artist_map = {}
+            for(var i=0; i<retv["items"].length; i++) {
+                var track_name = retv["items"][i]["track"]["name"]
+                var track_id = retv["items"][i]["track"]["id"]
+                var artist_name = retv["items"][i]["track"]["artists"][0]["name"]
+                var artist_id = retv["items"][i]["track"]["artists"][0]["id"]
+                this.related_songs.push(track_id)
+
+                if(!(track_name in temp_map)) {
+                    this.recently_played.push([track_name, track_id])
+                    // 隨便丟一個值(確認這個track_name有被記錄過而已)
+                    temp_map[track_name] = 0
+                }
+
+                if(!(artist_id in temp_artist_map)) {
+                    this.recently_artist.push([artist_name, artist_id, 1])
+                    // 隨便丟一個值(確認這個artist_name有被記錄過而已)
+                    temp_artist_map[artist_id] = 0
+                } else {
+                    for(var j=0; j<this.recently_artist.length; j++) {
+                        if(this.recently_artist[j][1]==artist_id) {
+                            this.recently_artist[j][2]+=1
+                        }
+                    }
+                }
+            }
+
+            
+
+
+
+
+
+
+        }).then(() =>{
             // set tags table items
 
-            // 預設artist全部丟
-            var followed_artist_name = this.followed_artist.map((elem)=> {
+            // recently_artist = [[artist_name, artist_id, freq], [artist_name, artist_id, freq], ...]
+            this.recently_artist.sort((a, b)=> {
+                return b[2]-a[2]
+            })
+
+            var recently_artist_name = this.recently_artist.map((elem)=> {
                 return elem[0]
             })
-            this.tags_data[1]['tags'] = followed_artist_name.slice(0, 10)
+            this.tags_data[1]['tags'] = recently_artist_name.slice(0, 10)
 
-            // 預設tracks丟前10個
+            // recently_played = [[track_name, track_id], [track_name, track_id], ...]
             var track_name = this.recently_played.map((elem)=> {
                 return elem[0]
             })
 
             this.tags_data[2]['tags'] = track_name.slice(0, 10)
 
-            // 預設genres丟前10高的
             var genere_freq_lst = []
 
             //dict to 2d array
@@ -107,7 +150,9 @@ export default {
                 return elem[0]
             }))
             this.tags_data[0]['tags'] = genere_freq_lst.slice(0, 10)
-        })),
+        })
+
+        // 取得相關(Related songs)歌曲，以計算歌曲平均物理參數
         axios.all([this.WrapGetLibraryTracks(), this.WrapGetPlaylistTracks()]).then(axios.spread(()=> {
             var top100songs = this.related_songs.slice(0, 100)
             // 還有以下參數尚未使用
@@ -198,25 +243,7 @@ export default {
 
     },
     methods: {
-        WrapGetRecentlyPlayed() {
-            // 獲取最近撥放的歌曲
-            return GetRecentlyPlayed(this.$store.access_token).then((res)=>{
-                console.log("Call GetRecentlyPlayed API successed!")
-                let retv = res.data
-                var temp_map = {}
-                for(var i=0; i<retv["items"].length; i++) {
-                    var track_name = retv["items"][i]["track"]["name"]
-                    var track_id = retv["items"][i]["track"]["id"]
-                    this.related_songs.push(track_id)
-
-                    if(!(track_name in temp_map)) {
-                        this.recently_played.push([track_name, track_id])
-                        // 隨便丟一個值(確認這個track_name有被記錄過而已)
-                        temp_map[track_name] = 0
-                    }
-                }
-            })
-        },
+        // 全部的genere、artist都從最近播放歌曲中獲得，這邊暫時棄用
         WrapGetFollowedArtist() {
             // 獲取使用者追隨的藝人
             return GetFollowedArtist(this.$store.access_token).then((res)=>{
@@ -297,9 +324,9 @@ export default {
                         if(j==0) {
                             send_obj[this.tags_data[j]['class']].push(tags_lst[i])
                         } else if(j==1) {
-                            for(var k=0; k<this.followed_artist.length; k++) {
-                                if(this.followed_artist[k][0]==tags_lst[i]) {
-                                    send_obj[this.tags_data[j]['class']].push(this.followed_artist[k][1])
+                            for(var k=0; k<this.related_artist.length; k++) {
+                                if(this.related_artist[k][0]==tags_lst[i]) {
+                                    send_obj[this.tags_data[j]['class']].push(this.related_artist[k][1])
                                 }
                             }
                             

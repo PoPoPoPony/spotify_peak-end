@@ -55,7 +55,7 @@ app.get('/callback', function (req, res) {
     }
     params ="?access_token=" + access_token
     params += "&between_subject_type=" + between_subject_type
-    params += "&within_subject_type=" + within_subject_type
+    params += "&within_subject_type=" + within_subject_type//品峰在搞
     params += "&pass_exp_num=" + String(0)
 
     res.redirect(uri + params)

@@ -11,11 +11,17 @@
             </el-col>
         </el-row>
         <el-row style="margin-top: 20px">
-            <el-col :span='3' :offset='3'>
-                <el-button type="danger" :disabled='!delete_not_complete' @click="on_delete">刪除</el-button>
-                <el-button type="primary" :disabled='!delete_not_complete' @click="on_complete_delete">刪除完成</el-button>
+            <el-col :span='6' :offset='3'>
+                <el-button v-if="deleteShow" type="danger" :disabled='!delete_not_complete' @click="on_delete">刪除</el-button>
+                <el-button v-if="deleteCompleteShow" type="primary" :disabled='!delete_not_complete' @click="on_complete_delete">刪除完成</el-button>
+                <span v-if="$store.between_subject_type==1 && !islong" style="color: white; font-size: 25px; padding-left:25px; padding-top:10px">
+                    請選擇 3 首歌曲加入歌單
+                </span>
+                <span v-if="$store.between_subject_type==1 && islong" style="color: white; font-size: 25px; padding-left:25px; padding-top:10px">
+                    請選擇 5 首歌曲加入歌單
+                </span>
             </el-col>
-            <el-col :span='4' :offset='4'>
+            <el-col :span='4' :offset='1'>
                 <el-button v-if="table1Show" type="primary" :disabled='!(like_sendable && splendid_sendable && add_song_sendable)' @click="send_dialog_visible=true">送出</el-button>
             </el-col>
         </el-row>
@@ -26,7 +32,7 @@
         </el-row>
 
         <!-- delete song double confirm dialog start -->
-        <el-dialog v-model="delete_dialog_visible" title="Warning" width="30%" center>
+        <el-dialog v-model="delete_dialog_visible" title="確認刪除" width="30%" center>
             <span style="font-size: 20px;">
                 確認完成刪除?
             </span>
@@ -40,7 +46,7 @@
         <!-- delete song double confirm dialog end -->
 
         <!-- send backend confirm dialog start -->
-        <el-dialog v-model="send_dialog_visible" title="Warning" width="30%" center>
+        <el-dialog v-model="send_dialog_visible" title="確認送出" width="30%" center>
             <span style="font-size: 20px;">
                 確認送出?
             </span>
@@ -86,6 +92,23 @@ export default {
             this.add_song_sendable = true
         } else if(this.$store.between_subject_type==1) {
             this.add_song_sendable = false
+        }
+
+
+        if(this.$store.between_subject_type==1) {
+            if(this.list_type==0) {
+                if(["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
+                    this.islong = false
+                } else {
+                    this.islong = true
+                }
+            } else {
+                if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
+                    this.islong = false
+                } else {
+                    this.islong = true
+                }
+            }
         }
 
 
@@ -211,6 +234,8 @@ export default {
 
             // need to delete songs first
             delete_not_complete: true,
+            deleteShow: true,
+            deleteCompleteShow: true,
 
             delete_dialog_visible: false,
 
@@ -232,6 +257,9 @@ export default {
             table2Show: false,
             table2Current:[],
             table2Idx: 0,
+
+            //判斷是長/短歌單
+            islong: false,
         }
     },
     methods: {
@@ -264,6 +292,8 @@ export default {
             this.delete_dialog_visible = true
         },
         confirm_delete_complete() {
+            this.deleteShow = false
+            this.deleteCompleteShow = false
             if(this.$store.between_subject_type==0) {
                 this.table1Show = false
                 this.table2Show = true

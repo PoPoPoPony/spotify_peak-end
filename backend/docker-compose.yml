@@ -1,0 +1,17 @@
+version: '2'
+services:
+  backendContainer:
+    build:
+      context: .
+      args:
+        FastAPIENV: "production"
+
+    image: peak-end_backend
+
+    container_name: backendContainer
+
+    ports: 
+    - "8080:8080"
+
+    env_file:
+    - .env
