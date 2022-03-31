@@ -49,13 +49,13 @@ app.get('/callback', function (req, res) {
     var access_token = body.access_token
     let uri = ''
     if(redirect_page=="0") {
-      uri = 'http://localhost:8080/create_list'
+      uri = 'http://localhost:8081/create_list'
     } else {
-      uri = 'http://localhost:8080/tags'
+      uri = 'http://localhost:8081/tags'
     }
     params ="?access_token=" + access_token
     params += "&between_subject_type=" + between_subject_type
-    params += "&within_subject_type=" + within_subject_type//品峰在搞
+    params += "&within_subject_type=" + within_subject_type
     params += "&pass_exp_num=" + String(0)
 
     res.redirect(uri + params)
