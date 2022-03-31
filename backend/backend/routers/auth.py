@@ -1,7 +1,9 @@
+import base64
 from fastapi import APIRouter
 from fastapi import Header
 from fastapi.responses import RedirectResponse
 import os
+import requests
 
 router = APIRouter(
     prefix="/api/v1/auth",
@@ -11,6 +13,8 @@ router = APIRouter(
 redirectPage = 0
 betweenSubjectType = 0
 withinSubjectType = 0
+accessToken = ""
+refreshToken = ""
 
 
 @router.get("/SpotifyAuth")
@@ -22,7 +26,7 @@ def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_ty
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     URL = "https://accounts.spotify.com/authorize?"
     URL += "response_type=code&client_id="+ID
-    URL += "&redirect_uri=http://localhost:8080/api/v1/auth/SpotifyAuthCallback&scpoe="
+    URL += "&redirect_uri=http://localhost:8080/api/v1/auth/SpotifyAuthCallback&scope="
 
     authScpoe = [
         'user-read-private',
@@ -45,15 +49,33 @@ def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_ty
 def SpotifyAuthCallback(code: str):
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+    URL = "https://accounts.spotify.com/api/token"
 
-    # authOptions = {
-    #     'url': 'https://accounts.spotify.com/api/token',
-    #     'form': {
-    #         "grant_type": 'authorization_code',
-    #         "code": authCode,
-    #         "http://localhost:8080/api/v1/auth/SpotifyAuthCallback"
-    #     }
-        
-    # }
+    data = {
+        "code": code,
+        "redirect_uri": "http://localhost:8080/api/v1/auth/SpotifyAuthCallback",
+        "grant_type": 'authorization_code'
+    }
+    appInfo = ID+":"+SECRET
+    headers = {
+        'Authorization': 'Basic '+ base64.b64encode(appInfo.encode("UTF-8")).decode()
+    }
 
-    return code
+    r = requests.post(url=URL, data=data, headers=headers)
+
+    r = r.json()
+
+    accessToken = r['access_token']
+    refreshToken = r['refresh_token']
+
+    if redirectPage==0:
+        redirectPageURL = 'http://localhost:8081/create_list'
+    else:
+        redirectPageURL = 'http://localhost:8081/tags'
+
+    redirectPageURL+="?access_token=" + accessToken
+    redirectPageURL+="&between_subject_type="+str(betweenSubjectType)
+    redirectPageURL+="&within_subject_type="+str(withinSubjectType)
+    redirectPageURL+="&pass_exp_num="+str(0)
+
+    return RedirectResponse(url=redirectPageURL)
