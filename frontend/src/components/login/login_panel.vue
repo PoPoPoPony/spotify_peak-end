@@ -106,7 +106,8 @@ export default {
                 require('@/assets/login/facebook.png'),
                 require('@/assets/login/apple.png')
             ],
-            backend_url: "http://localhost:8888/login",
+            // backend_url: "http://localhost:8888/login",
+            backend_url: "http://localhost:8080/api/v1/auth/SpotifyAuth",
             exp_type: 0,
             GroupSelected: false,
         }
@@ -116,7 +117,8 @@ export default {
     },
     methods: {
         GroupSelect() {
-            this.backend_url = "http://localhost:8888/login"
+            this.backend_url = "http://localhost:8080/api/v1/auth/SpotifyAuth"
+            // this.backend_url = "http://localhost:8888/login"
             if(this.exp_type == 1) {
                 this.$store.between_subject_type=0
                 this.$store.within_subject_type=0
