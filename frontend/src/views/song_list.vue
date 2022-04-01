@@ -11,7 +11,7 @@
             </el-col>
         </el-row>
         <el-row style="margin-top: 20px">
-            <el-col :span='6' :offset='3'>
+            <el-col :span='6' :offset='2'>
                 <el-button v-if="deleteShow" type="danger" :disabled='!delete_not_complete' @click="on_delete">刪除</el-button>
                 <el-button v-if="deleteCompleteShow" type="primary" :disabled='!delete_not_complete' @click="on_complete_delete">刪除完成</el-button>
                 <span v-if="$store.between_subject_type==1 && !islong" style="color: white; font-size: 25px; padding-left:25px; padding-top:10px">
@@ -21,7 +21,7 @@
                     請選擇 5 首歌曲加入歌單
                 </span>
             </el-col>
-            <el-col :span='4' :offset='1'>
+            <el-col :span='4' :offset='2'>
                 <el-button v-if="table1Show" type="primary" :disabled='!(like_sendable && splendid_sendable && add_song_sendable)' @click="send_dialog_visible=true">送出</el-button>
             </el-col>
         </el-row>

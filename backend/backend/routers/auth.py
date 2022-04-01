@@ -19,8 +19,11 @@ refreshToken = ""
 
 @router.get("/SpotifyAuth")
 def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_type: int):
+    global redirectPage
     redirectPage = redirect_page
+    global betweenSubjectType
     betweenSubjectType = between_subject_type
+    global withinSubjectType
     withinSubjectType = within_subject_type
 
     ID = os.getenv("SPOTIFY_CLIENT_ID")
@@ -47,6 +50,7 @@ def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_ty
 
 @router.get("/SpotifyAuthCallback")
 def SpotifyAuthCallback(code: str):
+    print(redirectPage)
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
     URL = "https://accounts.spotify.com/api/token"
@@ -65,7 +69,9 @@ def SpotifyAuthCallback(code: str):
 
     r = r.json()
 
+    global accessToken 
     accessToken = r['access_token']
+    global refreshToken
     refreshToken = r['refresh_token']
 
     if redirectPage==0:

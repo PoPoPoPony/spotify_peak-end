@@ -19,6 +19,8 @@ import {GetFollowedArtist} from '@/apis/get_followed_artist'
 import {GetLibraryTracks} from '@/apis/get_library_tracks'
 import {GetPlaylistTracks} from '@/apis/get_playlist_tracks'
 import {GetAudiosFeatures} from '@/apis/get_audios_features'
+import {GetRelatedArtist} from '@/apis/get_related_artists'
+import {GetSeveralArtists} from '@/apis/get_several_artists'
 import axios from 'axios'
 
 
@@ -107,49 +109,108 @@ export default {
                 }
             }
 
-            
-
-
-
-
-
-
-        }).then(() =>{
-            // set tags table items
-
-            // recently_artist = [[artist_name, artist_id, freq], [artist_name, artist_id, freq], ...]
+        }).then(()=>{
             this.recently_artist.sort((a, b)=> {
                 return b[2]-a[2]
             })
 
-            var recently_artist_name = this.recently_artist.map((elem)=> {
-                return elem[0]
-            })
-            this.tags_data[1]['tags'] = recently_artist_name.slice(0, 10)
-
-            // recently_played = [[track_name, track_id], [track_name, track_id], ...]
-            var track_name = this.recently_played.map((elem)=> {
-                return elem[0]
+            var recently_artist_id = this.recently_artist.map((elem)=> {
+                return elem[1]
             })
 
-            this.tags_data[2]['tags'] = track_name.slice(0, 10)
-
-            var genere_freq_lst = []
-
-            //dict to 2d array
-            for(var [key, val] of Object.entries(this.genre_dict['artist'])) {
-                genere_freq_lst.push([key, val])
+            var temp_map = {}
+            for(var i=0; i<recently_artist_id.length; i++) {
+                temp_map[recently_artist_id[i]]=0
             }
+            var promise = []
 
-            // sort by genere's frequency
-            genere_freq_lst.sort((a, b)=> {
-                return b[1]-a[1]
+            for(i=0; i<recently_artist_id.length; i++) {
+                promise.push(
+                    GetRelatedArtist(this.$store.access_token, recently_artist_id[i]).then((res)=>{
+                        console.log("Call RelatedArtist API successed!")
+                        let retv = res.data
+                        var artists = retv["artists"]
+                        for(var j=0; j<artists.length; j++) {
+                            var id = artists[j]["id"]
+                            var name = artists[j]["name"]
+                            if(!(id in temp_map)) {
+                                this.recently_artist.push([name, id, 1])
+                                temp_map[id]=0
+                            } else {
+                                for(var k=0; k<this.recently_artist.length; k++) {
+                                    if(this.recently_artist[k][1]==id) {
+                                        this.recently_artist[k][2]+=1
+                                    }
+                                }
+                            }
+                        }
+                    })
+                )
+            }
+            Promise.all(promise).then(()=>{
+                // set tags table items
+                // recently_artist = [[artist_name, artist_id, freq], [artist_name, artist_id, freq], ...]
+                this.recently_artist.sort((a, b)=> {
+                    return b[2]-a[2]
+                })
+
+                var recently_artist_name = this.recently_artist.map((elem)=> {
+                    return elem[0]
+                })
+
+                this.tags_data[1]['tags'] = recently_artist_name.slice(0, 10)
+
+                // recently_played = [[track_name, track_id], [track_name, track_id], ...]
+                var track_name = this.recently_played.map((elem)=> {
+                    return elem[0]
+                })
+
+                this.tags_data[2]['tags'] = track_name.slice(0, 10)
+
+            }).then(()=>{
+                var recentlyArtistsStr = ""
+                for(var i=0; i<this.recently_artist.length; i++) {
+                    if(i<50) {
+                        recentlyArtistsStr+=this.recently_artist[i][1]
+
+                        if(i<this.recently_artist.length-1 && i<49) {
+                            recentlyArtistsStr+=','
+                        }
+                    }
+                }
+                GetSeveralArtists(this.$store.access_token, recentlyArtistsStr).then((res)=>{
+                    let retv = res.data
+                    var artists = retv['artists']
+                    for(var i=0; i<artists.length; i++) {
+                        var genres = artists[i]['genres']
+                        for(var genre of genres) {
+                            if(!(genre in this.genre_dict['artist'])) {
+                                this.genre_dict['artist'][genre]=1
+                            } else {
+                                this.genre_dict['artist'][genre]+=1
+                            }
+                        }
+                    }
+                    var genere_freq_lst = []
+
+                    //dict to 2d array
+                    for(var [key, val] of Object.entries(this.genre_dict['artist'])) {
+                        genere_freq_lst.push([key, val])
+                    }
+
+                    // sort by genere's frequency
+                    genere_freq_lst.sort((a, b)=> {
+                        return b[1]-a[1]
+                    })
+
+                    genere_freq_lst = genere_freq_lst.map((elem=>{
+                        return elem[0]
+                    }))
+                    this.tags_data[0]['tags'] = genere_freq_lst.slice(0, 10)
+
+                })
             })
 
-            genere_freq_lst = genere_freq_lst.map((elem=>{
-                return elem[0]
-            }))
-            this.tags_data[0]['tags'] = genere_freq_lst.slice(0, 10)
         })
 
         // 取得相關(Related songs)歌曲，以計算歌曲平均物理參數
@@ -311,6 +372,7 @@ export default {
                 }
             })
         },
+
         send_tags(obj) {
             var send_obj = {
                 'Genres':[],
@@ -324,9 +386,9 @@ export default {
                         if(j==0) {
                             send_obj[this.tags_data[j]['class']].push(tags_lst[i])
                         } else if(j==1) {
-                            for(var k=0; k<this.related_artist.length; k++) {
-                                if(this.related_artist[k][0]==tags_lst[i]) {
-                                    send_obj[this.tags_data[j]['class']].push(this.related_artist[k][1])
+                            for(var k=0; k<this.recently_artist.length; k++) {
+                                if(this.recently_artist[k][0]==tags_lst[i]) {
+                                    send_obj[this.tags_data[j]['class']].push(this.recently_artist[k][1])
                                 }
                             }
                             
@@ -341,7 +403,6 @@ export default {
                     }
                 }
             }
-            // console.log(send_obj)
 
             var t = JSON.stringify(send_obj)
             var s = JSON.stringify(this.score_obj)

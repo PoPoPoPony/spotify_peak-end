@@ -145,9 +145,11 @@ export default {
                 this.$store.within_subject_type=3
             }
 
+            console.log(this.$store.within_subject_type)
+            console.log(typeof(this.$store.within_subject_type))
             // 0, 1 for doing discover weekly first
             // 2, 3 for doing seed first
-            if(["0", "1", 0, 1].includes(this.$store.within_subject_type)) {
+            if([0, 1].includes(this.$store.within_subject_type)) {
                 this.backend_url+="?redirect_page=0"
             } else {
                 this.backend_url+="?redirect_page=1"

@@ -19,6 +19,8 @@ services:
     environment:
     - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
     - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+    - POSTGRE_NAME=${POSTGRE_NAME}
+    - POSTGRE_PWD=${POSTGRE_PWD}
 
     volumes:
     - ./:/code
