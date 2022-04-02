@@ -11,6 +11,14 @@
                         <el-input v-model="user.pwd" show-password></el-input>
                     </el-form-item>
                 </el-form> -->
+                <el-row style="font-size: 25px;">
+                    <h3>
+                        姓名 : 
+                    </h3>
+                </el-row>
+                <el-row style="padding-bottom: 20px">
+                    <el-input placeholder="請輸入姓名" v-model="userName" clearable @change='userNameChanged'></el-input>
+                </el-row>
                 <el-row>
                     <h1>受試組別</h1>
                 </el-row>
@@ -60,7 +68,7 @@
                 </el-row>
                 <el-row style="margin-top: 50px; padding-bottom: 50px">
                     <el-col :span="4" :offset="9">
-                        <el-button type="primary" style="font-size: 25px;" :disabled="!GroupSelected" >
+                        <el-button type="primary" style="font-size: 25px;" :disabled="!GroupSelected || !userNameInputed" >
                             <el-link :href="backend_url" :underline="false" style="color: white; font-size: 30px" >Start</el-link>
                         </el-button>
                     </el-col>
@@ -110,6 +118,8 @@ export default {
             backend_url: "http://localhost:8080/api/v1/auth/SpotifyAuth",
             exp_type: 0,
             GroupSelected: false,
+            userName: "",
+            userNameInputed: false,
         }
     },
     created() {
@@ -117,8 +127,6 @@ export default {
     },
     methods: {
         GroupSelect() {
-            this.backend_url = "http://localhost:8080/api/v1/auth/SpotifyAuth"
-            // this.backend_url = "http://localhost:8888/login"
             if(this.exp_type == 1) {
                 this.$store.between_subject_type=0
                 this.$store.within_subject_type=0
@@ -147,18 +155,31 @@ export default {
 
             console.log(this.$store.within_subject_type)
             console.log(typeof(this.$store.within_subject_type))
-            // 0, 1 for doing discover weekly first
+            this.setBackendURL()
+            this.GroupSelected = true
+        },
+        userNameChanged() {
+            if(!(this.userName.trim() == "")) {
+                this.userNameInputed = true
+            }
+            this.setBackendURL()
+        }, 
+        setBackendURL() {
+            this.backend_url = "http://localhost:8080/api/v1/auth/SpotifyAuth"
+            // this.backend_url = "http://localhost:8888/login"
+
+                        // 0, 1 for doing discover weekly first
             // 2, 3 for doing seed first
             if([0, 1].includes(this.$store.within_subject_type)) {
                 this.backend_url+="?redirect_page=0"
             } else {
                 this.backend_url+="?redirect_page=1"
             }
-            let params="&between_subject_type=" + String(this.$store.between_subject_type)+"&within_subject_type=" + String(this.$store.within_subject_type)
+            let params="&between_subject_type=" + String(this.$store.between_subject_type)
+            params += "&within_subject_type=" + String(this.$store.within_subject_type)
+            params += "&user_name=" + this.userName
             this.backend_url+=params
             console.log(this.backend_url)
-
-            this.GroupSelected = true
         }
         
     }

@@ -15,16 +15,20 @@ betweenSubjectType = 0
 withinSubjectType = 0
 accessToken = ""
 refreshToken = ""
+userName = ""
+
 
 
 @router.get("/SpotifyAuth")
-def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_type: int):
+def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_type: int, user_name: str):
     global redirectPage
     redirectPage = redirect_page
     global betweenSubjectType
     betweenSubjectType = between_subject_type
     global withinSubjectType
     withinSubjectType = within_subject_type
+    global userName
+    userName = user_name
 
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     URL = "https://accounts.spotify.com/authorize?"
@@ -50,7 +54,6 @@ def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_ty
 
 @router.get("/SpotifyAuthCallback")
 def SpotifyAuthCallback(code: str):
-    print(redirectPage)
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
     URL = "https://accounts.spotify.com/api/token"
@@ -73,6 +76,8 @@ def SpotifyAuthCallback(code: str):
     accessToken = r['access_token']
     global refreshToken
     refreshToken = r['refresh_token']
+
+
 
     if redirectPage==0:
         redirectPageURL = 'http://localhost:8081/create_list'
