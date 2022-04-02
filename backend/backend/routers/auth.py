@@ -85,17 +85,14 @@ def SpotifyAuthCallback(code: str):
     global withinSubjectType
 
     data = {
-        "userID": uuid.uuid4(), 
+        "userID": str(uuid.uuid4()), 
         "userName": userName,
         "betweenType": betweenSubjectType,
         "withinType": withinSubjectType
     }
 
-    r = requests.post(url="http://localhost:8080/api/v1/user/initUser", data=data)
+    r = requests.post(url="http://localhost:8080/api/v1/user/initUser", json=data)
     print(r)
-
-
-
 
     if redirectPage==0:
         redirectPageURL = 'http://localhost:8081/create_list'
