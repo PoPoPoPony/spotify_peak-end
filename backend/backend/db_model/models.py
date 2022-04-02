@@ -1,11 +1,11 @@
 import uuid
-from database import Base
+from .database import Base
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Column, String, Integer
 
 
 
-class UserInfo(Base):
+class DBUserInfo(Base):
     __tablename__ = "UserInfo"
     userID = Column(UUID(as_uuid=True), primary_key=True, unique=True, nullable=False, default=uuid.uuid4)
     userName = Column(String, nullable=False)
