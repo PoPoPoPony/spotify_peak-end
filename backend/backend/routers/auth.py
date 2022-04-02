@@ -4,6 +4,8 @@ from fastapi import Header
 from fastapi.responses import RedirectResponse
 import os
 import requests
+import uuid
+
 
 router = APIRouter(
     prefix="/api/v1/auth",
@@ -76,6 +78,22 @@ def SpotifyAuthCallback(code: str):
     accessToken = r['access_token']
     global refreshToken
     refreshToken = r['refresh_token']
+
+
+    global userName
+    global betweenSubjectType
+    global withinSubjectType
+
+    data = {
+        "userID": uuid.uuid4(), 
+        "userName": userName,
+        "betweenType": betweenSubjectType,
+        "withinType": withinSubjectType
+    }
+
+    r = requests.post(url="http://localhost:8080/api/v1/user/initUser", data=data)
+    print(r)
+
 
 
 

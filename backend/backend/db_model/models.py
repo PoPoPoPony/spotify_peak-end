@@ -1,6 +1,3 @@
-from email.mime import base
-from email.policy import default
-from enum import unique
 import uuid
 from database import Base
 from sqlalchemy.dialects.postgresql import UUID

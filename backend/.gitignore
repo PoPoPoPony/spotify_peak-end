@@ -2,3 +2,5 @@
 backend/__pycache__
 backend/routers/__pycache__
 backend/db_model/__pycache__
+backend/backend/__pycache__
+backend/backend/models/__pycache__
