@@ -106,7 +106,8 @@ export default {
                 require('@/assets/login/facebook.png'),
                 require('@/assets/login/apple.png')
             ],
-            backend_url: "http://localhost:8888/login",
+            // backend_url: "http://localhost:8888/login",
+            backend_url: "http://localhost:8080/api/v1/auth/SpotifyAuth",
             exp_type: 0,
             GroupSelected: false,
         }
@@ -116,7 +117,8 @@ export default {
     },
     methods: {
         GroupSelect() {
-            this.backend_url = "http://localhost:8888/login"
+            this.backend_url = "http://localhost:8080/api/v1/auth/SpotifyAuth"
+            // this.backend_url = "http://localhost:8888/login"
             if(this.exp_type == 1) {
                 this.$store.between_subject_type=0
                 this.$store.within_subject_type=0
@@ -143,9 +145,11 @@ export default {
                 this.$store.within_subject_type=3
             }
 
+            console.log(this.$store.within_subject_type)
+            console.log(typeof(this.$store.within_subject_type))
             // 0, 1 for doing discover weekly first
             // 2, 3 for doing seed first
-            if(["0", "1", 0, 1].includes(this.$store.within_subject_type)) {
+            if([0, 1].includes(this.$store.within_subject_type)) {
                 this.backend_url+="?redirect_page=0"
             } else {
                 this.backend_url+="?redirect_page=1"

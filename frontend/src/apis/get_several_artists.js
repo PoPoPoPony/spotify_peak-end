@@ -1,16 +1,14 @@
 import request from '../utils/request'
 
-export function GetDiscoverWeekly(accessToken) {
+export function GetSeveralArtists(accessToken, artistsIDs) {
     let config = {
         headers: { 
             "Authorization": "Bearer " + accessToken,
         },
-        url: '/search',
+        url: '/artists',
         method: 'GET',
         params: {
-            "q": "Discover Weekly",
-            "type": "playlist",
-            "limit": 1
+            "ids": artistsIDs
         }
     }
 
