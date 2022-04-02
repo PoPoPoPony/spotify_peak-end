@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth
+from .routers import auth, user
 
 app = FastAPI()
 
@@ -20,6 +20,7 @@ app.add_middleware(
 
 # app.include_router()
 app.include_router(auth.router)
+app.include_router(user.router)
 
 @app.get("/")
 def read_root():
