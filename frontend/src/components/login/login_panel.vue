@@ -115,7 +115,7 @@ export default {
                 require('@/assets/login/apple.png')
             ],
             // backend_url: "http://localhost:8888/login",
-            backend_url: "http://localhost:8080/api/v1/auth/SpotifyAuth",
+            backend_url: "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth",
             exp_type: 0,
             GroupSelected: false,
             userName: "",
@@ -165,10 +165,10 @@ export default {
             this.setBackendURL()
         }, 
         setBackendURL() {
-            this.backend_url = "http://localhost:8080/api/v1/auth/SpotifyAuth"
+            this.backend_url = "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth"
             // this.backend_url = "http://localhost:8888/login"
 
-                        // 0, 1 for doing discover weekly first
+            // 0, 1 for doing discover weekly first
             // 2, 3 for doing seed first
             if([0, 1].includes(this.$store.within_subject_type)) {
                 this.backend_url+="?redirect_page=0"

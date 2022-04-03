@@ -35,7 +35,7 @@ def SpotifyAuth(redirect_page: int, between_subject_type: int, within_subject_ty
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     URL = "https://accounts.spotify.com/authorize?"
     URL += "response_type=code&client_id="+ID
-    URL += "&redirect_uri=http://localhost:8080/api/v1/auth/SpotifyAuthCallback&scope="
+    URL += "&redirect_uri=http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuthCallback&scope="
 
     authScpoe = [
         'user-read-private',
@@ -62,7 +62,7 @@ def SpotifyAuthCallback(code: str):
 
     data = {
         "code": code,
-        "redirect_uri": "http://localhost:8080/api/v1/auth/SpotifyAuthCallback",
+        "redirect_uri": "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuthCallback",
         "grant_type": 'authorization_code'
     }
     appInfo = ID+":"+SECRET
@@ -91,13 +91,13 @@ def SpotifyAuthCallback(code: str):
         "withinType": withinSubjectType
     }
 
-    r = requests.post(url="http://localhost:8080/api/v1/user/initUser", json=data)
+    r = requests.post(url="http://ponyia.ddns.net:8080/api/v1/user/initUser", json=data)
     print(r)
 
     if redirectPage==0:
-        redirectPageURL = 'http://localhost:8081/create_list'
+        redirectPageURL = 'http://ponyia.ddns.net:8081/create_list'
     else:
-        redirectPageURL = 'http://localhost:8081/tags'
+        redirectPageURL = 'http://ponyia.ddns.net:8081/tags'
 
     redirectPageURL+="?access_token=" + accessToken
     redirectPageURL+="&between_subject_type="+str(betweenSubjectType)
