@@ -1,4 +1,4 @@
-version: '2'
+version: '3.7'
 
 networks:
   pg-backend:
@@ -51,7 +51,6 @@ services:
     - backendContainer
 
     volumes:
-    - postgres_data:/var/lib/postgresql/data/
-
-volumes:
-  postgres_data:
+    - type: bind
+      source: ./postgres_data
+      target: /var/lib/postgresql/data/
