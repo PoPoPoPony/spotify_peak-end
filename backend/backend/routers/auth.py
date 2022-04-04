@@ -84,8 +84,10 @@ def SpotifyAuthCallback(code: str):
     global betweenSubjectType
     global withinSubjectType
 
+    userID = str(uuid.uuid4())
+
     data = {
-        "userID": str(uuid.uuid4()), 
+        "userID": userID, 
         "userName": userName,
         "betweenType": betweenSubjectType,
         "withinType": withinSubjectType
@@ -103,5 +105,6 @@ def SpotifyAuthCallback(code: str):
     redirectPageURL+="&between_subject_type="+str(betweenSubjectType)
     redirectPageURL+="&within_subject_type="+str(withinSubjectType)
     redirectPageURL+="&pass_exp_num="+str(0)
+    redirectPageURL+="&uuid="+userID
 
     return RedirectResponse(url=redirectPageURL)

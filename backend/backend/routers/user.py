@@ -23,7 +23,7 @@ def get_db():
 
 @router.post("/initUser", response_model=UserInfo)
 def initUser(User: UserInfo, db: Session = Depends(get_db)):
-    print(123)
+    
     newUser = DBUserInfo(
         userID = User.userID,
         userName = User.userName,

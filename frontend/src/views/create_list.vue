@@ -31,6 +31,7 @@ export default {
         this.$store.between_subject_type = urlParams.get('between_subject_type')
         this.$store.within_subject_type = urlParams.get('within_subject_type')
         this.$store.pass_exp_num = parseInt(urlParams.get('pass_exp_num'))
+        this.$store.userID = urlParams.get('userID')
 
         console.log("create list between", this.$store.between_subject_type)
         console.log("create list within", this.$store.within_subject_type)
