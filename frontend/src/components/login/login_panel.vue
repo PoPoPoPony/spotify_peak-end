@@ -68,7 +68,8 @@
                 </el-row>
                 <el-row style="margin-top: 50px; padding-bottom: 50px">
                     <el-col :span="4" :offset="9">
-                        <el-button type="primary" style="font-size: 25px;" :disabled="!GroupSelected || !userNameInputed" >
+                        <!--  :disabled="!GroupSelected || !userNameInputed"  -->
+                        <el-button  v-if="GroupSelected && userNameInputed" type="primary" style="font-size: 25px;">
                             <el-link :href="backend_url" :underline="false" style="color: white; font-size: 30px" >Start</el-link>
                         </el-button>
                     </el-col>

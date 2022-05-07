@@ -25,6 +25,8 @@
 
 
 <script>
+import {UpdateSongListScore} from '@/apis/backendAPIs/songListScore/update_songList_score'
+
 
 export default {
     name: 'list_credit',
@@ -48,9 +50,15 @@ export default {
         },
         send_list_credit() {
             if(this.list_type==0) {
-                console.log("credit weekly discovery success!")
+                UpdateSongListScore(this.$store.WD_ID, this.credit).then((res)=>{
+                    let retv = res.data
+                    console.log(retv)
+                })
             } else if(this.list_type==1) {
-                console.log("credit seed song list success!")
+                UpdateSongListScore(this.$store.T_ID, this.credit).then((res)=>{
+                    let retv = res.data
+                    console.log(retv)
+                })
             }
             if(this.$store.pass_exp_num == 1) {
                 // 1 表示只完成第一個實驗，需要導覽至下一個實驗
@@ -85,6 +93,7 @@ export default {
     }
 }
 </script>
+
 
 <style scoped>
 #bg {

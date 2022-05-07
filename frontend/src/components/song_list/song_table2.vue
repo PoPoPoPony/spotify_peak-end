@@ -24,7 +24,7 @@
             </el-table-column>
             <el-table-column label="驚艷度">
                 <template #default="scope">
-                    <el-slider v-model="song_lst[scope.$index]['splendid']" :disabled='delete_not_complete'   @change='splendid_change' style='padding-left: 10px; padding-right: 10px'></el-slider>
+                    <el-slider v-model="song_lst[scope.$index]['splendid']" :disabled='delete_not_complete' @change='splendid_change' style='padding-left: 10px; padding-right: 10px'></el-slider>
                 </template>
             </el-table-column>
             <el-table-column label="確認評分" width="150">
@@ -84,6 +84,7 @@ export default {
             // 判斷兩個slider有沒有被改變過
             like_changed: false,
             splendid_changed: false,
+            isAddList: false,
             
         }
     },
@@ -106,10 +107,10 @@ export default {
             this.$emit('delete_song', delete_lst)
         },
         add_song_change() {
-            this.$emit('add_song_change',Object.values(this.add_song_lst))
+            this.isAddList = true
         },
         completeOneSong(scope) {
-            this.$emit('completeOneSong',[this.like_val, this.splendid_val])
+            this.$emit('completeOneSong',[this.like_val, this.splendid_val, this.isAddList])
             console.log(scope)
         },
     },

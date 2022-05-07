@@ -1,14 +1,14 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
-export function GetUserPlaylists(accessToken) {
+export function GetRecentlyPlayed(accessToken) {
     let config = {
         headers: {
             "Authorization": "Bearer " + accessToken
         },
-        url: '/me/playlists',
+        url: '/me/player/recently-played',
         method: 'GET',
         params: {
-            "limit": 10
+            "limit": 50
         }
     }
 

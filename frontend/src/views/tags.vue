@@ -12,15 +12,19 @@
 <script>
 import navBar from '@/components/navBar'
 import tagTable from '@/components/tag/tag_table'
-import {getMe} from '@/apis/get_genre'
-import {GetRecentlyPlayed} from '@/apis/get_recently_played'
-import {GetUserPlaylists} from '@/apis/get_user_playlists'
-import {GetFollowedArtist} from '@/apis/get_followed_artist'
-import {GetLibraryTracks} from '@/apis/get_library_tracks'
-import {GetPlaylistTracks} from '@/apis/get_playlist_tracks'
-import {GetAudiosFeatures} from '@/apis/get_audios_features'
-import {GetRelatedArtist} from '@/apis/get_related_artists'
-import {GetSeveralArtists} from '@/apis/get_several_artists'
+import {getMe} from '@/apis/SpotifyAPIs/get_genre'
+import {GetRecentlyPlayed} from '@/apis/SpotifyAPIs/get_recently_played'
+import {GetUserPlaylists} from '@/apis/SpotifyAPIs/get_user_playlists'
+import {GetFollowedArtist} from '@/apis/SpotifyAPIs/get_followed_artist'
+import {GetLibraryTracks} from '@/apis/SpotifyAPIs/get_library_tracks'
+import {GetPlaylistTracks} from '@/apis/SpotifyAPIs/get_playlist_tracks'
+import {GetAudiosFeatures} from '@/apis/SpotifyAPIs/get_audios_features'
+import {GetRelatedArtist} from '@/apis/SpotifyAPIs/get_related_artists'
+import {GetSeveralArtists} from '@/apis/SpotifyAPIs/get_several_artists'
+import {UpdateTags} from '@/apis/backendAPIs/tags/update_tags'
+import {UpdateArtists} from '@/apis/backendAPIs/artists/update_artists'
+import {UpdateTracksInfo} from '@/apis/backendAPIs/tracks/update_tracksInfo'
+import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 import axios from 'axios'
 
 
@@ -43,6 +47,7 @@ export default {
             followed_artist: [],
             recently_artist: [],
             recently_played:[],
+            recently_played_artistInfo:[],
             tags_data: [{
                 'class': 'Genres',
                 'tags': []
@@ -65,7 +70,11 @@ export default {
         this.$store.between_subject_type = urlParams.get('between_subject_type')
         this.$store.within_subject_type = urlParams.get('within_subject_type')
         this.$store.pass_exp_num = parseInt(urlParams.get('pass_exp_num'))
-        this.$store.userID = urlParams.get('userID')
+        if(!this.$store.userID) {
+            this.$store.userID = urlParams.get('uuid')
+        }
+
+        console.log("userID", this.$store.userID )
 
         // 每到 create list 或 選擇 seed 頁面，就增加做過的實驗數量(每個人應做兩次)
         this.$store.pass_exp_num+=1
@@ -93,6 +102,7 @@ export default {
 
                 if(!(track_name in temp_map)) {
                     this.recently_played.push([track_name, track_id])
+                    this.recently_played_artistInfo.push([artist_id, artist_name])
                     // 隨便丟一個值(確認這個track_name有被記錄過而已)
                     temp_map[track_name] = 0
                 }
@@ -374,13 +384,15 @@ export default {
             })
         },
 
-        send_tags(obj) {
+        async send_tags(obj) {
             var send_obj = {
                 'Genres':[],
                 'Artists': [],
                 'Tracks': []
             }
+            
             var tags_lst = obj['tags_lst']
+            
             for(var i=0; i<tags_lst.length; i++) {
                 for(var j=0; j<this.tags_data.length;j++) {
                     if(this.tags_data[j]['tags'].includes(tags_lst[i])) {
@@ -401,20 +413,123 @@ export default {
                             }
                             
                         }
+                    } 
+                }
+            }
+
+            var send_backend_lst = []
+            var send_backend_obj = {}
+            var allPromise_lst = []
+
+            for(i=0; i<this.tags_data.length; i++) {
+                let c = this.tags_data[i]['class']
+                for(j=0; j<this.tags_data[i]['tags'].length; j++) {
+                    let tagName = this.tags_data[i]['tags'][j]
+                    let is_selected = false
+                    if(obj['tags_lst'].includes(tagName)) {
+                        is_selected = true
+                    }
+                    if(c=='Genres') {
+                        send_backend_obj = {
+                            'userID': this.$store.userID,
+                            'tagID': tagName,
+                            'tagType': c,
+                            'tagFreq': this.genre_dict['artist'][tagName],
+                            'order': -1,
+                            'tagSelected': is_selected
+                        }
+                        send_backend_lst.push(send_backend_obj)
+                        
+                    } else if(c=='Artists') {
+                        let freq = 0
+                        let id = 0
+                        for(k=0; k<this.recently_artist.length; k++) {
+                            if(this.recently_artist[k][0] == tagName) {
+                                id = this.recently_artist[k][1]
+                                freq = this.recently_artist[k][2]
+                                break
+                            }
+                        }
+
+                        let promiseArtist = await UpdateArtists(id, tagName).then((res)=>{
+                            let retv = res.data
+                            console.log(retv)
+                            send_backend_obj = {
+                                'userID': this.$store.userID,
+                                'tagID': id,
+                                'tagType': c,
+                                'tagFreq': freq,
+                                'order': -1,
+                                'tagSelected': is_selected
+                            }
+                        })
+                        send_backend_lst.push(send_backend_obj)
+                        allPromise_lst.push(promiseArtist)
+
+                    } else if(c=='Tracks') {
+                        let promiseTrackArtist = await UpdateArtists(this.recently_played_artistInfo[j][0], this.recently_played_artistInfo[j][1]).then((res)=>{
+                            let retv = res.data
+                            console.log(retv)
+                        })
+
+                        console.log(promiseTrackArtist)
+
+                        let promiseTrack = await UpdateTracksInfo(this.recently_played[j][1], this.recently_played[j][0], this.recently_played_artistInfo[j][0]).then((res)=>{
+                            let retv = res.data
+                            console.log(retv)
+
+                            send_backend_obj = {
+                                'userID': this.$store.userID,
+                                'tagID': this.recently_played[j][1],
+                                'tagType': c,
+                                'tagFreq': -1,
+                                'order': j,
+                                'tagSelected': is_selected
+                            }
+                        })
+
+                        send_backend_lst.push(send_backend_obj)
+                        allPromise_lst.push(promiseTrack)
                     }
                 }
             }
 
-            var t = JSON.stringify(send_obj)
-            var s = JSON.stringify(this.score_obj)
-            this.$router.push({
-                name: 'song_list', 
-                query: {
-                    list_type: 1,
-                    tags_obj: t,
-                    score_obj: s,
-                },
+
+
+            var updateTagsPromise = []
+            Promise.all(allPromise_lst).then(()=>{
+                for(i=0; i<send_backend_lst.length; i++) {
+                    updateTagsPromise.push(
+                        UpdateTags(send_backend_lst[i]).then((res)=>{
+                            let retv = res.data
+                            console.log(retv)
+                        })
+                    )
+                }
             })
+
+
+
+
+
+
+            Promise.all(updateTagsPromise).then(()=>{
+                UpdateSongListInfo(this.$store.userID, 'Tags').then((res)=>{
+                    let retv = res.data
+                    this.$store.T_ID = retv['songListID']
+                    var t = JSON.stringify(send_obj)
+                    var s = JSON.stringify(this.score_obj)
+                    this.$router.push({
+                        name: 'song_list', 
+                        query: {
+                            list_type: 1,
+                            tags_obj: t,
+                            score_obj: s,
+                        },
+                    })
+                })
+            })
+
         },
         getStatistics(numbers, digit = 2) {
             const formulaCalc = function formulaCalc(formula, digit) {

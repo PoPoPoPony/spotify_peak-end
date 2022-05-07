@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
 export function GetSongList(accessToken, playlist_id) {
     console.log(playlist_id, 111)

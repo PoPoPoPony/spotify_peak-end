@@ -6,23 +6,24 @@
                 <h2 style="color: white; font-size: 30px;">
                     播放列表
                 </h2>
-                <songTable1 v-if="table1Show" :table_data='song_lst' :delete_not_complete='delete_not_complete' @play_music='play_music' @delete_song='get_delete_song_lst' @like_change='like_change' @splendid_change='splendid_change' @add_song_change='add_song_change' :key='rerender'/>
-                <songTable2 v-if="table2Show" :table2Idx='table2Idx' :table_data='table2Current' :delete_not_complete='delete_not_complete' @play_music='play_music' @delete_song='get_delete_song_lst' @add_song_change='add_song_change' @completeOneSong='completeOneSong'  :key='rerender'/>
+                <songTable1 v-if="table1Show" :table_data='song_lst' :delete_not_complete='delete_not_complete' @play_music='play_music' @delete_song='get_delete_song_lst' @like_change='like_change' @splendid_change='splendid_change' @add_song_change='add_song_change' @completeOneSong="completeOneSongT1" :key='rerender'/>
+                <songTable2 v-if="table2Show" :table2Idx='table2Idx' :table_data='table2Current' :delete_not_complete='delete_not_complete' @play_music='play_music' @delete_song='get_delete_song_lst'  @completeOneSong='completeOneSongT2'  :key='rerender'/>
             </el-col>
         </el-row>
         <el-row style="margin-top: 20px">
             <el-col :span='6' :offset='2'>
                 <el-button v-if="deleteShow" type="danger" :disabled='!delete_not_complete' @click="on_delete">刪除</el-button>
                 <el-button v-if="deleteCompleteShow" type="primary" :disabled='!delete_not_complete' @click="on_complete_delete">刪除完成</el-button>
-                <span v-if="$store.between_subject_type==1 && !islong" style="color: white; font-size: 25px; padding-left:25px; padding-top:10px">
+                <!-- <span v-if="$store.between_subject_type==1 && !islong" style="color: white; font-size: 25px; padding-left:25px; padding-top:10px">
                     請選擇 3 首歌曲加入歌單
                 </span>
                 <span v-if="$store.between_subject_type==1 && islong" style="color: white; font-size: 25px; padding-left:25px; padding-top:10px">
                     請選擇 5 首歌曲加入歌單
-                </span>
+                </span> -->
             </el-col>
-            <el-col :span='4' :offset='2'>
-                <el-button v-if="table1Show" type="primary" :disabled='!(like_sendable && splendid_sendable && add_song_sendable)' @click="send_dialog_visible=true">送出</el-button>
+            <el-col :span='4' :offset='1'>
+                <!-- :disabled='!(like_sendable && splendid_sendable && add_song_sendable)' -->
+                <el-button v-if="table1Show" type="primary"  @click="send_dialog_visible=true" :disabled='!(T1songScoreSendable && add_song_sendable)'>送出</el-button>
             </el-col>
         </el-row>
         <el-row justify="center" style="margin-top: 50px">
@@ -66,9 +67,13 @@
 import songTable1 from '@/components/song_list/song_table'
 import songTable2 from '@/components/song_list/song_table2'
 import player from '@/components/song_list/player'
-import {GetDiscoverWeekly} from '@/apis/get_discover_weekly'
-import {GetSongList} from '@/apis/get_song_list'
-import {GetRecommendations} from '@/apis/get_recommendations'
+import {GetDiscoverWeekly} from '@/apis/SpotifyAPIs/get_discover_weekly'
+import {GetSongList} from '@/apis/SpotifyAPIs/get_song_list'
+import {GetRecommendations} from '@/apis/SpotifyAPIs/get_recommendations'
+import {UpdateArtists} from '@/apis/backendAPIs/artists/update_artists'
+import {UpdateTracksInfo} from '@/apis/backendAPIs/tracks/update_tracksInfo'
+import {UpdateSongListElem} from '@/apis/backendAPIs/songListElem/update_songList_elem'
+import {UpdateAudioFeatures} from '@/apis/backendAPIs/audioFeatures/update_audio_features'
 
 
 export default {
@@ -120,84 +125,92 @@ export default {
                 console.log(retv)
                 this.list_id = retv["playlists"]["items"][0]["id"]
             }).then(() => {
-                GetSongList(this.$store.access_token, this.list_id).then((res2)=>{
-                    console.log("Call GetSongList API successed!")
-                    let retv2 = res2.data
-                    console.log(retv2.tracks)
-                    var temp_song_lst = retv2.tracks.items
+                var promise = []
+                promise.push(
+                    GetSongList(this.$store.access_token, this.list_id).then((res2)=>{
+                        console.log("Call GetSongList API successed!")
+                        let retv2 = res2.data
+                        console.log(retv2.tracks)
+                        this.temp_song_lst = retv2.tracks.items
 
-                    // 在0, 3的實驗組別中，weekly discovery是短歌單
-                    // 在1, 2的實驗組別中，weekly discovery是長歌單
-                    // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
-                    // 測試用長的先用5，短的先用3
+                        // 在0, 3的實驗組別中，weekly discovery是短歌單
+                        // 在1, 2的實驗組別中，weekly discovery是長歌單
+                        // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
+                        // 測試用長的先用5，短的先用3
 
-                    if(["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
-                        this.song_limit = 8
-                    } else {
-                        this.song_limit = 12
-                    }
-                    this.last_song_pointer = this.song_limit-1
+                        this.song_limit = 15
+                        this.last_song_pointer = this.song_limit-1
 
-                    for(var i=0; i<temp_song_lst.length; i++) {
-                        var temp_obj = {
-                            listened: 0,
-                            title: temp_song_lst[i].track.name,
-                            artist: temp_song_lst[i].track.artists[0].name,
-                            song_id: temp_song_lst[i].track.id,
-                            source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].track.id + "?utm_source=generator",
-                            song_preview_url: temp_song_lst[i].track.preview_url,
-                            like: 0,
-                            splendid: 0,
-                            add: 0,
+                        for(var i=0; i<this.temp_song_lst.length; i++) {
+                            var temp_obj = {
+                                listened: 0,
+                                title: this.temp_song_lst[i].track.name,
+                                artist: this.temp_song_lst[i].track.artists[0].name,
+                                song_id: this.temp_song_lst[i].track.id,
+                                source: "https://open.spotify.com/embed/track/" + this.temp_song_lst[i].track.id + "?utm_source=generator",
+                                song_preview_url: this.temp_song_lst[i].track.preview_url,
+                                like: 0,
+                                splendid: 0,
+                                add: 0,
+                            }
+                            // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
+                            this.all_song_lst.push(temp_obj)
+
+                            if(i<this.song_limit) {
+                                this.song_lst.push(temp_obj)
+                            }
                         }
-                        // 存下所有歌曲，如果有刪除的歌曲可從這裡補剩下的
-                        this.all_song_lst.push(temp_obj)
-
-                        if(i<this.song_limit) {
-                            this.song_lst.push(temp_obj)
-                        }
+                        console.log(this.song_lst)
+                        this.rerender+=1
+                    }).catch((err)=>{
+                        console.log("Call GetSongList API Failed!")
+                        console.log(err)
+                    })
+                )
+                Promise.all(promise).then(()=>{
+                    var artistPromise = []
+                    for(var i=0; i<this.temp_song_lst.length; i++) {
+                        let artistObj = this.temp_song_lst[i].track.artists[0]
+                        artistPromise.push(UpdateArtists(artistObj.id, artistObj.name))
                     }
-                    console.log(this.song_lst)
-                    this.rerender+=1
-                }).catch((err)=>{
-                    console.log("Call GetSongList API Failed!")
-                    console.log(err)
+                    console.log(artistPromise)
+                    Promise.all(artistPromise).then(()=>{
+                        for(var i=0; i<this.temp_song_lst.length; i++) {
+                            UpdateTracksInfo(this.temp_song_lst[i].track.id, this.temp_song_lst[i].track.name, this.temp_song_lst[i].track.artists[0].id)
+                        }
+                    })
                 })
             })
 
         } else {
-            
+            UpdateAudioFeatures(this.$store.userID, this.score_obj)
+
             // for song list from seeds
             var genres = this.tags_obj['Genres'].join()
             var artists = this.tags_obj['Artists'].join()
             var tracks = this.tags_obj['Tracks'].join()
             
-            GetRecommendations(this.$store.access_token, genres, artists, tracks, this.score_obj).then((res)=>{
+            var promise = GetRecommendations(this.$store.access_token, genres, artists, tracks, this.score_obj).then((res)=>{
                 console.log("Call GetRecommendations API successed!")
                 let retv = res.data
-                var temp_song_lst = retv["tracks"]
-                console.log(temp_song_lst)
+                this.temp_song_lst = retv["tracks"]
 
                 // 在0, 3的實驗組別中，weekly discovery是短歌單
                 // 在1, 2的實驗組別中，weekly discovery是長歌單
                 // 目前設定長歌單的歌曲數量為12，短歌單的歌曲數量為8
                 // 測試用長的先用5，短的先用3
 
-                if(["1", "2", 1, 2].includes(this.$store.within_subject_type)) {
-                    this.song_limit = 8
-                } else {
-                    this.song_limit = 12
-                }
+                this.song_limit=15
                 this.last_song_pointer = this.song_limit-1
 
-                for(var i=0; i<temp_song_lst.length; i++) {
+                for(var i=0; i<this.temp_song_lst.length; i++) {
                     var temp_obj = {
                         listened: 0,
-                        title: temp_song_lst[i].name,
-                        artist: temp_song_lst[i].artists[0].name,
-                        song_id: temp_song_lst[i].id,
-                        source: "https://open.spotify.com/embed/track/" + temp_song_lst[i].id + "?utm_source=generator",
-                        song_preview_url: temp_song_lst[i].preview_url,
+                        title: this.temp_song_lst[i].name,
+                        artist: this.temp_song_lst[i].artists[0].name,
+                        song_id: this.temp_song_lst[i].id,
+                        source: "https://open.spotify.com/embed/track/" + this.temp_song_lst[i].id + "?utm_source=generator",
+                        song_preview_url: this.temp_song_lst[i].preview_url,
                         like: 0,
                         splendid: 0,
                         add: 0,
@@ -209,6 +222,19 @@ export default {
                         this.song_lst.push(temp_obj)
                     }
                 }
+            })
+            promise.then(()=>{
+                var artistPromise = []
+                for(var i=0; i<this.temp_song_lst.length; i++) {
+                    let artistObj = this.temp_song_lst[i].artists[0]
+                    artistPromise.push(UpdateArtists(artistObj.id, artistObj.name))
+                }
+                console.log(artistPromise)
+                Promise.all(artistPromise).then(()=>{
+                    for(var i=0; i<this.temp_song_lst.length; i++) {
+                        UpdateTracksInfo(this.temp_song_lst[i].id, this.temp_song_lst[i].name, this.temp_song_lst[i].artists[0].id)
+                    }
+                })
             })
         }
 
@@ -260,6 +286,10 @@ export default {
 
             //判斷是長/短歌單
             islong: false,
+
+            temp_song_lst: [],
+            T1Complete: [],
+            T1songScoreSendable: false,
         }
     },
     methods: {
@@ -269,7 +299,32 @@ export default {
         },
         on_delete() {
             while(this.delete_lst.length) {
-                this.song_lst.splice(this.delete_lst.pop(), 1);
+                let songIdx = this.delete_lst.pop()
+                console.log(this.all_song_lst[songIdx])
+                
+                let songListID = ''
+                if(this.list_type==0){
+                    songListID = this.$store.WD_ID
+                } else {
+                    songListID = this.$store.T_ID
+                }
+
+                var elemObj = {
+                    'songListID': songListID,
+                    'userID': this.$store.userID,
+                    'trackID': this.all_song_lst[songIdx]['song_id'],
+                    'trackShowType': 'deleted',
+                    'splendidScore': -1,
+                    'likeScore': -1,
+                    'addSongList': false,
+                    'order': -1,
+                }
+
+                UpdateSongListElem(elemObj).then((res)=> {
+                    let retv = res.data
+                    console.log(retv)
+                })
+                this.song_lst.splice(songIdx, 1);
             }
 
             var push_num = this.song_limit-this.song_lst.length
@@ -294,15 +349,37 @@ export default {
         confirm_delete_complete() {
             this.deleteShow = false
             this.deleteCompleteShow = false
-            if(this.$store.between_subject_type==0) {
-                this.table1Show = false
-                this.table2Show = true
-                this.table2Current.push(this.song_lst[0])
-
-            } else if(this.$store.between_subject_type==1) {
-                this.table1Show = true
-                this.table2Show = false
+            if(this.list_type==0) {
+                if(["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
+                    this.table1Show = true
+                    this.table2Show = false
+                }
+                else {
+                    this.table1Show = false
+                    this.table2Show = true
+                    this.table2Current.push(this.song_lst[0])
+                }
+            } else {
+                if(["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
+                    this.table1Show = false
+                    this.table2Show = true
+                    this.table2Current.push(this.song_lst[0])
+                }
+                else {
+                    this.table1Show = true
+                    this.table2Show = false
+                }
             }
+
+            // if(this.list_type==0 && ["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
+            //     this.table1Show = false
+            //     this.table2Show = true
+            //     this.table2Current.push(this.song_lst[0])
+
+            // } else if(this.list_type==0 && ["0", "3", 0, 3].includes(this.$store.within_subject_type)) {
+            //     this.table1Show = true
+            //     this.table2Show = false
+            // }
             this.delete_dialog_visible = false
             this.delete_not_complete = false
             this.rerender+=1
@@ -330,20 +407,58 @@ export default {
             }
         },
         add_song_change(add_song_lst) {
-            // 目前最少選1首
-            if(add_song_lst.length===0) {
+            console.log(add_song_lst)
+            // 目前最少選3首
+            if(add_song_lst.length<3) {
                 this.add_song_sendable = false
             }
             else {
-                for(var i=0; i<add_song_lst.length; i++) {
-                    this.song_lst[add_song_lst[i]]['add'] = 1
+                for(var i=0; i<this.song_lst.length; i++) {
+                    if(add_song_lst.indexOf(i)>=0) {
+                        this.song_lst[i]['add'] = 1
+                    } else {
+                        this.song_lst[i]['add'] = 0
+                    }
                 }
                 this.add_song_sendable = true
             }
         },
-        confirm_send() {
+
+        async confirm_send() {
             this.send_dialog_visible = false
-            // send code to write
+            console.log(this.song_lst)
+
+            let songListID = ''
+            if(this.list_type==0){
+                songListID = this.$store.WD_ID
+            } else {
+                songListID = this.$store.T_ID
+            }
+
+
+            for(var i=0; i<this.song_lst.length; i++) {
+                var isAdd = false
+                if(this.song_lst[i]['add']==0) {
+                    isAdd = false
+                } else {
+                    isAdd = true
+                }
+
+                var elemObj = {
+                    'songListID': songListID,
+                    'userID': this.$store.userID,
+                    'trackID': this.song_lst[i]['song_id'],
+                    'trackShowType': 'onList',
+                    'splendidScore': this.song_lst[i]['splendid'],
+                    'likeScore': this.song_lst[i]['like'],
+                    'addSongList': isAdd,
+                    'order': i,
+                }
+                await UpdateSongListElem(elemObj).then((res)=>{
+                    console.log(res)
+                })
+            }
+
             
 
             this.$router.push({
@@ -353,12 +468,20 @@ export default {
                 },
             })
         },
-        completeOneSong(val_lst) {
+        completeOneSongT1() {
+            this.T1Complete.push(1)
+            if(this.T1Complete.length == 15) {
+                this.T1songScoreSendable = true
+            }
+        },
+        completeOneSongT2(val_lst) {
             var like = val_lst[0]
             var splendid = val_lst[1]
+            var isAdd = val_lst[2]
 
             this.song_lst[this.table2Idx]["splendid"] = splendid
             this.song_lst[this.table2Idx]["like"] = like
+            this.song_lst[this.table2Idx]["add"] = isAdd
             if(this.table2Idx<this.song_limit-1) {
                 this.table2Idx+=1
                 this.table2Current[0] = this.song_lst[this.table2Idx]
@@ -366,7 +489,6 @@ export default {
             } else {
                 this.confirm_send()
             }
-            
         },
     }
 }

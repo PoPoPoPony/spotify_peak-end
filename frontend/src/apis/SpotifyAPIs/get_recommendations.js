@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
 export function GetRecommendations(accessToken, genres, artists, tracks, score_obj) {
     var params = {

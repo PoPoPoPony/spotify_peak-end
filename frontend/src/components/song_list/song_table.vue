@@ -31,12 +31,12 @@
             </el-table-column>
             <el-table-column label="確認評分" width="150">
                 <template #default="scope">
-                    <el-button type="primary" @click="completeOneSong(scope)" :disabled='delete_not_complete || !splendid_changed[scope.$index] || !like_changed[scope.$index]'>確認</el-button>
+                    <el-button type="primary" @click="completeOneSong(scope)" :disabled='delete_not_complete || !splendid_changed[scope.$index] || !like_changed[scope.$index] || confirmClicked[scope.$index]'>確認</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="加入歌單" width="150" v-if="show_add_song">
                 <template #default="scope">
-                    <el-checkbox-group v-model="add_song_lst" @change='add_song_change' :max='2'>
+                    <el-checkbox-group v-model="add_song_lst" @change='add_song_change' :max='3'>
                         <el-checkbox :label="scope.$index" border :disabled='delete_not_complete'>{{ }}</el-checkbox>
                     </el-checkbox-group>
                 </template>
@@ -94,7 +94,7 @@ export default {
             // 判斷兩個slider有沒有被改變過
             like_changed: [],
             splendid_changed: [],
-            
+            confirmClicked: new Array(this.table_data.length).fill(false)
         }
     },
     methods: {
@@ -123,6 +123,8 @@ export default {
         completeOneSong(scope) {
             this.like_show[scope.$index] = false
             this.splendid_show[scope.$index] = false
+            this.confirmClicked[scope.$index] = true
+            this.$emit('completeOneSong')
         },
     },
 }

@@ -12,7 +12,8 @@
 
 <script>
 import navBar from '@/components/navBar'
-import {getMe} from '@/apis/get_genre'
+import {getMe} from '@/apis/SpotifyAPIs/get_genre'
+import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 
 export default {
     name: 'create_list',
@@ -31,10 +32,9 @@ export default {
         this.$store.between_subject_type = urlParams.get('between_subject_type')
         this.$store.within_subject_type = urlParams.get('within_subject_type')
         this.$store.pass_exp_num = parseInt(urlParams.get('pass_exp_num'))
-        this.$store.userID = urlParams.get('userID')
-
-        console.log("create list between", this.$store.between_subject_type)
-        console.log("create list within", this.$store.within_subject_type)
+        if(!this.$store.userID) {
+            this.$store.userID = urlParams.get('uuid')
+        }
 
         // 每到 create list 或 選擇 seed 頁面，就增加做過的實驗數量(每個人應做兩次)
         this.$store.pass_exp_num+=1
@@ -50,11 +50,16 @@ export default {
     },
     methods: {
         create() {
-            this.$router.push({
-                name: 'song_list',
-                query: {
-                    list_type: 0
-                }
+            UpdateSongListInfo(this.$store.userID, 'Weekly_Discovery').then((res)=>{
+                let retv = res.data
+                this.$store.WD_ID = retv['songListID']
+                console.log(this.$store.WD_ID)
+                this.$router.push({
+                    name: 'song_list',
+                    query: {
+                        list_type: 0
+                    }
+                })
             })
         }
     }
