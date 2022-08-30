@@ -12,65 +12,75 @@
                     </el-form-item>
                 </el-form> -->
                 <el-row style="font-size: 25px;">
-                    <h3>
-                        姓名 : 
+                    <h3 style="font-size: 1.8vw">
+                        信箱 : 
                     </h3>
                 </el-row>
                 <el-row style="padding-bottom: 20px">
-                    <el-input placeholder="請輸入姓名" v-model="userName" clearable @change='userNameChanged'></el-input>
+                    <el-input placeholder="請輸入常用信箱" v-model="userEmail" clearable @change='userEmailChanged'></el-input>
                 </el-row>
                 <el-row>
-                    <h1>受試組別</h1>
+                    <el-col :xs="{'span':'5', 'offset': '3'}" :sm="{'span':'5', 'offset': '6'}" :lg="{'span': '5', 'offset': '7'}">
+                        <el-button type="success" style="font-size: 1vw" size='small' @click="onSecondTest" :disabled='!userEmailInputed'>
+                            <el-icon style="font-size:1vw"><ArrowRightBold /></el-icon>
+                            <span style="vertical-align: middle;"> 第二次測驗 </span>
+                        </el-button>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <h1 style="font-size: 1.8vw">
+                        受試組別
+                    </h1>
                 </el-row>
                 <el-row class="row-bg" justify="space-around">
-                    <el-col :span="3">
+                    <el-col :xs="{'span':'1'}" :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="1" border @change="GroupSelect">1</el-radio-button>
                         </el-radio-group>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :xs="{'span':'1'}" :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="2" border @change="GroupSelect">2</el-radio-button>
                         </el-radio-group>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :xs="{'span':'1'}" :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="3" border @change="GroupSelect">3</el-radio-button>
                         </el-radio-group>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :xs="{'span':'1'}" :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="4" border @change="GroupSelect">4</el-radio-button>
                         </el-radio-group>
                     </el-col>
                 </el-row>
-                <el-row class="row-bg" justify="space-around" style="padding-top:50px">
-                    <el-col :span="3">
+                <el-row class="row-bg" justify="space-around" style="padding-top:1vw">
+                    <el-col :xs="{'span':'1'}"  :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="5" border @change="GroupSelect">5</el-radio-button>
                         </el-radio-group>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :xs="{'span':'1'}" :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="6" border @change="GroupSelect">6</el-radio-button>
                         </el-radio-group>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :xs="{'span':'1'}" :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="7" border @change="GroupSelect">7</el-radio-button>
                         </el-radio-group>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :xs="{'span':'1'}" :sm="{'span':'2'}" :lg="{'span': '3'}">
                         <el-radio-group v-model="exp_type" size="large">
                             <el-radio-button label="8" border @change="GroupSelect">8</el-radio-button>
                         </el-radio-group>
                     </el-col>
                 </el-row>
-                <el-row style="margin-top: 50px; padding-bottom: 50px">
-                    <el-col :span="4" :offset="9">
+                <el-row style="margin-top: 1.5vw; padding-bottom: 2vw">
+                    <el-col :xs="{'span':'1', 'offset': '7'}" :sm="{'span':'3', 'offset': '9'}" :lg="{'span': '4', 'offset': '9'}">
                         <!--  :disabled="!GroupSelected || !userNameInputed"  -->
-                        <el-button  v-if="GroupSelected && userNameInputed" type="primary" style="font-size: 25px;">
-                            <el-link :href="backend_url" :underline="false" style="color: white; font-size: 30px" >Start</el-link>
+                        <el-button v-if="GroupSelected && userEmailInputed" type="primary" style="font-size: 1.5vw; padding: 0.7vw 0.9vw 0.7vw 0.9vw;">
+                            <el-link :href="backend_url" :underline="false" style="color: white; font-size: 1.5vw" >Start</el-link>
                         </el-button>
                     </el-col>
                 </el-row>
@@ -99,9 +109,16 @@
 
 <script>
 // import {SignOut} from '@/apis/sign_out.js'
+import { ElNotification } from 'element-plus'
+import { ArrowRightBold } from '@element-plus/icons'
+import { GetUser } from '@/apis/backendAPIs/user/get_user'
+// import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 
 export default {
     name: 'login_panel',
+    components: {
+        ArrowRightBold
+    },
     data() {
         return {
             account: '',
@@ -119,8 +136,13 @@ export default {
             backend_url: "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth",
             exp_type: 0,
             GroupSelected: false,
-            userName: "",
-            userNameInputed: false,
+            userEmail: "",
+            userEmailInputed: false,
+            expObject : {
+                "within": "0",
+                "between":"0",
+            },
+            secondTestDisable: true,
         }
     },
     created() {
@@ -129,58 +151,93 @@ export default {
     methods: {
         GroupSelect() {
             if(this.exp_type == 1) {
-                this.$store.between_subject_type=0
-                this.$store.within_subject_type=0
+                this.expObject['between'] = "0"
+                this.expObject['within'] = "0"
             } else if(this.exp_type == 2) {
-                this.$store.between_subject_type=0
-                this.$store.within_subject_type=1
+                this.expObject['between'] = "0"
+                this.expObject['within'] = "1"
             } else if(this.exp_type == 3) {
-                this.$store.between_subject_type=0
-                this.$store.within_subject_type=2
+                this.expObject['between'] = "0"
+                this.expObject['within'] = "2"
             } else if(this.exp_type == 4) {
-                this.$store.between_subject_type=0
-                this.$store.within_subject_type=3
+                this.expObject['between'] = "0"
+                this.expObject['within'] = "3"
             } else if(this.exp_type == 5) {
-                this.$store.between_subject_type=1
-                this.$store.within_subject_type=0
+                this.expObject['between'] = "1"
+                this.expObject['within'] = "0"
             } else if(this.exp_type == 6) {
-                this.$store.between_subject_type=1
-                this.$store.within_subject_type=1
+                this.expObject['between'] = "1"
+                this.expObject['within'] = "1"
             } else if(this.exp_type ==7) {
-                this.$store.between_subject_type=1
-                this.$store.within_subject_type=2
+                this.expObject['between'] = "1"
+                this.expObject['within'] = "2"
             } else if(this.exp_type == 8) {
-                this.$store.between_subject_type=1
-                this.$store.within_subject_type=3
+                this.expObject['between'] = "1"
+                this.expObject['within'] = "3"
             }
 
-            console.log(this.$store.within_subject_type)
-            console.log(typeof(this.$store.within_subject_type))
+            this.$store.dispatch("initExpType", this.expObject)
+            // console.log(this.$store.state.within_subject_type)
+            // console.log(this.$store.state.between_subject_type)
             this.setBackendURL()
             this.GroupSelected = true
         },
-        userNameChanged() {
-            if(!(this.userName.trim() == "")) {
-                this.userNameInputed = true
+        userEmailChanged() {
+            if(this.isEmail(this.userEmail.trim())) {
+                this.userEmailInputed = true
+            } else {
+                this.userEmailInputed = false
+                ElNotification({
+                    title: 'Error',
+                    message: 'Wrong Email Format!',
+                    type: 'error',
+                }) 
             }
             this.setBackendURL()
         }, 
+        isEmail(email) {
+            var regex = /^([a-zA-Z0-9_.\-+])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            if(!regex.test(email)) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+
         setBackendURL() {
             this.backend_url = "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth"
             // this.backend_url = "http://localhost:8888/login"
 
             // 0, 1 for doing discover weekly first
             // 2, 3 for doing seed first
-            if([0, 1].includes(this.$store.within_subject_type)) {
+            if(["0", "1"].includes(this.$store.state.within_subject_type)) {
                 this.backend_url+="?redirect_page=0"
             } else {
                 this.backend_url+="?redirect_page=1"
             }
-            let params="&between_subject_type=" + String(this.$store.between_subject_type)
-            params += "&within_subject_type=" + String(this.$store.within_subject_type)
-            params += "&user_name=" + this.userName
+            let params="&between_subject_type=" + this.$store.state.between_subject_type
+            params += "&within_subject_type=" + this.$store.state.within_subject_type
+            params += "&user_email=" + this.userEmail
             this.backend_url+=params
             console.log(this.backend_url)
+        },
+        // 做第二次的實驗
+        onSecondTest() {
+            GetUser(this.userEmail).then((res)=>{
+                let retv = res.data
+                if(retv) {
+                    window.location.assign("http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth2?user_email=" + this.userEmail.trim())
+                } else {
+                    ElNotification({
+                        title: 'Error',
+                        message: 'User is not exsist!',
+                        type: 'error',
+                    })
+                }
+            }).catch((err)=>{
+                console.log('call getUser faild')
+                console.log(err)
+            })
         }
         
     }
@@ -192,42 +249,45 @@ export default {
     background-color: white;
     width: 80%;
     border-radius:40px;
-    margin-top: 20%;
+    margin-top: 0%;
+    height: 35vw;
 }
 
 #panel_elem {
-    margin: 0 50px 20% 50px;
+    margin: 0 2vw 0 2vw;
 }
 
 #panel_logo {
     width: 25%;
-    margin-top: -70px;
+    margin-top: -7vh;
 }
 
 .el-input {
-    font-size: 25px;
+    font-size: 1vw;
 }
 
 .el-input :deep(.el-input__inner) {
-    height: 50px
+    height: 2.5vw
 }
 
 .el-form-item :deep(.el-form-item__label) {
     font-size: 25px
 }
 
-#avater_container {
+/* #avater_container {
     margin-top: 30px;
     padding-bottom: 10%;
-}
+} */
 
 ::v-deep .el-radio-button__inner {
-    font-size:50px;
+    font-size:2vw;
+    padding: 0.7vw 0.8vw 0.7vw 0.8vw;
 }
 
 ::v-deep .el-radio-button.is-bordered {
-    padding: 30px 20px 30px 20px
+    padding: 2vw 1vw 2vw 1vw
 }
+
 
 
 /* background-color: white;

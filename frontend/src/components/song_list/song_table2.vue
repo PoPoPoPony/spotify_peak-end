@@ -1,6 +1,6 @@
 <template>
     <div class="animate__animated animate__fadeIn">
-        <el-table :data="song_lst" :style="table_style" :cell-style="{height: '40px', }" :header-cell-style="{height: '60px', padding: '5px'}" :key="rerender">
+        <el-table :data="song_lst" :style="table_style" :cell-style="{height: '40px', 'font-size': '1.25vw'}" :header-cell-style="{height: '60px', padding: '5px'}" max-height='50vh' :key="rerender">
             <el-table-column prop="listened" label="聽過" width="100">
                 <template #default="scope">
                     <el-checkbox-group v-model="listened_lst">
@@ -11,32 +11,33 @@
             <el-table-column prop="title" label="標題"/>
             <el-table-column prop="artist" label="藝人"/>
             <el-table-column label="播放" width="100">
-                <template #default="scope">
-                    <el-button :disabled='delete_not_complete' circle @click="play_song(scope)">
-                        <el-icon><CaretRight /></el-icon>
+                <template #default="scope" >
+                    <el-button :disabled='delete_not_complete' circle @click="play_song(scope)" style="border:0; padding:0;">
+                        <el-icon size='50' v-if="play_show"><VideoPlay /></el-icon>
+                        <el-icon size='50' v-if="!play_show"><VideoPause /></el-icon>
                     </el-button>
                 </template>
             </el-table-column>
             <el-table-column prop="like" label="喜好">
                 <template #default="scope">
-                    <el-slider v-model="song_lst[scope.$index]['like']" :disabled='delete_not_complete' @change='like_change' style='padding-left: 10px; padding-right: 10px'></el-slider>
+                    <el-slider v-model="song_lst[scope.$index]['like']" :disabled='delete_not_complete||song_not_complete' @change='like_change' style='padding-left: 10px; padding-right: 10px'></el-slider>
                 </template>
             </el-table-column>
             <el-table-column label="驚艷度">
                 <template #default="scope">
-                    <el-slider v-model="song_lst[scope.$index]['splendid']" :disabled='delete_not_complete' @change='splendid_change' style='padding-left: 10px; padding-right: 10px'></el-slider>
-                </template>
-            </el-table-column>
-            <el-table-column label="確認評分" width="150">
-                <template #default="scope">
-                    <el-button type="primary" @click="completeOneSong(scope)" :disabled='delete_not_complete || !splendid_changed || !like_changed'>完成</el-button>
+                    <el-slider v-model="song_lst[scope.$index]['splendid']" :disabled='delete_not_complete||song_not_complete' @change='splendid_change' style='padding-left: 10px; padding-right: 10px'></el-slider>
                 </template>
             </el-table-column>
             <el-table-column label="加入歌單" width="150" v-if="show_add_song">
                 <template #default="scope">
                     <el-checkbox-group v-model="add_song_lst" @change='add_song_change' :max='2'>
-                        <el-checkbox :label="scope.$index" border :disabled='delete_not_complete'>{{ }}</el-checkbox>
+                        <el-checkbox :label="scope.$index" border :disabled='delete_not_complete||song_not_complete'>{{ }}</el-checkbox>
                     </el-checkbox-group>
+                </template>
+            </el-table-column>
+            <el-table-column label="完成評分" width="150">
+                <template #default="scope">
+                    <el-button type="primary" style="font-size: 1vw" @click="completeOneSong(scope)" :disabled='(delete_not_complete|| song_not_complete) || !splendid_changed || !like_changed'>完成</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -46,18 +47,20 @@
 
 
 <script>
-import { CaretRight } from '@element-plus/icons'
+import { VideoPlay } from '@element-plus/icons'
+import { VideoPause } from '@element-plus/icons'
 
 export default {
     name: 'song_table2',
-    props: ['table_data', 'delete_not_complete', 'table2Idx'],
+    props: ['table_data', 'delete_not_complete', 'table2Idx', 'song_not_complete'],
     components: {
-        CaretRight
+        VideoPlay,
+        VideoPause,
     },
     created () {
         console.log("songtable2")
         console.log(this.table2Idx)
-        if(this.$store.between_subject_type=="1") {
+        if(this.$store.state.between_subject_type=="1" && !this.$store.isExercise) {
             this.show_add_song = true
         } else {
             this.show_add_song = false
@@ -85,14 +88,28 @@ export default {
             like_changed: false,
             splendid_changed: false,
             isAddList: false,
-            
+            play_show: true,
+            ini_play:true,
         }
     },
     methods: {
         play_song(scope) {
-            console.log(scope)
+            
             // this.$emit("play_music", this.song_lst[scope.$index]['source'])
-            this.$emit("play_music", this.song_lst[scope.$index]['song_preview_url'])
+            if(this.play_show) {
+                if(this.ini_play) {
+                    this.$emit("loadSource", this.song_lst[scope.$index]['song_preview_url'], 0)
+                    this.ini_play = false
+                }
+                else {
+                    this.$emit("play_music", 0)
+                }
+            } 
+            else {
+                this.$emit("pause_music", 0)
+            }
+            
+            this.play_show = !this.play_show
         },
         like_change(val) {
             this.like_val = val
@@ -113,6 +130,9 @@ export default {
             this.$emit('completeOneSong',[this.like_val, this.splendid_val, this.isAddList])
             console.log(scope)
         },
+        song_ended() {
+            this.play_show = !this.song_not_complete
+        }
     },
 }
 </script>

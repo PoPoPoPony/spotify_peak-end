@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 class UserInfo(BaseModel):
     userID: UUID = Field(default_factory=uuid4)
-    userName: str
+    userEmail: str
     betweenType: int
     withinType: int
 

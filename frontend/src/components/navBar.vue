@@ -21,6 +21,6 @@ export default {
 
 <style scoped>
 #spotify_nav {
-    width: 300px;
+    width: 15vw;
 }
 </style>

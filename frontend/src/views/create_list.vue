@@ -2,11 +2,15 @@
     <div>
         <div id='bg'/>
         <navBar/>
-        <div id="credit_container" class="animate__animated animate__fadeInUp">
-            <span id="title">Weekly discovery</span>
-            <el-image style="width: 200px; height: 200px; margin-top: 50px; display: block; left: 30%" :src="album_src" fit='cover'></el-image>
-            <el-button type="primary" style="margin-top: 50px; font-size: 30px" @click="create">建立歌單</el-button>
-        </div>
+        <!-- <div id="credit_container" class="animate__animated animate__fadeInUp"> -->
+        <el-row style="padding-top: 3vw">
+            <el-col :xs="{'span':'10', 'offset': '8'}" :sm="{'span':'10', 'offset': '7'}" :lg="{'span': '9', 'offset': '8'}">
+                <span id="title" style="font-size: 3vw; ">Weekly discovery</span>
+                <el-image style="width: 13vw; height: 13vw; margin-top: 30px; display: block; left: 32%" :src="album_src" fit='cover'></el-image>
+                <el-button type="primary" style="margin-top: 50px; font-size: 1.3vw" @click="create">送出</el-button>
+            </el-col>
+        </el-row>
+        <!-- </div> -->
     </div>
 </template>
 
@@ -27,20 +31,16 @@ export default {
     },
     created() {
         // set access token globel
-        let urlParams = new URLSearchParams(window.location.search)
-        this.$store.access_token = urlParams.get('access_token')
-        this.$store.between_subject_type = urlParams.get('between_subject_type')
-        this.$store.within_subject_type = urlParams.get('within_subject_type')
-        this.$store.pass_exp_num = parseInt(urlParams.get('pass_exp_num'))
-        if(!this.$store.userID) {
-            this.$store.userID = urlParams.get('uuid')
-        }
-
-        // 每到 create list 或 選擇 seed 頁面，就增加做過的實驗數量(每個人應做兩次)
-        this.$store.pass_exp_num+=1
+        // let urlParams = new URLSearchParams(window.location.search)
+        // this.$store.access_token = urlParams.get('access_token')
+        // this.$store.between_subject_type = urlParams.get('between_subject_type')
+        // this.$store.within_subject_type = urlParams.get('within_subject_type')
+        // if(!this.$store.userID) {
+        //     this.$store.userID = urlParams.get('uuid')
+        // }
 
         // for test
-        getMe(this.$store.access_token).then((res)=>{
+        getMe(this.$store.state.access_token).then((res)=>{
             console.log('call me success')
             console.log(res.data)
         }).catch((err)=>{
@@ -50,10 +50,11 @@ export default {
     },
     methods: {
         create() {
-            UpdateSongListInfo(this.$store.userID, 'Weekly_Discovery').then((res)=>{
+            UpdateSongListInfo(this.$store.state.userID, 'Weekly_Discovery').then((res)=>{
                 let retv = res.data
-                this.$store.WD_ID = retv['songListID']
-                console.log(this.$store.WD_ID)
+                // this.$store.WD_ID = retv['songListID']
+                this.$store.dispatch("initWD_ID", retv['songListID'])
+                console.log(this.$store.state.WD_ID)
                 this.$router.push({
                     name: 'song_list',
                     query: {
@@ -80,8 +81,8 @@ export default {
 }
 
 #credit_container {
-    width: 500px;
-    height: 200px;
+    width: 50vw;
+    height: 20vw;
     position: absolute;
     justify-content: center;
     top: 50%;

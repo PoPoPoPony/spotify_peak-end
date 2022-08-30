@@ -2,7 +2,7 @@
     <div>
         <div id='bg'/>
         <navBar/>
-        <h2 style="font-size: 50px; color: white;">請選擇標籤</h2>
+        <h2 style="font-size: 2vw; color: white;">請選擇標籤</h2>
         <div id="tagTable_container">
             <tagTable :table_data='tags_data' :key='rerender' @send_tags='send_tags'/>
         </div>
@@ -65,21 +65,18 @@ export default {
         }
     },
     created() {
-        let urlParams = new URLSearchParams(window.location.search)
-        this.$store.access_token = urlParams.get('access_token')
-        this.$store.between_subject_type = urlParams.get('between_subject_type')
-        this.$store.within_subject_type = urlParams.get('within_subject_type')
-        this.$store.pass_exp_num = parseInt(urlParams.get('pass_exp_num'))
-        if(!this.$store.userID) {
-            this.$store.userID = urlParams.get('uuid')
-        }
+        // let urlParams = new URLSearchParams(window.location.search)
+        // this.$store.access_token = urlParams.get('access_token')
+        // this.$store.between_subject_type = urlParams.get('between_subject_type')
+        // this.$store.within_subject_type = urlParams.get('within_subject_type')
+        // if(!this.$store.userID) {
+        //     this.$store.userID = urlParams.get('uuid')
+        // }
 
-        console.log("userID", this.$store.userID )
+        // console.log("userID", this.$store.userID )
 
-        // 每到 create list 或 選擇 seed 頁面，就增加做過的實驗數量(每個人應做兩次)
-        this.$store.pass_exp_num+=1
 
-        getMe(this.$store.access_token).then((res)=>{
+        getMe(this.$store.state.access_token).then((res)=>{
             console.log('call me success')
             console.log(res.data)
         }).catch((err)=>{
@@ -88,7 +85,7 @@ export default {
         })
 
         // 獲取最近撥放的歌曲
-        GetRecentlyPlayed(this.$store.access_token).then((res)=>{
+        GetRecentlyPlayed(this.$store.state.access_token).then((res)=>{
             console.log("Call GetRecentlyPlayed API successed!")
             let retv = res.data
             var temp_map = {}
@@ -137,7 +134,7 @@ export default {
 
             for(i=0; i<recently_artist_id.length; i++) {
                 promise.push(
-                    GetRelatedArtist(this.$store.access_token, recently_artist_id[i]).then((res)=>{
+                    GetRelatedArtist(this.$store.state.access_token, recently_artist_id[i]).then((res)=>{
                         console.log("Call RelatedArtist API successed!")
                         let retv = res.data
                         var artists = retv["artists"]
@@ -189,37 +186,40 @@ export default {
                         }
                     }
                 }
-                GetSeveralArtists(this.$store.access_token, recentlyArtistsStr).then((res)=>{
-                    let retv = res.data
-                    var artists = retv['artists']
-                    for(var i=0; i<artists.length; i++) {
-                        var genres = artists[i]['genres']
-                        for(var genre of genres) {
-                            if(!(genre in this.genre_dict['artist'])) {
-                                this.genre_dict['artist'][genre]=1
-                            } else {
-                                this.genre_dict['artist'][genre]+=1
+                if (recentlyArtistsStr) {
+                    GetSeveralArtists(this.$store.state.access_token, recentlyArtistsStr).then((res)=>{
+                        let retv = res.data
+                        var artists = retv['artists']
+                        for(var i=0; i<artists.length; i++) {
+                            var genres = artists[i]['genres']
+                            for(var genre of genres) {
+                                if(!(genre in this.genre_dict['artist'])) {
+                                    this.genre_dict['artist'][genre]=1
+                                } else {
+                                    this.genre_dict['artist'][genre]+=1
+                                }
                             }
                         }
-                    }
-                    var genere_freq_lst = []
+                        var genere_freq_lst = []
 
-                    //dict to 2d array
-                    for(var [key, val] of Object.entries(this.genre_dict['artist'])) {
-                        genere_freq_lst.push([key, val])
-                    }
+                        //dict to 2d array
+                        for(var [key, val] of Object.entries(this.genre_dict['artist'])) {
+                            genere_freq_lst.push([key, val])
+                        }
 
-                    // sort by genere's frequency
-                    genere_freq_lst.sort((a, b)=> {
-                        return b[1]-a[1]
+                        // sort by genere's frequency
+                        genere_freq_lst.sort((a, b)=> {
+                            return b[1]-a[1]
+                        })
+
+                        genere_freq_lst = genere_freq_lst.map((elem=>{
+                            return elem[0]
+                        }))
+                        this.tags_data[0]['tags'] = genere_freq_lst.slice(0, 10)
+
                     })
-
-                    genere_freq_lst = genere_freq_lst.map((elem=>{
-                        return elem[0]
-                    }))
-                    this.tags_data[0]['tags'] = genere_freq_lst.slice(0, 10)
-
-                })
+                }
+                
             })
 
         })
@@ -266,51 +266,67 @@ export default {
                 "valence": [0, 1],
             }
 
-            var audiosString = ''
-            for(var i=0; i<top100songs.length;i++) {
-                audiosString+=top100songs[i]
-                if(i<top100songs.length-1) {
-                    audiosString+=','
+            if(top100songs.length==0) {
+                for(i in feature_obj) {
+                    this.score_obj['max_'+i] = limit_obj[i][1]
+                    this.score_obj['min_'+i] = limit_obj[i][0]
+                    
+                    if(i=='key') {
+                        this.score_obj['target_'+i] = 5
+                    } else {
+                        this.score_obj['target_'+i] = (limit_obj[i][0] + limit_obj[i][1])/2
+                    }
                 }
+                console.log(this.score_obj)
+            } else {
+                var audiosString = ''
+                for(var i=0; i<top100songs.length;i++) {
+                    audiosString+=top100songs[i]
+                    if(i<top100songs.length-1) {
+                        audiosString+=','
+                    }
+                }
+
+                GetAudiosFeatures(this.$store.state.access_token, audiosString).then((res)=>{
+                    console.log("Call GetAudiosFeatures API successed!")
+                    let retv = res.data
+                    var feature_lst = retv['audio_features']
+
+                    for(i=0; i<feature_lst.length;i++) {
+                        for(var j in feature_obj) {
+                            feature_obj[j].push(feature_lst[i][j])
+                        }
+                    }
+                    for(i in feature_obj) {
+                        var statistics = this.getStatistics(feature_obj[i])
+                        var target_score = statistics['avg']
+                        var std = statistics['std']
+                        var min_score = target_score-2*std
+                        var max_score = target_score+2*std
+
+                        if(min_score < limit_obj[i][0]) {
+                            min_score = limit_obj[i][0]
+                        }
+
+                        if(max_score > limit_obj[i][1]) {
+                            max_score = limit_obj[i][1]
+                        }
+
+                        // key 只允許整數
+                        if(i=='key') {
+                            min_score = parseInt(min_score)
+                            target_score = parseInt(target_score)
+                            max_score = parseInt(max_score)
+                        }
+
+                        this.score_obj['max_'+i] = max_score
+                        this.score_obj['min_'+i] = min_score
+                        this.score_obj['target_'+i] = target_score
+                    }
+                })
             }
 
-            GetAudiosFeatures(this.$store.access_token, audiosString).then((res)=>{
-                console.log("Call GetAudiosFeatures API successed!")
-                let retv = res.data
-                var feature_lst = retv['audio_features']
-
-                for(i=0; i<feature_lst.length;i++) {
-                    for(var j in feature_obj) {
-                        feature_obj[j].push(feature_lst[i][j])
-                    }
-                }
-                for(i in feature_obj) {
-                    var statistics = this.getStatistics(feature_obj[i])
-                    var target_score = statistics['avg']
-                    var std = statistics['std']
-                    var min_score = target_score-2*std
-                    var max_score = target_score+2*std
-
-                    if(min_score < limit_obj[i][0]) {
-                        min_score = limit_obj[i][0]
-                    }
-
-                    if(max_score > limit_obj[i][1]) {
-                        max_score = limit_obj[i][1]
-                    }
-
-                    // key 只允許整數
-                    if(i=='key') {
-                        min_score = parseInt(min_score)
-                        target_score = parseInt(target_score)
-                        max_score = parseInt(max_score)
-                    }
-
-                    this.score_obj['max_'+i] = max_score
-                    this.score_obj['min_'+i] = min_score
-                    this.score_obj['target_'+i] = target_score
-                }
-            })
+            
         }))
 
     },
@@ -318,7 +334,7 @@ export default {
         // 全部的genere、artist都從最近播放歌曲中獲得，這邊暫時棄用
         WrapGetFollowedArtist() {
             // 獲取使用者追隨的藝人
-            return GetFollowedArtist(this.$store.access_token).then((res)=>{
+            return GetFollowedArtist(this.$store.state.access_token).then((res)=>{
                 console.log("Call GetFollowedArtist API successed!")
                 let retv = res.data
                 var artist_lst = retv['artists']['items']
@@ -348,7 +364,7 @@ export default {
         },
         WrapGetLibraryTracks() {
             // 獲取最近撥放的歌曲
-            return GetLibraryTracks(this.$store.access_token).then((res)=>{
+            return GetLibraryTracks(this.$store.state.access_token).then((res)=>{
                 console.log("Call GetLibraryTracks API successed!")
                 let retv = res.data
                 var items = retv['items']
@@ -361,7 +377,7 @@ export default {
         },
         WrapGetPlaylistTracks() {
             // 獲取使用者建立的播放清單
-            GetUserPlaylists(this.$store.access_token).then((res)=>{
+            GetUserPlaylists(this.$store.state.access_token).then((res)=>{
                 console.log("Call GetUserPlaylists API successed!")
                 let retv = res.data
                 var items = retv['items']
@@ -371,7 +387,7 @@ export default {
                 this.library_playlist_id.push(...items)
             }).then(()=>{
                 if(this.library_playlist_id.length>0) {
-                    GetPlaylistTracks(this.$store.access_token, this.library_playlist_id[0]).then((res)=>{
+                    GetPlaylistTracks(this.$store.state.access_token, this.library_playlist_id[0]).then((res)=>{
                         console.log("Call GetPlaylistTracks API successed!")
                         let retv = res.data
                         var items = retv['tracks']['items']
@@ -431,7 +447,7 @@ export default {
                     }
                     if(c=='Genres') {
                         send_backend_obj = {
-                            'userID': this.$store.userID,
+                            'userID': this.$store.state.userID,
                             'tagID': tagName,
                             'tagType': c,
                             'tagFreq': this.genre_dict['artist'][tagName],
@@ -455,7 +471,7 @@ export default {
                             let retv = res.data
                             console.log(retv)
                             send_backend_obj = {
-                                'userID': this.$store.userID,
+                                'userID': this.$store.state.userID,
                                 'tagID': id,
                                 'tagType': c,
                                 'tagFreq': freq,
@@ -467,26 +483,18 @@ export default {
                         allPromise_lst.push(promiseArtist)
 
                     } else if(c=='Tracks') {
-                        let promiseTrackArtist = await UpdateArtists(this.recently_played_artistInfo[j][0], this.recently_played_artistInfo[j][1]).then((res)=>{
-                            let retv = res.data
-                            console.log(retv)
-                        })
+                        await UpdateArtists(this.recently_played_artistInfo[j][0], this.recently_played_artistInfo[j][1])
 
-                        console.log(promiseTrackArtist)
+                        let promiseTrack = await UpdateTracksInfo(this.recently_played[j][1], this.recently_played[j][0], this.recently_played_artistInfo[j][0])
 
-                        let promiseTrack = await UpdateTracksInfo(this.recently_played[j][1], this.recently_played[j][0], this.recently_played_artistInfo[j][0]).then((res)=>{
-                            let retv = res.data
-                            console.log(retv)
-
-                            send_backend_obj = {
-                                'userID': this.$store.userID,
-                                'tagID': this.recently_played[j][1],
-                                'tagType': c,
-                                'tagFreq': -1,
-                                'order': j,
-                                'tagSelected': is_selected
-                            }
-                        })
+                        send_backend_obj = {
+                            'userID': this.$store.state.userID,
+                            'tagID': this.recently_played[j][1],
+                            'tagType': c,
+                            'tagFreq': -1,
+                            'order': j,
+                            'tagSelected': is_selected
+                        }
 
                         send_backend_lst.push(send_backend_obj)
                         allPromise_lst.push(promiseTrack)
@@ -500,23 +508,17 @@ export default {
             Promise.all(allPromise_lst).then(()=>{
                 for(i=0; i<send_backend_lst.length; i++) {
                     updateTagsPromise.push(
-                        UpdateTags(send_backend_lst[i]).then((res)=>{
-                            let retv = res.data
-                            console.log(retv)
-                        })
+                        UpdateTags(send_backend_lst[i])
                     )
                 }
             })
 
 
-
-
-
-
             Promise.all(updateTagsPromise).then(()=>{
-                UpdateSongListInfo(this.$store.userID, 'Tags').then((res)=>{
+                UpdateSongListInfo(this.$store.state.userID, 'Tags').then((res)=>{
                     let retv = res.data
-                    this.$store.T_ID = retv['songListID']
+                    // this.$store.state.T_ID = retv['songListID']
+                    this.$store.dispatch("initT_ID", retv['songListID'])
                     var t = JSON.stringify(send_obj)
                     var s = JSON.stringify(this.score_obj)
                     this.$router.push({

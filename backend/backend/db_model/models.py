@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 class DBUserInfo(Base):
     __tablename__ = "UserInfo"
     userID = Column(UUID(as_uuid=True), primary_key=True, unique=True, nullable=False, default=uuid.uuid4)
-    userName = Column(String, nullable=False)
+    userEmail = Column(String, nullable=False)
     betweenType = Column(Integer, nullable=False)
     withinType = Column(Integer, nullable=False)
 
@@ -17,10 +17,11 @@ class DBUserInfo(Base):
     songListInfo = relationship("DBSongListInfo", back_populates="user")
     songListElem = relationship("DBSongListElem", back_populates="user")
     audioFeatures = relationship("DBAudioFeatures", back_populates="user")
+    listScore = relationship("DBSongListScore", back_populates="user")
 
-    def __init__(self, userID, userName, betweenType, withinType):
+    def __init__(self, userID, userEmail, betweenType, withinType):
         self.userID = userID
-        self.userName = userName
+        self.userEmail = userEmail
         self.betweenType = betweenType
         self.withinType = withinType
 
@@ -88,13 +89,15 @@ class DBSongListElem(Base):
 class DBSongListScore(Base):
     __tablename__ = "SongListScore"
     songListID = Column(UUID(as_uuid=True), ForeignKey("SongListInfo.songListID", ondelete="CASCADE"), primary_key=True, unique=True, nullable=False)
+    userID = Column(UUID(as_uuid=True), ForeignKey("UserInfo.userID", ondelete="CASCADE"))
     score = Column(Integer, nullable=False)
     
     songListInfo = relationship("DBSongListInfo", back_populates="listScore")
+    user = relationship("DBUserInfo", back_populates="listScore")
 
-
-    def __init__(self, songListID, score):
+    def __init__(self, songListID, userID, score):
         self.songListID = songListID
+        self.userID = userID
         self.score = score
 
 
@@ -106,6 +109,7 @@ class DBTags(Base):
     tagFreq = Column(Integer, nullable=False)
     order = Column(Integer, nullable=False)
     tagSelected = Column(Boolean, nullable=False)
+
     user = relationship("DBUserInfo", back_populates="tags")
 
     def __init__(self, userID, tagID, tagType, tagFreq, order, tagSelected):

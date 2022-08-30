@@ -26,7 +26,7 @@ def initUser(User: UserInfo, db: Session = Depends(get_db)):
     
     newUser = DBUserInfo(
         userID = User.userID,
-        userName = User.userName,
+        userEmail = User.userEmail,
         betweenType = User.betweenType,
         withinType = User.withinType
     )
@@ -35,3 +35,17 @@ def initUser(User: UserInfo, db: Session = Depends(get_db)):
     db.commit()
 
     return newUser
+
+
+@router.get("/getUser")
+def getUser(email: str, db: Session = Depends(get_db)):
+    DB_User = db.query(DBUserInfo).filter(DBUserInfo.userEmail == email).first()
+    if DB_User:
+        return {"userID": DB_User.userID}
+    else:
+        return None
+
+@router.get("/getAllUser")
+def getUser(db: Session = Depends(get_db)):
+    DB_User = db.query(DBUserInfo).all()
+    return DB_User

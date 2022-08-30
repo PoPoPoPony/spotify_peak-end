@@ -11,7 +11,7 @@ export function UpdateSongListElem(ElemObj) {
         splendidScore: ElemObj.splendidScore,
         likeScore: ElemObj.likeScore,
         addSongList: ElemObj.addSongList,
-        order: ElemObj.order
+        order: ElemObj.order,
     })
 
 

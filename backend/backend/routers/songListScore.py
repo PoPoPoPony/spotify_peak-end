@@ -29,6 +29,7 @@ def updateSongListScore(list_score: SongListScore, db: Session = Depends(get_db)
     if not DB_list_score:
         newListScore = DBSongListScore(
             songListID = list_score.songListID,
+            userID = list_score.userID,
             score = list_score.score,
         )
 
@@ -38,4 +39,11 @@ def updateSongListScore(list_score: SongListScore, db: Session = Depends(get_db)
 
         return newListScore
     else:
-        return DBSongListScore
+        return DB_list_score
+
+
+@router.get("/getSongListScoreLen")
+def getSongListScoreLen(userID:uuid.UUID, db: Session = Depends(get_db)):
+    listScore_ct = db.query(DBSongListScore).filter(DBSongListScore.userID == userID).count()
+
+    return listScore_ct

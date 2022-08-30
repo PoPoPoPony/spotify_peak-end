@@ -44,3 +44,14 @@ def updateSongListInfo(userID: str, listType: str, db: Session = Depends(get_db)
         return newSongList
     else:
         return DB_songList
+
+
+@router.get("/getSongListInfo")
+def getSongListInfo(userID: str, listType: str, db: Session = Depends(get_db)):
+    userID = uuid.UUID(userID)
+    DB_songList = db.query(DBSongListInfo).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType == listType).first()
+
+    if DB_songList:
+        return {"songListID": DB_songList.songListID}
+    else:
+        return None

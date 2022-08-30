@@ -60,3 +60,14 @@ def updateSongListElem(elem: SongListElem, db: Session = Depends(get_db)):
         db.refresh(DB_songListElem)
 
         return DB_songListElem
+
+
+@router.get("/getSongListElem")
+def updateSongListElem(songListID: str, db: Session = Depends(get_db)):
+    DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID, DBSongListElem.trackShowType=='onList').all()
+
+    if DB_songListElem:
+        return {"trackIDsStr": ','.join([x.trackID for x in DB_songListElem])}
+    
+    else:
+        return None

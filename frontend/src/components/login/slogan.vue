@@ -14,7 +14,7 @@ export default {
 
 <style scoped>
 h1 {
-    font-size: 200px;
+    font-size: 7vw;
     color: white;
     text-align: left;
     font-family: 'Reluctant-Aviator'

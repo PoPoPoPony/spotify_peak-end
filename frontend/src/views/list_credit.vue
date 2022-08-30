@@ -9,7 +9,7 @@
                 </el-col>
             </el-row>
             <el-button id="send_btn" type="primary" :disabled='send_disable' @click="send_list_credit">送出</el-button>
-            <div v-if="unauth_show" class="animate__animated animate__fadeInDown">
+            <!-- <div v-if="unauth_show" class="animate__animated animate__fadeInDown">
                 <h1>
                     Thank You!
                     <br>
@@ -17,7 +17,7 @@
                     <br>
                     <v-html>https://www.spotify.com/tw/account/apps/</v-html>
                 </h1>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -26,7 +26,7 @@
 
 <script>
 import {UpdateSongListScore} from '@/apis/backendAPIs/songListScore/update_songList_score'
-
+import {GetSongListScoreLen} from '@/apis/backendAPIs/songListScore/get_songList_score'
 
 export default {
     name: 'list_credit',
@@ -40,7 +40,9 @@ export default {
             credit: 0,
             send_disable: true,
             list_type:0,
-            unauth_show: false
+            unauth_show: false,
+            exp_num : 0,
+            promise: '',
         }
     },
     methods: {
@@ -48,19 +50,29 @@ export default {
             this.send_disable = false
             console.log(val)
         },
-        send_list_credit() {
+        async send_list_credit() {
             if(this.list_type==0) {
-                UpdateSongListScore(this.$store.WD_ID, this.credit).then((res)=>{
+                await UpdateSongListScore(this.$store.state.WD_ID, this.$store.state.userID, this.credit)
+                GetSongListScoreLen(this.$store.state.userID).then((res)=>{
                     let retv = res.data
-                    console.log(retv)
+                    this.redirect(retv)
                 })
+
+
+                // redirect()
             } else if(this.list_type==1) {
-                UpdateSongListScore(this.$store.T_ID, this.credit).then((res)=>{
+                await UpdateSongListScore(this.$store.state.T_ID, this.$store.state.userID, this.credit)
+                GetSongListScoreLen(this.$store.state.userID).then((res)=>{
                     let retv = res.data
-                    console.log(retv)
+                    this.redirect(retv)
                 })
             }
-            if(this.$store.pass_exp_num == 1) {
+
+        },
+
+        redirect(pass_exp_num) {
+            // [TODO] get exp num from DB
+            if(pass_exp_num == 1) {
                 // 1 表示只完成第一個實驗，需要導覽至下一個實驗
                 // within_subject_type: 
                 // 0, 1 -> to seed page
@@ -68,27 +80,37 @@ export default {
                 
                 var new_page = ''
                 
-                if(["0", 0, "1", 1].includes(this.$store.within_subject_type)) {
+                if(["0", "1"].includes(this.$store.state.within_subject_type)) {
                     new_page = 'tags'
-                } else if(["2", 2, "3", 3].includes(this.$store.within_subject_type)) {
+                } else if(["2", "3"].includes(this.$store.state.within_subject_type)) {
                     new_page = 'create_list'
                 }
 
                 this.$router.push({
                     name: new_page,
                     query: {
-                        access_token: this.$store.access_token,
-                        between_subject_type: this.$store.between_subject_type,
-                        within_subject_type: this.$store.within_subject_type,
-                        pass_exp_num: this.$store.pass_exp_num
+                        access_token: this.$store.state.access_token,
+                        between_subject_type: this.$store.state.between_subject_type,
+                        within_subject_type: this.$store.state.within_subject_type,
                     }
                 })
 
-            } else if(this.$store.pass_exp_num == 2) {
-                this.unauth_show = true
-                console.log("Exp Finish. Thank you!")
-
+            } else if(pass_exp_num == 2) {
+                window.location = "https://forms.gle/LGjTEhG7Qeq6Lg5K6"
+            } else if (pass_exp_num == 3) { // 相當於第二次做了一次
+                this.$router.push({
+                    name: 'second_test',
+                    query: {
+                        userID: this.$store.state.userID,
+                        access_token: this.$store.state.access_token,
+                        list_type: 1
+                    }
+                })
+            } else if (pass_exp_num == 4) {
+                window.location = "www.youtube.com"
             }
+            
+            
         }
     }
 }

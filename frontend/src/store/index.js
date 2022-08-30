@@ -1,52 +1,62 @@
 import Vuex from 'vuex'
-import class_num_dict from './class_num'
-
-
-function get_exp_type() {
-  var choosable_lst = [];
-  var min_class_num = Math.min(...Object.values(class_num_dict))
-
-
-  for(var i in Object.keys(class_num_dict)) {
-    if(class_num_dict[i] == min_class_num) {
-      choosable_lst.push(i)
-    }
-  }
-
-  var current_class = choosable_lst[Math.floor(Math.random()*choosable_lst.length)]
-  var between_subject_type = 0
-  var within_subject_type = 0
-
-  if(current_class < 4) {
-    between_subject_type = 0
-    within_subject_type = current_class
-  } else {
-    between_subject_type = 1
-    within_subject_type = current_class-4
-  }
-
-  return [between_subject_type, within_subject_type]
-}
+import createPersistedState from 'vuex-persistedstate'
 
 const store = new Vuex.Store({
+  plugins: [createPersistedState()],
+  
   state: {
-    between_subject_type: 0,
-    within_subject_type:0,
-    access_token:0,
-    pass_exp_num: 0,
+    between_subject_type: '',
+    within_subject_type:'',
+    userID: '',
+    access_token:'',
+    WD_ID: '',
+    T_ID: '',
   },
   mutations: {
-    initial_exp_type() {
-      var result = get_exp_type()
-      store.between_subject_type = result[0]
-      store.within_subject_type = result[1]
-      store.access_token = 0
-      store.pass_exp_num = 0
-    }
+    setWithinType(state, within) {
+      state.within_subject_type = within
+    },
+    setBetweenType(state, between) {
+      state.between_subject_type = between
+    },
+    setAccessToken(state, access_token) {
+      state.access_token = access_token
+    },
+    setUserID(state, userID) {
+      state.userID = userID
+    },
+    setWD_ID(state, ID) {
+      state.WD_ID = ID
+    },
+    setT_ID(state, ID) {
+      state.T_ID = ID
+    },
   },
   actions: {
+    initUserData(context, userData) {
+      context.commit("setAccessToken", userData.access_token)
+      context.commit("setUserID", userData.userID)
+    },
+    initExpType(context, expType) {
+      context.commit("setWithinType", expType.within)
+      context.commit("setBetweenType", expType.between)
+    },
+    
+    initWD_ID(context, ID) {
+      context.commit("setWD_ID", ID)
+    },
+    initT_ID(context, ID) {
+      context.commit("setT_ID", ID)
+    },
+    // initUserID(context, userID) {
+    //   context.commit("setUserID", userID.userID)
+    // }
 
   },
+  getters: {
+    
+  },
+
   modules: {
     
   }

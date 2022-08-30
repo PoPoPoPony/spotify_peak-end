@@ -1,13 +1,15 @@
 import request from '../../utils/request'
 
-export function GetSongList(accessToken, playlist_id) {
+export function GetTracksByID(accessToken, trackIDsStr) {
     let config = {
-        headers: { 
+        headers: {
             "Authorization": "Bearer " + accessToken
         },
-        url: '/playlists/'+String(playlist_id),
+        url: '/tracks',
         method: 'GET',
-
+        params: {
+            "ids": trackIDsStr
+        }
     }
 
     return request(config)
