@@ -47,3 +47,10 @@ def getSongListScoreLen(userID:uuid.UUID, db: Session = Depends(get_db)):
     listScore_ct = db.query(DBSongListScore).filter(DBSongListScore.userID == userID).count()
 
     return listScore_ct
+
+
+@router.get("/getSongListScore")
+def getSongListScoreLen(songListID:uuid.UUID, db: Session = Depends(get_db)):
+    songList = db.query(DBSongListScore).filter(DBSongListScore.songListID == songListID).first()
+
+    return songList.score

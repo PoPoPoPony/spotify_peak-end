@@ -71,3 +71,25 @@ def updateSongListElem(songListID: str, db: Session = Depends(get_db)):
     
     else:
         return None
+
+
+@router.get("/getElemByRule")
+# 目前暫定計分方式 : 只看like
+def getElemByRule(songListID: str, ruleType:str, num: int, db: Session = Depends(get_db)):
+    DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID, DBSongListElem.trackShowType=='onList').all()
+
+    # rulType : like、dislike、end
+    if ruleType=='like':
+        likeScores = [x.likeScore for x in DB_songListElem]
+        likeScores.sort(reverse=True)
+        return likeScores[:num]
+
+    elif ruleType=='dislike':
+        likeScores = [x.likeScore for x in DB_songListElem]
+        likeScores.sort()
+        return likeScores[:num]
+
+    elif ruleType=='end':
+        DB_songListElem.sort(key=lambda x: x.order)
+        likeScores = [x.likeScore for x in DB_songListElem]
+        return likeScores[-num:]

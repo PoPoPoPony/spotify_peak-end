@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from ctypes.wintypes import INT
+from fastapi import APIRouter, Query
 import requests
 import uuid as uuidPkg
 from ..models.user import UserInfo
@@ -6,6 +7,7 @@ from ..db_model.database import SessionLocal
 from ..db_model.models import DBUserInfo
 from fastapi import Depends
 from sqlalchemy.orm import Session
+from typing import List, Union
 
 
 router = APIRouter(
@@ -46,6 +48,21 @@ def getUser(email: str, db: Session = Depends(get_db)):
         return None
 
 @router.get("/getAllUser")
-def getUser(db: Session = Depends(get_db)):
+def getAllUser(db: Session = Depends(get_db)):
     DB_User = db.query(DBUserInfo).all()
     return DB_User
+
+
+@router.get("/getUsers")
+def getUsers(expTypes: Union[List[str], None] = Query(default=None), db: Session = Depends(get_db)):
+    print(expTypes)
+    expTypes = [x.split('_') for x in expTypes]
+    retv = []
+    for expType in expTypes:
+        DB_User = db.query(DBUserInfo.userID).filter(DBUserInfo.betweenType == expType[0], DBUserInfo.withinType == expType[1]).all()
+        retv.extend(DB_User)
+
+    if len(retv)>0:
+        return retv
+    else:
+        return None
