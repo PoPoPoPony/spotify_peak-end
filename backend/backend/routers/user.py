@@ -59,7 +59,7 @@ def getUsers(expTypes: Union[List[str], None] = Query(default=None), db: Session
     expTypes = [x.split('_') for x in expTypes]
     retv = []
     for expType in expTypes:
-        DB_User = db.query(DBUserInfo.userID).filter(DBUserInfo.betweenType == expType[0], DBUserInfo.withinType == expType[1]).all()
+        DB_User = db.query(DBUserInfo).filter(DBUserInfo.betweenType == expType[0], DBUserInfo.withinType == expType[1]).all()
         retv.extend(DB_User)
 
     if len(retv)>0:

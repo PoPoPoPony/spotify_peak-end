@@ -43,3 +43,11 @@ def updateTrackInfo(tag: Tags, db: Session = Depends(get_db)):
         return newTag
     else:
         return DB_tag
+
+
+
+@router.get("/getAllTags",)
+def getAllTags(userID: str, db: Session = Depends(get_db)):
+    DB_tags = db.query(DBTags).filter(DBTags.userID == userID).all()
+
+    return DB_tags

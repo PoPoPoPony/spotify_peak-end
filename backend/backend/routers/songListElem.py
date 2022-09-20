@@ -93,3 +93,14 @@ def getElemByRule(songListID: str, ruleType:str, num: int, db: Session = Depends
         DB_songListElem.sort(key=lambda x: x.order)
         likeScores = [x.likeScore for x in DB_songListElem]
         return likeScores[-num:]
+
+
+
+@router.get("/getAllSongs")
+def getAllSongs(songListID: str, containDelete:bool, db: Session = Depends(get_db)):
+    if containDelete:
+        DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID).all()
+    else:
+        DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID, DBSongListElem.trackShowType=='onList').all()
+
+    return DB_songListElem

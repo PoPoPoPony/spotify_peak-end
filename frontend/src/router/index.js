@@ -43,7 +43,7 @@ const routes = [
 		path: '/second_test',
 		name: 'second_test',
 		component: second_test
-	}
+	},
 ]
 
 const router = createRouter({

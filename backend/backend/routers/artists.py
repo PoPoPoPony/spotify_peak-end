@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 import requests
 import uuid as uuidPkg
 from ..models.artists import Artists
@@ -7,7 +7,7 @@ from ..db_model.models import DBArtists
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-
+from typing import List, Union
 
 router = APIRouter(
     prefix='/api/v1/artist',
@@ -40,4 +40,15 @@ def updateArtist(Artist: Artists, db: Session = Depends(get_db)):
     else:
         return DB_artist
 
-    
+@router.get("/getArtistInfos")
+def getArtistInfos(artistIDs: Union[List[str], None] = Query(default=None), db: Session = Depends(get_db)):
+    DB_artists = db.query(DBArtists).filter(DBArtists.artistID.in_(artistIDs)).all()
+
+    return DB_artists
+
+
+@router.get("/getArtistInfo")
+def getArtistInfo(artistID: str, db: Session = Depends(get_db)):
+    DB_artist = db.query(DBArtists).filter(DBArtists.artistID==artistID).first()
+
+    return DB_artist

@@ -1,7 +1,9 @@
 import requests
 import json
-from utils.utils import diffIntent
+from utils.transfer2CSV import transfer
+from analyze import diffIntent
 
 
 if __name__=="__main__":
-    diffIntent()
+    # diffIntent()
+    transfer()

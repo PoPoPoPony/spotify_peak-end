@@ -1,11 +1,12 @@
 import requests
-import json
-from typing import List
-from ..user import User
-from .draw import drawDiffTargetHist
+
+from utils.utils import getUserInfos, getSongListScore, getSongListIDs
+from user import User
+from utils.draw import drawDiffTargetHist
+
+
 
 baseURL = "http://ponyia.ddns.net:8080/api/v1/"
-
 
 def diffIntent():
     classUsers = []
@@ -13,8 +14,9 @@ def diffIntent():
         users = []
 
         # 不同搜尋目的的歌曲分數差異
+        # betweenType_withinType
         expTypes = [f'{i}_{x}' for x in range(4)]
-        userIDs = getUserIDs(expTypes)
+        userIDs = [x['userID'] for x in getUserInfos(expTypes)]
         temp = getSongListIDs(userIDs)
 
         for userID, songListIDs in temp.items():
@@ -44,34 +46,3 @@ def diffIntent():
         classUsers.append(users)
     
     drawDiffTargetHist(*classUsers)
-
-
-
-
-def getUserIDs(expTypes: List) -> List:
-    data = requests.get(baseURL+'user/getUsers', params={'expTypes': expTypes})
-
-    userIDs = [x['userID'] for x in data.json()]
-
-    return userIDs
-
-
-def getSongListIDs(userIDs: List) -> dict:
-    store = {}
-    for userID in userIDs:
-        # storeIDs[userID] = []
-        data = requests.get(baseURL+'songListInfo/getSongListInfo', params={'userID': userID, 'listType': 'Weekly_Discovery'})
-        WD_ID = data.json()['songListID']
-
-        data = requests.get(baseURL+'songListInfo/getSongListInfo', params={'userID': userID, 'listType': 'Tags'})
-        T_ID = data.json()['songListID']
-
-        store[userID] = {'WD_ID': WD_ID, 'T_ID': T_ID}
-    
-    return store
-
-def getSongListScore(songListID):
-    data = requests.get(baseURL+'songListScore/getSongListScore', params={'songListID': songListID})
-    score = data.json()
-
-    return score
