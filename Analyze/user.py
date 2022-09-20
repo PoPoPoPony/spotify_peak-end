@@ -35,5 +35,12 @@ class User:
         self.TsongInfos = songs
 
 
+    def setWDDeletedSongNum(self, num:int):
+        self.WDDeletedSongNum = num
+
+    def setTDeletedSongNum(self, num:int):
+        self.TDeletedSongNum = num
+
+
     def setTagInfos(self, tagInfos:List):
         self.tagInfos = tagInfos

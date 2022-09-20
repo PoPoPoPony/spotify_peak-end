@@ -30,8 +30,14 @@ def transfer():
         WD_ID = user.WD_ID
         T_ID = user.T_ID
 
-        user.setWDSongInfos(getSongInfos(WD_ID))
-        user.setTSongInfos(getSongInfos(T_ID))
+        WDSongListInfos, WDDeletedSongNum = getSongInfos(WD_ID)
+        user.setWDSongInfos(WDSongListInfos)
+        user.setWDDeletedSongNum(WDDeletedSongNum)
+
+        TSongListInfos, TDeletedSongNum = getSongInfos(T_ID)
+        user.setTSongInfos(TSongListInfos)
+        user.setTDeletedSongNum(TDeletedSongNum)
+
         user.setSongListScores(getSongListScore(WD_ID), getSongListScore(T_ID))
         tagInfos = getAllTags(user.userID)
 
@@ -49,6 +55,7 @@ def transfer():
     within = []
     between = []
     songListType = []
+    deleteNum = []
     songTitle = []
     artist = []
     likeScore = []
@@ -66,9 +73,10 @@ def transfer():
         email.extend([user.userEmail]*(WD_len+T_len))
         within.extend([user.withinType]*(WD_len+T_len))
         between.extend([user.betweenType]*(WD_len+T_len))
-
+        
         # WD SongScores
         songListType.extend(["Weekly discovery"]*WD_len)
+        deleteNum.extend([user.WDDeletedSongNum]*WD_len)
         for song in user.WDsongInfos:
             songTitle.append(song.songTitle)
             artist.append(song.artistName)
@@ -80,6 +88,7 @@ def transfer():
 
         # T SongScores
         songListType.extend(["Tag"]*T_len)
+        deleteNum.extend([user.TDeletedSongNum]*T_len)
         for song in user.TsongInfos:
             songTitle.append(song.songTitle)
             artist.append(song.artistName)
@@ -94,14 +103,15 @@ def transfer():
 
     data = {
         "email": email,
-        "within": within,
-        "between": between,
+        "withinType": within,
+        "betweenType": between,
         "songListType": songListType,
+        "deleteSongNum": deleteNum,
         "songTitle": songTitle,
-        "artist": artist,
+        "artistName": artist,
         "likeScore": likeScore,
         "splendidScore": splendidScore, 
-        "add": add, 
+        "addToSongList": add, 
         "order": order,
         "songListScore": songListScore, 
         "tags": tags
@@ -113,7 +123,9 @@ def transfer():
 def getSongInfos(songListID:str) -> List[Song]:
     songs = []
 
-    songInfos = getAllSongs(songListID, containDelete=False)
+    allSongInfos = getAllSongs(songListID, containDelete=True)
+    songInfos = [x for x in allSongInfos if x['trackShowType']=='onList']
+    deleteNum = len(allSongInfos)-len(songInfos)
 
     for i in range(len(songInfos)):
         songID = songInfos[i].pop('trackID')
@@ -129,7 +141,7 @@ def getSongInfos(songListID:str) -> List[Song]:
         s = Song(**songInfos[i])
         songs.append(s)
 
-    return songs
+    return songs, deleteNum
 
 
 
