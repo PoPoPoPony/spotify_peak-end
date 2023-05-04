@@ -3,7 +3,7 @@
         <el-table :data="song_lst" :style="table_style" :cell-style="{height: '40px', 'font-size': '1.25vw'}" :header-cell-style="{height: '60px', padding: '5px'}" max-height='50vh' :key="rerender">
             <el-table-column prop="listened" label="聽過" width="100">
                 <template #default="scope">
-                    <el-checkbox-group v-model="listened_lst">
+                    <el-checkbox-group v-model="listened_lst" style="zoom:2;">
                         <el-checkbox :label='scope.$index' :disabled='!delete_not_complete' size='medium' @change="delete_change">{{ }}</el-checkbox>
                     </el-checkbox-group>
                 </template>
