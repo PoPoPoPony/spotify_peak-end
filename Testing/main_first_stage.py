@@ -31,7 +31,7 @@ def main():
     
     # save testing user info
     testing_user_dict = vars(testing_user)
-    with open(os.path.join(f"users_json/first/{testing_user.user_name}.json"), mode='w') as f:
+    with open(os.path.join(f"users_json/first/{testing_user.user_name}.json"), mode='w', encoding='utf-8') as f:
         json.dump(testing_user_dict, f, indent=4, sort_keys=True, ensure_ascii=False)
 
 
