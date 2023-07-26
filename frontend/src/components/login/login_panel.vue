@@ -17,11 +17,11 @@
                     </h3>
                 </el-row>
                 <el-row style="padding-bottom: 20px">
-                    <el-input placeholder="請輸入常用信箱" v-model="userEmail" clearable @change='userEmailChanged'></el-input>
+                    <el-input placeholder="請輸入常用信箱" v-model="userEmail" clearable  @change="userEmailChanged"></el-input>
                 </el-row>
                 <el-row>
                     <el-col :xs="{'span':'5', 'offset': '3'}" :sm="{'span':'5', 'offset': '6'}" :lg="{'span': '5', 'offset': '7'}">
-                        <el-button type="success" style="font-size: 1vw" size='small' @click="onSecondTest" :disabled='!userEmailInputed'>
+                        <el-button type="success" style="font-size: 1vw" size='small' @click="onSecondTest" :disabled='second_test_disable'>
                             <el-icon style="font-size:1vw"><ArrowRightBold /></el-icon>
                             <span style="vertical-align: middle;"> 第二次測驗 </span>
                         </el-button>
@@ -79,11 +79,14 @@
                 <el-row style="margin-top: 1.5vw; padding-bottom: 2vw">
                     <el-col :xs="{'span':'1', 'offset': '7'}" :sm="{'span':'3', 'offset': '9'}" :lg="{'span': '4', 'offset': '9'}">
                         <!--  :disabled="!GroupSelected || !userNameInputed"  -->
-                        <el-button v-if="GroupSelected && userEmailInputed" type="primary" style="font-size: 1.5vw; padding: 0.7vw 0.9vw 0.7vw 0.9vw;">
-                            <el-link :href="backend_url" :underline="false" style="color: white; font-size: 1.5vw" >Start</el-link>
+                        <el-button v-if="GroupSelected && userEmailInputed" type="primary" style="padding: 0; margin: 0">
+                            <el-link :href="backend_url" :underline="false" style="color: white; font-size: 1.5vw; padding: 0.7vw 0.9vw 0.7vw 0.9vw;" >Start</el-link>
                         </el-button>
                     </el-col>
                 </el-row>
+
+                <!-- Test@gmail.com -->
+
                 <!-- <el-row>
                     <el-col :span="11">
                         <hr style="border: 1px solid black;"/>
@@ -136,13 +139,16 @@ export default {
             backend_url: "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth",
             exp_type: 0,
             GroupSelected: false,
+            // for testing
+            // userEmail: "",
             userEmail: "",
             userEmailInputed: false,
+            // userEmailInputed: true,
             expObject : {
                 "within": "0",
                 "between":"0",
             },
-            secondTestDisable: true,
+            second_test_disable: true
         }
     },
     created() {
@@ -182,11 +188,29 @@ export default {
             this.setBackendURL()
             this.GroupSelected = true
         },
-        userEmailChanged() {
+        async userEmailChanged() {
+            let DB_email=''
+            await GetUser(this.userEmail).then((res)=>{
+                let retv = res.data
+                DB_email = retv
+            })
+
             if(this.isEmail(this.userEmail.trim())) {
                 this.userEmailInputed = true
+                if(DB_email) {
+                    this.userEmailInputed = false
+                    this.second_test_disable = false
+                    ElNotification({
+                        title: 'Warning',
+                        message: 'This Email is Already in the DataBase!',
+                        type: 'warning',
+                    })
+                } else {
+                    this.second_test_disable = true
+                }
             } else {
                 this.userEmailInputed = false
+                this.second_test_disable = true
                 ElNotification({
                     title: 'Error',
                     message: 'Wrong Email Format!',
@@ -218,15 +242,18 @@ export default {
             let params="&between_subject_type=" + this.$store.state.between_subject_type
             params += "&within_subject_type=" + this.$store.state.within_subject_type
             params += "&user_email=" + this.userEmail
+            params += "&period=first"
             this.backend_url+=params
-            console.log(this.backend_url)
+            // console.log(this.backend_url)
         },
         // 做第二次的實驗
         onSecondTest() {
             GetUser(this.userEmail).then((res)=>{
                 let retv = res.data
                 if(retv) {
-                    window.location.assign("http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth2?user_email=" + this.userEmail.trim())
+                    window.location.assign(
+                        "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth2?user_email=" + this.userEmail.trim() + "&period=second"
+                    )
                 } else {
                     ElNotification({
                         title: 'Error',
@@ -238,8 +265,7 @@ export default {
                 console.log('call getUser faild')
                 console.log(err)
             })
-        }
-        
+        },
     }
 }
 </script>

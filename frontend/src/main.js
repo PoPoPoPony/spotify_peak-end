@@ -10,14 +10,17 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VuePlyr from 'vue-plyr'
 import 'vue-plyr/dist/vue-plyr.css'
-
+import VueCookies from 'vue-cookies'
 
 const app = createApp(App)
+
+
+// "volume": 0.3,
 
 app.use(VueAxios, axios)
 app.use(VuePlyr, {plyr: {
     "autoplay": true,
-    "volume": 0.3,
+    "volume": 0.03,
     "speed": { selected: 1, options: [0.75, 1, 1.25] },
     "controls":[
         // 'play-large',
@@ -33,8 +36,11 @@ app.use(VuePlyr, {plyr: {
         // 'fullscreen'
     ]
 }})
+
+
 app.use(store)
 app.use(router)
 app.use(ElementPlus)
+app.use(VueCookies)
 app.mount('#app')
 

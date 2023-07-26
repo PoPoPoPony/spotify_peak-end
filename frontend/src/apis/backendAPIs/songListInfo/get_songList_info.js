@@ -2,7 +2,7 @@ import request from '../../../utils/requestBackend'
 
 
 
-export function GetSongListInfo(userID, listType) {
+export function GetSongListInfo(userID, listType, period) {
     let config = {
         url: '/songListInfo/getSongListInfo',
         method: 'GET',
@@ -11,7 +11,8 @@ export function GetSongListInfo(userID, listType) {
         },
         params:{
             'userID': userID,
-            'listType': listType
+            'listType': listType,
+            'period': period
         }
     }
     return request(config)

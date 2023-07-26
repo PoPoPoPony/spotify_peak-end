@@ -6,6 +6,7 @@ class SongListInfo(BaseModel):
     songListID: UUID = Field(default_factory=uuid4)
     userID: UUID = Field(default_factory=uuid4)
     listType: str
+    period: str
 
     class Config:
         orm_mode=True

@@ -1,9 +1,9 @@
 <template>
     <div>
         <div id='bg'/>
-        <el-row justify="center" style="margin-top: 100px">
+        <el-row justify="center" style="margin-top: 8vh">
             <el-col :span='18'>
-                <h2 style="color: white; font-size: 30px;">
+                <h2 style="color: white; font-size: 2vw">
                     播放列表
                 </h2>
                 <songTable1 :table_data='song_lst' :song_not_complete='song_not_complete' @loadSource='loadSource'  @like_change='like_change' @splendid_change='splendid_change' @completeOneSong="completeOneSongT1" @play_music='play_music' @pause_music='pause_music' ref="T1" :key='rerender'/>
@@ -11,7 +11,7 @@
         </el-row>
         <el-row style="margin-top: 20px">
             <el-col :span='4' :offset='10'>
-                    <el-button type="primary" style="font-size: 1.3vw" v-if='ct==3' @click="startHandler" :disabled='ct<3' :key='startRerender' class="animate__animated animate__slideInUp">開始正式測驗</el-button>
+                <el-button type="primary" style="font-size: 1.3vw" v-if='ct==3' @click="startHandler" :disabled='ct<3' :key='startRerender' class="animate__animated animate__slideInUp">開始正式測驗</el-button>
             </el-col>
         </el-row>
         <el-row justify="center" style="margin-top: 50px">
@@ -26,6 +26,13 @@
 // import { song_lst } from '@/utils/test_songs'
 import songTable1 from '@/components/song_list/song_table'
 import player from '@/components/song_list/player'
+import {GetRecentlyPlayed} from '@/apis/SpotifyAPIs/get_recently_played'
+import {GetSavedTracks} from '@/apis/SpotifyAPIs/get_saved_tracks'
+import {UpdateUserRecentTracks} from '@/apis/backendAPIs/tracks/update_user_recent_track'
+import {CheckRecent, CheckSaved} from '@/apis/backendAPIs/tracks/check_user_exist'
+import {UpdateUserSavedTracks} from '@/apis/backendAPIs/tracks/update_user_saved_track'
+import {UpdateBasicInfo} from '@/utils/functools'
+import {ElLoading} from 'element-plus'
 
 
 export default {
@@ -35,6 +42,7 @@ export default {
         player,
     },
     created(){
+        
         this.$store.isExercise = true
         let urlParams = new URLSearchParams(window.location.search)
 
@@ -51,10 +59,10 @@ export default {
         }
 
         this.$store.dispatch("initExpType", expType)
+        this.$store.dispatch("initPeriod", urlParams.get('period'))
 
         this.redirectPage = urlParams.get('redirect_page')
-        this.add_song_sendable = true
-
+        
         this.song_lst = [
             {
                 listened: 0,
@@ -90,10 +98,35 @@ export default {
                 add: 0,
             },
         ]
+        
     },
 
     mounted() {
-        this.$refs.T1.changeStateOnDeleteComplete()
+        const loadingInstance = ElLoading.service({
+            'lock': false,
+            'fullscreen': true,
+            'text': 'Fetching data',
+            'background': 'rgba(0, 0, 0, 0.7)',
+        })
+        setTimeout(() => {
+            loadingInstance.close()
+        }, 1000)
+        // 3000
+        // 收集近3個月聆聽的歌曲
+        CheckRecent(this.$store.state.userID).then((res)=>{
+            let retv = res.data
+            if(!retv) {
+                this.updateRecentTracks()
+            }
+        })
+
+        // 收集近3個月收藏的歌曲
+        CheckSaved(this.$store.state.userID).then((res)=>{
+            let retv = res.data
+            if(!retv) {
+                this.updateSavedTracks()
+            }
+        })
     },
 
     data() {
@@ -134,6 +167,7 @@ export default {
             this.player_rerender+=1
         },
         play_music(idx) {
+            console.log(idx)
             this.currentPlayingIdx = idx
             this.$refs.player.$refs.plyr.player.play()
         },
@@ -188,6 +222,113 @@ export default {
 
         song_ended(idx) {
             this.$refs.T1.song_ended(idx)
+        },
+
+        getThresholdTime() {
+            let today = new Date();
+            let newDay = new Date(
+                today.getFullYear(),
+                today.getMonth()-3,
+                today.getDate(),
+                today.getHours(),
+                today.getMinutes(),
+                today.getSeconds(),
+                today.getMilliseconds()
+            )
+
+            return newDay
+        },
+        async updateRecentTracks() {
+            var unix_time = this.getThresholdTime().getTime()
+            var recent_play_tracks = []
+            var accumulate_tracks = {}
+            var objs = {}
+
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                let retv = await GetRecentlyPlayed(this.$store.state.access_token, unix_time)
+                retv = retv.data
+                recent_play_tracks.push(...retv['items'])
+
+                if (retv['next'] === null) {
+                    break
+                } else {
+                    unix_time = parseInt(retv['cursors']['after'])
+                }
+            }
+
+            if (recent_play_tracks.length > 0) {
+                for(let i=0; i<recent_play_tracks.length; i++) {
+                    let song_id = recent_play_tracks[i]['track']['id']
+                    if (song_id in accumulate_tracks) {
+                        accumulate_tracks[song_id]+=1
+                    } else {
+                        accumulate_tracks[song_id]=1
+                        objs[song_id] = {
+                            "artist_id": recent_play_tracks[i]['track']['artists'][0]['id'],
+                            "artist": recent_play_tracks[i]['track']['artists'][0]['name'],
+                            "song_id": song_id,
+                            "title": recent_play_tracks[i]['track']['name'],
+                            "track_popularity": recent_play_tracks[i]['track']['popularity'],
+                            "song_preview_url": recent_play_tracks[i]['track']['preview_url']
+                        }
+                    }
+                }
+
+                await UpdateBasicInfo(this.$store.state.access_token, Object.values(objs))
+
+                // for(var key in accumulate_tracks) {
+                //     UpdateUserRecentTrack(this.$store.state.userID, key, accumulate_tracks[key])
+                // }
+                await UpdateUserRecentTracks(this.$store.state.userID, Object.keys(accumulate_tracks), Object.values(accumulate_tracks))
+                console.log(accumulate_tracks)
+            }
+            
+        },
+        async updateSavedTracks() {
+            var all_saved_tracks = []
+            let offset = 0
+            let time_threshold = this.getThresholdTime().toISOString()
+
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                let retv = await GetSavedTracks(this.$store.state.access_token, offset)
+                retv = retv.data
+                all_saved_tracks.push(...retv['items'])
+
+                if (retv['next'] === null) {
+                    break
+                } else {
+                    offset = parseInt(retv['next'].slice(
+                        retv['next'].indexOf("offset=")+7,
+                        retv['next'].indexOf("&limit")
+                    ))
+                }
+            }
+
+            if (all_saved_tracks.length > 0) {
+                let objs = []
+                for(let i=0; i<all_saved_tracks.length; i++) {
+                    let add_at = all_saved_tracks[i]['added_at']
+                    if (add_at>=time_threshold) {
+                        let song_id = all_saved_tracks[i]['track']['id']
+                        let obj = {
+                            "artist_id": all_saved_tracks[i]['track']['artists'][0]['id'],
+                            "artist": all_saved_tracks[i]['track']['artists'][0]['name'],
+                            "song_id": song_id,
+                            "title": all_saved_tracks[i]['track']['name'],
+                            "track_popularity": all_saved_tracks[i]['track']['popularity'],
+                            "song_preview_url": all_saved_tracks[i]['track']['preview_url']
+                        }
+                        objs.push(obj)
+                    }
+                }
+                await UpdateBasicInfo(this.$store.state.access_token, objs)
+                let saved_song_ids = objs.map(x=>x['song_id'])
+                let saved_song_ids_str = saved_song_ids.join(',')
+                await UpdateUserSavedTracks(this.$store.state.userID, saved_song_ids_str)
+
+            }
         },
     }
 }

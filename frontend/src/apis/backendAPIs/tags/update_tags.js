@@ -24,3 +24,22 @@ export function UpdateTags(ElemObj) {
 
     return request(config)
 }
+
+
+export function UpdateSeveralTags(ElemObjs) {
+    let data = JSON.stringify({
+        'tags': ElemObjs
+    })
+
+    let config = {
+        url: '/tags/updateSeveralTags',
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        data: data
+    }
+    
+
+    return request(config)
+}

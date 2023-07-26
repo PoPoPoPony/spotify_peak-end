@@ -6,12 +6,12 @@
                 <h2 style="color: white; font-size: 2vw;">
                     播放列表
                 </h2>
-                <secondTestSongTable v-if='songTableShow' :table_data='currentSong' :currentSongIdx='currentSongIdx' :song_not_complete='song_not_complete[currentSongIdx]' @loadSource='loadSource' @completeOneSong="completeOneSong" @play_music='play_music' @pause_music='pause_music' :key='rerender' ref='T1'/>
+                <secondTestSongTable v-if='songTableShow' :table_data='currentSong' :currentSongIdx='currentSongIdx' :song_not_complete='song_not_complete' @loadSource='loadSource' @completeOneSong="completeOneSong" @play_music='play_music' @pause_music='pause_music' :key='rerender' ref='T1'/>
             </el-col>
         </el-row>
         <el-row justify="center" style="margin-top: 50px">
             <el-col :span='18'>
-                <player v-show="true" v-if="current_song_source!=''" :key='player_rerender' :source='current_song_source' :idx='currentPlayingIdx' @song_listened='song_listened' @song_ended='song_ended' class="animate__animated animate__fadeInUp" ref='player'/>
+                <player v-show="true" v-if="current_song_source!=''" :key='player_rerender' :source='current_song_source' :isAuto="true" :idx='currentPlayingIdx' @song_listened='song_listened' @song_ended='song_ended' class="animate__animated animate__fadeInUp" ref='player'/>
             </el-col>
         </el-row>
     </div>
@@ -21,13 +21,13 @@
 // import { song_lst } from '@/utils/test_songs'
 import secondTestSongTable from '@/components/song_list/second_test_song_table'
 import player from '@/components/song_list/player'
-import {UpdateSongListElem} from '@/apis/backendAPIs/songListElem/update_songList_elem'
+// import {UpdateSongListElem} from '@/apis/backendAPIs/songListElem/update_songList_elem'
 import {GetSongListElem} from '@/apis/backendAPIs/songListElem/get_songList_elem'
 import {GetSongListInfo} from '@/apis/backendAPIs/songListInfo/get_songList_info'
 import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 import {GetTracksByID} from '@/apis/SpotifyAPIs/get_tracks_by_ID'
-
-
+import {GetSongListScoreLen} from '@/apis/backendAPIs/songListScore/get_songList_score'
+import {GetTrackInfos} from '@/apis/backendAPIs/tracks/get_track_infos'
 
 export default {
     name: 'second_test',
@@ -38,6 +38,7 @@ export default {
     async created(){
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
+        this.secondaryType = urlParams.get('secondaryType')
 
         let userObj = {
             "userID": urlParams.get('userID'),
@@ -45,43 +46,62 @@ export default {
         }
 
         this.$store.dispatch("initUserData", userObj)
+        this.$store.dispatch("initPeriod", urlParams.get('period'))
 
         // 在資料庫中init新歌單
-        let firstType = ''
         if(this.list_type==0) {
-            firstType = 'Weekly_Discovery'
-            UpdateSongListInfo(this.$store.state.userID, firstType+'2').then((res)=> {
+            this.first_type = "Weekly_Discovery"
+            UpdateSongListInfo(this.$store.state.userID, this.first_type, this.$store.state.period).then((res)=> {
                 let retv = res.data
                 this.$store.dispatch("initWD_ID", retv.songListID)
-                console.log(retv.songListID)
             })
         } else {
-            firstType = 'Tags'
-            UpdateSongListInfo(this.$store.state.userID, firstType+'2').then((res)=> {
+            this.first_type = "Tags"
+            UpdateSongListInfo(this.$store.state.userID, this.first_type, this.$store.state.period).then((res)=> {
                 let retv = res.data
                 this.$store.dispatch("initT_ID", retv.songListID)
+                
             })
         }
-        
+
         // 獲取第一次實驗歌單
-        await GetSongListInfo(this.$store.state.userID, firstType).then((res)=>{
+        await GetSongListInfo(this.$store.state.userID, this.first_type, "first").then((res)=>{
             let retv = res.data
             this.firstTestSongListID = retv['songListID']
         })
 
-        await GetSongListElem(this.firstTestSongListID).then((res)=>{
+        await GetSongListScoreLen(this.$store.state.userID).then((res)=>{
             let retv = res.data
-            if (retv) {
-                this.trackIDsStr = retv['trackIDsStr']
-            } else {
-                console.log("No songs in DB")
-            }
-            
+            // pass_exp_num=2 -> 正在進行第二次的第一個歌單
+            // pass_exp_num=3 -> 正在進行第二次的第二個歌單
+            this.pass_exp_num = retv
         })
-        await this.getTracksByID()
+
+        // console.log(this.firstTestSongListID, this.pass_exp_num)
+        // console.log("st", this.secondaryType, "pen", this.pass_exp_num)
+        
+
+        // 獲取排序後的歌單Str
+        if (this.pass_exp_num==2) {
+            if (["1", "3"].indexOf(this.secondaryType)>=0) {
+                this.GetSongData(this.firstTestSongListID, 0)
+            } else {
+                this.GetSongData(this.firstTestSongListID, 1)
+            }
+        } else {
+            if (["1", "3"].indexOf(this.secondaryType)>=0) {
+                this.GetSongData(this.firstTestSongListID, 1)
+            } else {
+                this.GetSongData(this.firstTestSongListID, 0)
+            }
+        }
+
     },
     data() {
         return {
+            pass_exp_num: 0,
+            first_type:'',
+            secondaryType: 0,
             // for player
             current_song_source: '',
             
@@ -92,7 +112,7 @@ export default {
             rerender: 0,
 
             // need to delete songs first
-            song_not_complete: [],
+            song_not_complete: true,
 
             player_rerender: 0,
 
@@ -117,7 +137,6 @@ export default {
             currentSong: [],
             currentSongIdx: 0,
             firstTestSongListID: '',
-            trackIDsStr: '',
         }
     },
     methods: {
@@ -134,93 +153,59 @@ export default {
             this.currentPlayingIdx = idx
             this.$refs.player.$refs.plyr.player.pause()
         },
-        like_change(like_lst) {
-            if(like_lst.includes(0)) {
-                this.like_sendable = false
-            }
-            else {
-                for(var i=0; i<like_lst.length; i++) {
-                    this.song_lst[i]['like'] = like_lst[i]
-                }
-                this.like_sendable = true
-            }
-        },
-        splendid_change(splendid_lst) {
-            if(splendid_lst.includes(0)) {
-                this.splendid_sendable = false
-            }
-            else {
-                for(var i=0; i<splendid_lst.length; i++) {
-                    this.song_lst[i]['splendid'] = splendid_lst[i]
-                }
-                this.splendid_sendable = true
-            }
-        },
 
         async confirm_send() {
             this.send_dialog_visible = false
-            console.log(this.song_lst)
-
-            let songListID = ''
-            if(this.list_type==0){
-                songListID = this.$store.state.WD_ID
-            } else {
-                songListID = this.$store.state.T_ID
-            }
-
-
-            for(var i=0; i<this.song_lst.length; i++) {
-                var elemObj = {
-                    'songListID': songListID,
-                    'userID': this.$store.state.userID,
-                    'trackID': this.song_lst[i]['song_id'],
-                    'trackShowType': 'onList',
-                    'splendidScore': this.song_lst[i]['splendid'],
-                    'likeScore': this.song_lst[i]['like'],
-                    'addSongList': false,
-                    'order': i,
-                }
-                await UpdateSongListElem(elemObj).then((res)=>{
-                    console.log(res)
-                })
-            }
 
             this.$router.push({
                 name: 'list_credit', 
                 query: {
-                    list_type: this.list_type
+                    list_type: this.list_type,
+                    secondaryType: this.secondaryType
                 },
             })
         },
-        completeOneSong(val_lst) {
-            this.song_not_complete[this.currentPlayingIdx] = true
-            var like = val_lst[0]
-            var splendid = val_lst[1]
 
-            this.song_lst[this.currentSongIdx]["splendid"] = splendid
-            this.song_lst[this.currentSongIdx]["like"] = like
+        completeOneSong() {
+            this.song_not_complete = false
+
             if(this.currentSongIdx<this.song_limit-1) {
                 this.currentSongIdx+=1
                 this.currentSong[0] = this.song_lst[this.currentSongIdx]
+                this.song_not_complete = true
                 this.rerender+=1
             } else {
                 this.confirm_send()
             }
 
         },
-        song_listened(idx) {
-            console.log("activate")
-            console.log(idx)
-            this.song_not_complete[idx] = false
+        song_listened() {
+            // console.log("activate")
+            // console.log(idx)
+            this.song_not_complete = false
         },
-        song_ended(idx) {
-            this.song_not_complete[idx] = false
-            this.$refs.T1.song_ended(idx)
+        song_ended() {
+            this.song_not_complete = false
+            this.$refs.T1.song_ended()
         },
-        async getTracksByID() {
-            await GetTracksByID(this.$store.state.access_token, this.trackIDsStr).then((res)=> {
+
+        async GetSongData(song_list_id, order) {
+            let trackIDsStr = ''
+            await GetSongListElem(song_list_id, order).then((res)=>{
+                let retv = res.data
+                if (retv) {
+                    trackIDsStr = retv['trackIDsStr']
+                } else {
+                    console.log("No songs in DB")
+                }
+            })
+
+            // [0720] 先查SpotifyAPI，有缺preview_url的話再走DB的TracksInfo.preview
+            await GetTracksByID(this.$store.state.access_token, trackIDsStr).then((res)=> {
                 let retv = res.data['tracks']
+                // console.log(retv)
                 for(let i of retv) {
+                    // 若SpotifyAPI少了preview_url
                     var temp_obj = {
                         title: i.name,
                         artist: i.artists[0].name,
@@ -232,14 +217,22 @@ export default {
                         splendid: 0,
                     }
                     this.song_lst.push(temp_obj)
-                    this.song_not_complete.push(true)
                 }
-                this.currentSong.push(this.song_lst[0])
             })
+            
+            // 取DB中預先儲存的preview
+            for (let temp_obj of this.song_lst) {
+                if (!temp_obj['song_preview_url']) {
+                    await GetTrackInfos(temp_obj.song_id).then((res)=> {
+                        let retv = res.data
+                        temp_obj['song_preview_url'] = retv[0].preview
+                    })
+                }
+            }
+            
+            this.currentSong.push(this.song_lst[0])
             this.songTableShow = true
         },
-        
-
     }
 }
 </script>

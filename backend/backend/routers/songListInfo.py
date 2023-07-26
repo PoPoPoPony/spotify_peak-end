@@ -24,9 +24,12 @@ def get_db():
 
 
 @router.post("/updateSongListInfo", response_model=SongListInfo)
-def updateSongListInfo(userID: str, listType: str, db: Session = Depends(get_db)):
+def updateSongListInfo(userID: str, listType: str, period: str, db: Session = Depends(get_db)):
+    if period not in ["first", "second"]:
+        raise HTTPException(409, detail="Error raised")
+        
     userID = uuid.UUID(userID)
-    DB_songList = db.query(DBSongListInfo).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType == listType).first()
+    DB_songList = db.query(DBSongListInfo).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType == listType, DBSongListInfo.period==period).first()
 
     if not DB_songList:
         songListID = uuid.uuid4()
@@ -34,7 +37,8 @@ def updateSongListInfo(userID: str, listType: str, db: Session = Depends(get_db)
         newSongList = DBSongListInfo(
             songListID = songListID,
             userID = userID,
-            listType = listType
+            listType = listType,
+            period = period
         )
 
         db.add(newSongList)
@@ -47,9 +51,9 @@ def updateSongListInfo(userID: str, listType: str, db: Session = Depends(get_db)
 
 
 @router.get("/getSongListInfo")
-def getSongListInfo(userID: str, listType: str, db: Session = Depends(get_db)):
+def getSongListInfo(userID: str, listType: str, period: str, db: Session = Depends(get_db)):
     userID = uuid.UUID(userID)
-    DB_songList = db.query(DBSongListInfo).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType == listType).first()
+    DB_songList = db.query(DBSongListInfo).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType == listType, DBSongListInfo.period == period).first()
 
     if DB_songList:
         return {"songListID": DB_songList.songListID}

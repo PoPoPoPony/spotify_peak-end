@@ -12,34 +12,69 @@ class DBUserInfo(Base):
     userEmail = Column(String, nullable=False)
     betweenType = Column(Integer, nullable=False)
     withinType = Column(Integer, nullable=False)
+    secondaryType = Column(Integer, nullable=False)
 
     tags = relationship("DBTags", back_populates="user")
     songListInfo = relationship("DBSongListInfo", back_populates="user")
     songListElem = relationship("DBSongListElem", back_populates="user")
-    audioFeatures = relationship("DBAudioFeatures", back_populates="user")
+    userAudioFeatures = relationship("DBUserAudioFeatures", back_populates="user")
     listScore = relationship("DBSongListScore", back_populates="user")
+    userSavedTracks = relationship("DBUserSavedTracks", back_populates="user")
+    userRecentTracks = relationship("DBUserRecentTracks", back_populates="user")
 
-    def __init__(self, userID, userEmail, betweenType, withinType):
+    def __init__(self, userID, userEmail, betweenType, withinType, secondaryType):
         self.userID = userID
         self.userEmail = userEmail
         self.betweenType = betweenType
         self.withinType = withinType
+        self.secondaryType = secondaryType
 
 
 class DBTracksInfo(Base):
     __tablename__= "TracksInfo"
     trackID = Column(String, nullable=False, primary_key=True, unique=True)
     trackName = Column(String, nullable=False)
-    artistID = Column(String, ForeignKey("Artists.artistID", ondelete="CASCADE"), nullable=False)
+    artistID = Column(String, ForeignKey("ArtistsInfo.artistID", ondelete="CASCADE"), nullable=False)
+    popularity = Column(Integer, nullable=False)
 
-    artist = relationship("DBArtists", back_populates="trackInfo")
+    acousticness = Column(Float, nullable=False)
+    danceability = Column(Float, nullable=False)
+    energy = Column(Float, nullable=False)
+    instrumentalness = Column(Float, nullable=False)
+    key = Column(Integer, nullable=False)
+    liveness = Column(Float, nullable=False)
+    loudness = Column(Float, nullable=False)
+    mode = Column(Integer, nullable=False)
+    speechiness = Column(Float, nullable=False)
+    tempo = Column(Float, nullable=False)
+    timeSignature = Column(Integer, nullable=False)
+    valence = Column(Float, nullable=False)
+    preview = Column(String, nullable=True)
+
+    artist = relationship("DBArtistsInfo", back_populates="trackInfo")
     songListElem = relationship("DBSongListElem", back_populates="trackInfo")
+    userSavedTracks = relationship("DBUserSavedTracks", back_populates="trackInfo")
+    userRecentTracks = relationship("DBUserRecentTracks", back_populates="trackInfo")
 
-    def __init__(self, trackID, trackName, artistID):
+    def __init__(self, trackID, trackName, artistID, popularity, acousticness, danceability, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, timeSignature, valence, preview):
         self.trackID = trackID
         self.trackName = trackName
         self.artistID = artistID
+        self.popularity = popularity
 
+        self.acousticness = acousticness
+        self.danceability = danceability
+        self.energy = energy
+        self.instrumentalness = instrumentalness
+        self.key = key
+        self.liveness = liveness
+        self.loudness = loudness
+        self.mode = mode
+        self.speechiness = speechiness
+        self.tempo = tempo
+        self.timeSignature = timeSignature
+        self.valence = valence
+        self.preview = preview
 
 class DBSongListInfo(Base):
     __tablename__ = "SongListInfo"
@@ -47,15 +82,17 @@ class DBSongListInfo(Base):
     userID = Column(UUID(as_uuid=True), ForeignKey("UserInfo.userID", ondelete="CASCADE"))
     # Weekly_Discovery or Tags
     listType = Column(String, nullable=False)
+    period = Column(String, nullable=False)
 
     user = relationship("DBUserInfo", back_populates="songListInfo")
     listScore = relationship("DBSongListScore", back_populates="songListInfo")
     songListElem = relationship("DBSongListElem", back_populates="songListInfo")
 
-    def __init__(self, songListID, userID, listType):
+    def __init__(self, songListID, userID, listType, period):
         self.songListID = songListID
         self.userID = userID
         self.listType = listType
+        self.period = period
 
 
 class DBSongListElem(Base):
@@ -63,26 +100,28 @@ class DBSongListElem(Base):
     songListID = Column(UUID(as_uuid=True), ForeignKey("SongListInfo.songListID", ondelete="CASCADE"), primary_key=True, nullable=False, default=uuid.uuid4)
     userID = Column(UUID(as_uuid=True), ForeignKey("UserInfo.userID", ondelete="CASCADE"))
     trackID = Column(String, ForeignKey("TracksInfo.trackID", ondelete="CASCADE"), nullable=False, primary_key=True)
-    # onList / deleted 兩種
-    trackShowType = Column(String, nullable=False)
+
     splendidScore = Column(Integer, nullable=False, default=-1)
     likeScore = Column(Integer, nullable=False, default=-1)
     addSongList = Column(Boolean, nullable=False)
     order = Column(Integer, nullable=False)
+    beforeListened = Column(Boolean, nullable=False)
+    recommend = Column(String, nullable=False)
 
     user = relationship("DBUserInfo", back_populates="songListElem")
     trackInfo = relationship("DBTracksInfo", back_populates="songListElem")
     songListInfo = relationship("DBSongListInfo", back_populates="songListElem")
 
-    def __init__(self, songListID, userID, trackID, trackShowType, splendidScore, likeScore, addSongList, order):
+    def __init__(self, songListID, userID, trackID, splendidScore, likeScore, addSongList, order, beforeListened, recommend):
         self.songListID = songListID
         self.userID = userID
         self.trackID = trackID
-        self.trackShowType = trackShowType
         self.splendidScore = splendidScore
         self.likeScore = likeScore
         self.addSongList = addSongList
         self.order = order
+        self.beforeListened = beforeListened
+        self.recommend = recommend
 
 
 
@@ -90,15 +129,19 @@ class DBSongListScore(Base):
     __tablename__ = "SongListScore"
     songListID = Column(UUID(as_uuid=True), ForeignKey("SongListInfo.songListID", ondelete="CASCADE"), primary_key=True, unique=True, nullable=False)
     userID = Column(UUID(as_uuid=True), ForeignKey("UserInfo.userID", ondelete="CASCADE"))
-    score = Column(Integer, nullable=False)
+    satisfyScore = Column(Integer, nullable=False)
+    diversityScore = Column(Integer, nullable=False)
+    noveltyScore = Column(Integer, nullable=False)
     
     songListInfo = relationship("DBSongListInfo", back_populates="listScore")
     user = relationship("DBUserInfo", back_populates="listScore")
 
-    def __init__(self, songListID, userID, score):
+    def __init__(self, songListID, userID, satisfyScore, diversityScore, noveltyScore):
         self.songListID = songListID
         self.userID = userID
-        self.score = score
+        self.satisfyScore = satisfyScore
+        self.diversityScore = diversityScore
+        self.noveltyScore = noveltyScore
 
 
 class DBTags(Base):
@@ -121,19 +164,24 @@ class DBTags(Base):
         self.tagSelected = tagSelected
 
 
-class DBArtists(Base):
-    __tablename__ = "Artists"
+class DBArtistsInfo(Base):
+    __tablename__ = "ArtistsInfo"
     artistID = Column(String, nullable=False, primary_key=True, unique=True)
     artistName = Column(String, nullable=False)
+    popularity = Column(Integer, nullable=False)
+    genres = Column(String, nullable=True)
+
     trackInfo = relationship("DBTracksInfo", back_populates="artist")
 
-    def __init__(self, artistID, artistName):
+    def __init__(self, artistID, artistName, popularity, genres):
         self.artistID = artistID
         self.artistName = artistName
+        self.popularity = popularity
+        self.genres = genres
 
 
-class DBAudioFeatures(Base):
-    __tablename__ = "AudioFeatures"
+class DBUserAudioFeatures(Base):
+    __tablename__ = "UserAudioFeatures"
     userID = Column(UUID(as_uuid=True), ForeignKey("UserInfo.userID", ondelete="CASCADE"), primary_key=True)
     minAcousticness = Column(Float, nullable=False)
     targetAcousticness = Column(Float, nullable=False)
@@ -160,7 +208,7 @@ class DBAudioFeatures(Base):
     targetValence = Column(Float, nullable=False)
     maxValence = Column(Float, nullable=False)
 
-    user = relationship("DBUserInfo", back_populates="audioFeatures")
+    user = relationship("DBUserInfo", back_populates="userAudioFeatures")
 
     def __init__(self, userID, minAcousticness, targetAcousticness, maxAcousticness, minDanceability, targetDanceability, maxDanceability, minEnergy, targetEnergy, maxEnergy, minInstrumentalness, targetInstrumentalness, maxInstrumentalness, minKey, targetKey, maxKey, minLiveness, targetLiveness, maxLiveness, minTempo, targetTempo, maxTempo, minValence, targetValence, maxValence):
         self.userID = userID
@@ -188,3 +236,33 @@ class DBAudioFeatures(Base):
         self.minValence = minValence
         self.targetValence = targetValence
         self.maxValence = maxValence
+
+
+
+
+class DBUserSavedTracks(Base):
+    __tablename__ = "UserSavedTracks"
+    userID = Column(UUID(as_uuid=True), ForeignKey("UserInfo.userID", ondelete="CASCADE"), primary_key=True)
+    trackID = Column(String, ForeignKey("TracksInfo.trackID", ondelete="CASCADE"), nullable=False, primary_key=True)
+    
+    user = relationship("DBUserInfo", back_populates="userSavedTracks")
+    trackInfo = relationship("DBTracksInfo", back_populates="userSavedTracks")
+
+    def __init__(self, userID, trackID):
+        self.userID = userID
+        self.trackID = trackID
+
+
+class DBUserRecentTracks(Base):
+    __tablename__ = "UserRecentTracks"
+    userID = Column(UUID(as_uuid=True), ForeignKey("UserInfo.userID", ondelete="CASCADE"), primary_key=True)
+    trackID = Column(String, ForeignKey("TracksInfo.trackID", ondelete="CASCADE"), nullable=False, primary_key=True)
+    times = Column(Integer, nullable=False)
+    
+    user = relationship("DBUserInfo", back_populates="userRecentTracks")
+    trackInfo = relationship("DBTracksInfo", back_populates="userRecentTracks")
+
+    def __init__(self, userID, trackID, times):
+        self.userID = userID
+        self.trackID = trackID
+        self.times = times

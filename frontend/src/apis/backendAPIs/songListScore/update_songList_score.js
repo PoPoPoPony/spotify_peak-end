@@ -2,12 +2,16 @@ import request from '../../../utils/requestBackend'
 
 
 
-export function UpdateSongListScore(songListID, userID, score) {
+export function UpdateSongListScore(songListID, userID, satisfyScore, diversityScore, noveltyScore) {
     var data = JSON.stringify({
         "songListID": songListID,
         "userID": userID,
-        "score": score,
+        "satisfyScore": satisfyScore,
+        "diversityScore": diversityScore,
+        "noveltyScore": noveltyScore
     });
+
+
 
     let config = {
         //?userID='+userID + '&songListID='+songListID+'&score='+score

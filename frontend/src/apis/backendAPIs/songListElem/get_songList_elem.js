@@ -2,7 +2,7 @@ import request from '../../../utils/requestBackend'
 
 
 
-export function GetSongListElem(songListID) {
+export function GetSongListElem(songListID, order) {
     let config = {
         url: '/songListElem/getSongListElem',
         method: 'GET',
@@ -10,7 +10,8 @@ export function GetSongListElem(songListID) {
             "Content-Type": "application/json"
         },
         params: {
-            'songListID': songListID
+            'songListID': songListID,
+            'order': order
         }
     }
     return request(config)

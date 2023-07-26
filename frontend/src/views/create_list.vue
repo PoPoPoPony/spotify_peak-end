@@ -16,7 +16,7 @@
 
 <script>
 import navBar from '@/components/navBar'
-import {getMe} from '@/apis/SpotifyAPIs/get_genre'
+// import {getMe} from '@/apis/SpotifyAPIs/get_genre'
 import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 
 export default {
@@ -39,22 +39,23 @@ export default {
         //     this.$store.userID = urlParams.get('uuid')
         // }
 
+        // console.log(this.$store.period)
+
         // for test
-        getMe(this.$store.state.access_token).then((res)=>{
-            console.log('call me success')
-            console.log(res.data)
-        }).catch((err)=>{
-            console.log('call me faild')
-            console.log(err)
-        })
+        // getMe(this.$store.state.access_token).then((res)=>{
+        //     console.log('call me success')
+        //     console.log(res.data)
+        // }).catch((err)=>{
+        //     console.log('call me faild')
+        //     console.log(err)
+        // })
     },
     methods: {
         create() {
-            UpdateSongListInfo(this.$store.state.userID, 'Weekly_Discovery').then((res)=>{
+            UpdateSongListInfo(this.$store.state.userID, 'Weekly_Discovery', this.$store.state.period).then((res)=>{
                 let retv = res.data
                 // this.$store.WD_ID = retv['songListID']
                 this.$store.dispatch("initWD_ID", retv['songListID'])
-                console.log(this.$store.state.WD_ID)
                 this.$router.push({
                     name: 'song_list',
                     query: {

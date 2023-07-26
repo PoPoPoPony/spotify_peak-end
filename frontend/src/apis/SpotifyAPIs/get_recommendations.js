@@ -2,7 +2,7 @@ import request from '../../utils/request'
 
 export function GetRecommendations(accessToken, genres, artists, tracks, score_obj) {
     var params = {
-        "limit": 100,
+        "limit": 50,
         "seed_artists": artists,
         "seed_genres": genres,
         "seed_tracks": tracks,

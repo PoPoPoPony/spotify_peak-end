@@ -6,6 +6,7 @@ import list_credit from '@/views/list_credit'
 import create_list from '@/views/create_list'
 import exercise from '@/views/exercise'
 import second_test from '@/views/second_test'
+import thanks from '@/views/thanks'
 
 
 const routes = [
@@ -43,6 +44,11 @@ const routes = [
 		path: '/second_test',
 		name: 'second_test',
 		component: second_test
+	},
+	{
+		path: '/thanks',
+		name: 'thanks',
+		component: thanks
 	},
 ]
 

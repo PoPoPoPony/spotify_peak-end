@@ -30,7 +30,8 @@ def initUser(User: UserInfo, db: Session = Depends(get_db)):
         userID = User.userID,
         userEmail = User.userEmail,
         betweenType = User.betweenType,
-        withinType = User.withinType
+        withinType = User.withinType,
+        secondaryType = User.secondaryType
     )
 
     db.add(newUser)
@@ -39,11 +40,11 @@ def initUser(User: UserInfo, db: Session = Depends(get_db)):
     return newUser
 
 
-@router.get("/getUser")
+@router.get("/getUser", response_model=UserInfo)
 def getUser(email: str, db: Session = Depends(get_db)):
     DB_User = db.query(DBUserInfo).filter(DBUserInfo.userEmail == email).first()
     if DB_User:
-        return {"userID": DB_User.userID}
+        return DB_User
     else:
         return None
 
@@ -55,7 +56,6 @@ def getAllUser(db: Session = Depends(get_db)):
 
 @router.get("/getUsers")
 def getUsers(expTypes: Union[List[str], None] = Query(default=None), db: Session = Depends(get_db)):
-    print(expTypes)
     expTypes = [x.split('_') for x in expTypes]
     retv = []
     for expType in expTypes:

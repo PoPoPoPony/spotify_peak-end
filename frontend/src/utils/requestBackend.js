@@ -12,7 +12,9 @@ const axios_instance = axios.create({
     timeout: 5000,
 })
 
-
+//     headers: {
+//     Authorization : 'Access-Control-Allow-Private-Network'
+// }
 
 axios_instance.interceptors.response.use((res)=>{
     return res

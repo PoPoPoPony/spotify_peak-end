@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from uuid import UUID, uuid4
 
 
-class AudioFeatures(BaseModel):
+class UserAudioFeatures(BaseModel):
     userID: UUID = Field(default_factory=uuid4)
     minAcousticness: float
     targetAcousticness: float

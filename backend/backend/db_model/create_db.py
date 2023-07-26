@@ -1,5 +1,5 @@
-from database import Base, engine
-from models import DBUserInfo, DBSongListInfo, DBSongListElem, DBSongListScore, DBTracksInfo, DBArtists, DBTags
+from .database import Base, engine
+from models import DBUserInfo, DBSongListInfo, DBSongListElem, DBSongListScore, DBTracksInfo, DBArtistsInfo, DBTags, DBUserAudioFeatures, DBUserSavedTracks, DBUserRecentTracks
 
 
 print("Creating database...")

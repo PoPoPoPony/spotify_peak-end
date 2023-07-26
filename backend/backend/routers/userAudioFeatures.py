@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 import requests
 import uuid
-from ..models.audioFeatures import AudioFeatures
+from ..models.userAudioFeatures import UserAudioFeatures
 from ..db_model.database import SessionLocal
-from ..db_model.models import DBAudioFeatures
+from ..db_model.models import DBUserAudioFeatures
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
@@ -11,8 +11,8 @@ import json
 
 
 router = APIRouter(
-    prefix='/api/v1/audioFeatures',
-    tags = ["audioFeatures"]
+    prefix='/api/v1/userAudioFeatures',
+    tags = ["userAudioFeatures"]
 )
 
 def get_db():
@@ -23,9 +23,9 @@ def get_db():
         db.close()
 
 
-@router.post("/updateAudioFeatures", response_model=AudioFeatures)
-def updateAudioFeatures(userID: uuid.UUID, score_obj: str, db: Session = Depends(get_db)):
-    DB_AudioFeatures = db.query(DBAudioFeatures).filter(DBAudioFeatures.userID == userID).first()
+@router.post("/updateUserAudioFeatures", response_model=UserAudioFeatures)
+def updateUserAudioFeatures(userID: uuid.UUID, score_obj: str, db: Session = Depends(get_db)):
+    DB_AudioFeatures = db.query(DBUserAudioFeatures).filter(DBUserAudioFeatures.userID == userID).first()
     score_obj = json.loads(score_obj)
 
     audiofeatures = {}
@@ -35,7 +35,7 @@ def updateAudioFeatures(userID: uuid.UUID, score_obj: str, db: Session = Depends
         audiofeatures[newKey] = score_obj.pop(i)
 
     if not DB_AudioFeatures:
-        newAudioFeatures = DBAudioFeatures(
+        newAudioFeatures = DBUserAudioFeatures(
             userID = userID,
             minAcousticness = audiofeatures['minAcousticness'],
             targetAcousticness = audiofeatures['targetAcousticness'],

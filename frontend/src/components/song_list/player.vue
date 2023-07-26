@@ -37,6 +37,9 @@ export default {
         updateTimeCallback() {
             if(this.$refs.plyr.player.currentTime>0 && !this.ifReternedListened) {
                 this.$emit("song_listened", this.idx)
+                // 測試用，聽1秒就直接下一首
+                this.$emit("song_ended", this.idx)
+
                 this.ifReternedListened = true
             }
         },

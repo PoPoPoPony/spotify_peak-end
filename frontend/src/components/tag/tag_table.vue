@@ -125,4 +125,8 @@ export default {
     font-size: 1.3vw;
 }
 
+:deep(.el-checkbox.is-bordered+.el-checkbox.is-bordered) {
+    margin-left: 0px;
+}
+
 </style>

@@ -1,0 +1,5 @@
+__pycache__
+.env
+users_json/first/*
+users_json/second/*
+chromedriver.exe

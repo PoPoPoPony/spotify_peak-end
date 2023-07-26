@@ -11,6 +11,7 @@ const store = new Vuex.Store({
     access_token:'',
     WD_ID: '',
     T_ID: '',
+    period: '',
   },
   mutations: {
     setWithinType(state, within) {
@@ -31,6 +32,9 @@ const store = new Vuex.Store({
     setT_ID(state, ID) {
       state.T_ID = ID
     },
+    setPeriod(state, period) {
+      state.period = period
+    },
   },
   actions: {
     initUserData(context, userData) {
@@ -48,6 +52,11 @@ const store = new Vuex.Store({
     initT_ID(context, ID) {
       context.commit("setT_ID", ID)
     },
+
+    initPeriod(context, period) {
+      context.commit("setPeriod", period)
+    }
+
     // initUserID(context, userID) {
     //   context.commit("setUserID", userID.userID)
     // }

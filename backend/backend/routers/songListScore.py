@@ -30,7 +30,9 @@ def updateSongListScore(list_score: SongListScore, db: Session = Depends(get_db)
         newListScore = DBSongListScore(
             songListID = list_score.songListID,
             userID = list_score.userID,
-            score = list_score.score,
+            satisfyScore = list_score.satisfyScore,
+            diversityScore = list_score.diversityScore,
+            noveltyScore = list_score.noveltyScore
         )
 
         db.add(newListScore)
@@ -50,7 +52,14 @@ def getSongListScoreLen(userID:uuid.UUID, db: Session = Depends(get_db)):
 
 
 @router.get("/getSongListScore")
-def getSongListScoreLen(songListID:uuid.UUID, db: Session = Depends(get_db)):
+def getSongListScore(songListID:uuid.UUID, db: Session = Depends(get_db)):
     songList = db.query(DBSongListScore).filter(DBSongListScore.songListID == songListID).first()
 
-    return songList.score
+    obj = {
+        'satisfyScore': songList.satisfyScore,
+        'diversityScore': songList.diversityScore,
+        'noveltyScore ': songList.noveltyScore 
+    }
+
+    return obj
+

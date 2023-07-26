@@ -4,11 +4,33 @@
         <div id="credit_container" class="animate__animated animate__fadeInDown">
             <span id="title">請為整體歌單評分</span>
             <el-row justify="center">
+                <el-col :span="5">
+                    <div class="slider_text">滿意度 </div>
+                </el-col>
                 <el-col :span="16">
-                    <el-slider v-model="credit" @change='credit_change' style='padding-top: 20px'></el-slider>
+                    <el-slider v-model="satisfyScore" @change='credit_change' style='padding-top: 20px' :max="10"></el-slider>
                 </el-col>
             </el-row>
-            <el-button id="send_btn" type="primary" :disabled='send_disable' @click="send_list_credit">送出</el-button>
+
+            <el-row justify="center">
+                <el-col :span="5">
+                    <div class="slider_text">多樣性 </div>
+                </el-col>
+                <el-col :span="16">
+                    <el-slider v-model="diversityScore" @change='credit_change' style='padding-top: 20px' :max="10"></el-slider>
+                </el-col>
+            </el-row>
+
+            <el-row justify="center">
+                <el-col :span="5">
+                    <div class="slider_text">新穎性 </div>
+                </el-col>
+                <el-col :span="16">
+                    <el-slider v-model="noveltyScore" @change='credit_change' style='padding-top: 20px' :max="10"></el-slider>
+                </el-col>
+            </el-row>
+
+            <el-button id="send_btn" type="primary" :disabled='send_disable' style="font-size:1.3vw" @click="send_list_credit">送出</el-button>
             <!-- <div v-if="unauth_show" class="animate__animated animate__fadeInDown">
                 <h1>
                     Thank You!
@@ -33,41 +55,51 @@ export default {
     created() {
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
+        this.secondaryType = urlParams.get('secondaryType')
 
     },
     data() {
         return {
-            credit: 0,
+            satisfyScore: 0,
+            diversityScore: 0,
+            noveltyScore: 0,
             send_disable: true,
             list_type:0,
             unauth_show: false,
             exp_num : 0,
             promise: '',
+            secondaryType: -1,
         }
     },
     methods: {
-        credit_change(val) {
-            this.send_disable = false
-            console.log(val)
+        credit_change() {
+            if (this.satisfyScore>0 && this.diversityScore>0 && this.noveltyScore>0) {
+                this.send_disable = false
+            }
         },
         async send_list_credit() {
             if(this.list_type==0) {
-                await UpdateSongListScore(this.$store.state.WD_ID, this.$store.state.userID, this.credit)
+                await UpdateSongListScore(this.$store.state.WD_ID, this.$store.state.userID, this.satisfyScore, this.diversityScore, this.noveltyScore)
+                this.clear_cookies()
                 GetSongListScoreLen(this.$store.state.userID).then((res)=>{
                     let retv = res.data
                     this.redirect(retv)
                 })
 
-
-                // redirect()
             } else if(this.list_type==1) {
-                await UpdateSongListScore(this.$store.state.T_ID, this.$store.state.userID, this.credit)
+                await UpdateSongListScore(this.$store.state.T_ID, this.$store.state.userID, this.satisfyScore, this.diversityScore, this.noveltyScore)
+                this.clear_cookies()
                 GetSongListScoreLen(this.$store.state.userID).then((res)=>{
                     let retv = res.data
                     this.redirect(retv)
                 })
             }
 
+        },
+
+        // clear song list elements cookies
+        clear_cookies() {
+            Array(20).fill("song_lst_elem").map((x, i)=>this.$cookies.remove(x+i.toString()))
         },
 
         redirect(pass_exp_num) {
@@ -96,18 +128,31 @@ export default {
                 })
 
             } else if(pass_exp_num == 2) {
-                window.location = "https://forms.gle/LGjTEhG7Qeq6Lg5K6"
+                this.$router.push({
+                    name: 'thanks',
+                })
             } else if (pass_exp_num == 3) { // 相當於第二次做了一次
+                let list_type=0
+                if (["0", "1"].indexOf(this.secondaryType)>=0) {
+                    list_type=1
+                } else {
+                    list_type=0
+                }
+
                 this.$router.push({
                     name: 'second_test',
                     query: {
                         userID: this.$store.state.userID,
                         access_token: this.$store.state.access_token,
-                        list_type: 1
+                        list_type: list_type,
+                        secondaryType: this.secondaryType,
+                        period: 'second'
                     }
                 })
             } else if (pass_exp_num == 4) {
-                window.location = "www.youtube.com"
+                this.$router.push({
+                    name: 'thanks',
+                })
             }
             
             
@@ -132,7 +177,7 @@ export default {
 
 #credit_container {
     width: 800px;
-    height: 200px;
+    height: 350px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -145,7 +190,6 @@ export default {
 #title {
     color: black;
     font-size: 40px;
-
 }
 
 :deep(.el-rate__icon) {
@@ -154,6 +198,12 @@ export default {
 
 #send_btn {
     margin-top: 30px;
+}
+
+.slider_text {
+    color: black;
+    font-size: 30px;
+    padding-top: 20px;
 }
 
 </style>
