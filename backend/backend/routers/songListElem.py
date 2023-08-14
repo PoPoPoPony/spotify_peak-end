@@ -82,8 +82,8 @@ def updateSongListElems(elems: SongListElems, db: Session = Depends(get_db)):
             )
 
             db.add(newSongListElem)
-    db.commit()
-    db.refresh(newSongListElem)
+            db.commit()
+            db.refresh(newSongListElem)
 
 
 @router.get("/getSongListElem")

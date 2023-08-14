@@ -35,7 +35,7 @@
             </el-table-column>
             <el-table-column label="收藏" width="150" v-if="show_add_song">
                 <template #default="scope" >
-                    <el-checkbox-group style="zoom:2;" :max="5" v-if="add_show[scope.$index]" v-model="add_song_lst">
+                    <el-checkbox-group style="zoom:2;" v-if="add_show[scope.$index]" v-model="add_song_lst">
                         <el-checkbox :label="scope.$index" size="large" :disabled='song_not_complete[scope.$index]'>{{ }}</el-checkbox>
                     </el-checkbox-group>
                 </template>

@@ -33,88 +33,88 @@ class FirstStageTestingUser(User):
     def __init__(self, args):
         user_jsons = [os.path.split(x)[-1] for x in glob.glob("users_json/first/*.json")]
         self.physical_user_name = args.physical_user_name
-        if f"{args.user_name}.json" in user_jsons:
-            with open(f"users_json/first/{args.user_name}.json", 'r', encoding='utf8') as f:
-                data = json.load(f)
+        # if f"{args.user_name}.json" in user_jsons:
+        #     with open(f"users_json/first/{args.user_name}.json", 'r', encoding='utf8') as f:
+        #         data = json.load(f)
 
-            args.email = data['email']
-            super().__init__(args)
+        #     args.email = data['email']
+        #     super().__init__(args)
 
-            self.first_stage_group = data['first_stage_group']
-            self.is_add = data['is_add']
-            self.UI = data['UI']
-            self.list_type = data['list_type']
-            self.weekly_like_scores = data['weekly_like_scores']
-            self.weekly_splendid_scores = data['weekly_splendid_scores']
-            self.weekly_listened = data['weekly_listened']
-            self.weekly_song_lst_added = data['weekly_song_lst_added']
-            self.weekly_satisfy = data['weekly_satisfy']
-            self.weekly_novelty = data['weekly_novelty']
-            self.weekly_diversity = data['weekly_diversity']
-            self.tag_like_scores = data['tag_like_scores']
-            self.tag_splendid_scores = data['tag_splendid_scores']
-            self.tag_listened = data['tag_listened']
-            self.tag_song_lst_added = data['tag_song_lst_added']
-            self.tag_satisfy = data['tag_satisfy']
-            self.tag_novelty = data['tag_novelty']
-            self.tag_diversity = data['tag_diversity']
-            self.tags = data['tags']
+        #     self.first_stage_group = data['first_stage_group']
+        #     self.is_add = data['is_add']
+        #     self.UI = data['UI']
+        #     self.list_type = data['list_type']
+        #     self.weekly_like_scores = data['weekly_like_scores']
+        #     self.weekly_splendid_scores = data['weekly_splendid_scores']
+        #     self.weekly_listened = data['weekly_listened']
+        #     self.weekly_song_lst_added = data['weekly_song_lst_added']
+        #     self.weekly_satisfy = data['weekly_satisfy']
+        #     self.weekly_novelty = data['weekly_novelty']
+        #     self.weekly_diversity = data['weekly_diversity']
+        #     self.tag_like_scores = data['tag_like_scores']
+        #     self.tag_splendid_scores = data['tag_splendid_scores']
+        #     self.tag_listened = data['tag_listened']
+        #     self.tag_song_lst_added = data['tag_song_lst_added']
+        #     self.tag_satisfy = data['tag_satisfy']
+        #     self.tag_novelty = data['tag_novelty']
+        #     self.tag_diversity = data['tag_diversity']
+        #     self.tags = data['tags']
 
+        # else:
+        super().__init__(args)
+        self.first_stage_group = args.first_stage_group
+        
+
+        if args.first_stage_group>4:
+            self.is_add = True
         else:
-            super().__init__(args)
-            self.first_stage_group = args.first_stage_group
-            
+            self.is_add = False
 
-            if args.first_stage_group>4:
-                self.is_add = True
-            else:
-                self.is_add = False
+        if args.first_stage_group in [1, 3, 5, 7]:
+            self.UI = ['list', 'single']
+        else:
+            self.UI = ['single', 'list']
 
-            if args.first_stage_group in [1, 3, 5, 7]:
-                self.UI = ['list', 'single']
-            else:
-                self.UI = ['single', 'list']
+        if args.first_stage_group in [1, 2, 5, 6]:
+            self.list_type = ["WD", "T"]
+        else:
+            self.list_type = ["T", "WD"]
 
-            if args.first_stage_group in [1, 2, 5, 6]:
-                self.list_type = ["WD", "T"]
-            else:
-                self.list_type = ["T", "WD"]
+        # weekly-related scores
+        self.weekly_like_scores = [randint(1, 10) for _ in range(20)]
+        self.weekly_splendid_scores = [randint(1, 10) for _ in range(20)]
 
-            # weekly-related scores
-            self.weekly_like_scores = [randint(1, 10) for _ in range(20)]
-            self.weekly_splendid_scores = [randint(1, 10) for _ in range(20)]
+        idxs = list(range(20))
+        shuffle(idxs)
 
-            idxs = list(range(20))
-            shuffle(idxs)
+        self.weekly_listened = idxs[:5]
 
-            self.weekly_listened = idxs[:5]
+        shuffle(idxs)
+        if self.is_add:
+            self.weekly_song_lst_added = idxs[:5]
+        else:
+            self.weekly_song_lst_added = []
+        self.weekly_satisfy = randint(1, 10)
+        self.weekly_novelty = randint(1, 10)
+        self.weekly_diversity = randint(1, 10)
 
-            shuffle(idxs)
-            if self.is_add:
-                self.weekly_song_lst_added = idxs[:5]
-            else:
-                self.weekly_song_lst_added = []
-            self.weekly_satisfy = randint(1, 10)
-            self.weekly_novelty = randint(1, 10)
-            self.weekly_diversity = randint(1, 10)
+        # tag-related scores
+        self.tag_like_scores = [randint(1, 10) for _ in range(20)]
+        self.tag_splendid_scores = [randint(1, 10) for _ in range(20)]
 
-            # tag-related scores
-            self.tag_like_scores = [randint(1, 10) for _ in range(20)]
-            self.tag_splendid_scores = [randint(1, 10) for _ in range(20)]
+        shuffle(idxs)
+        self.tag_listened = idxs[:5]
 
-            shuffle(idxs)
-            self.tag_listened = idxs[:5]
+        shuffle(idxs)
+        if self.is_add:
+            self.tag_song_lst_added = idxs[:5]
+        else:
+            self.tag_song_lst_added = []
+        self.tag_satisfy = randint(1, 10)
+        self.tag_novelty = randint(1, 10)
+        self.tag_diversity = randint(1, 10)
 
-            shuffle(idxs)
-            if self.is_add:
-                self.tag_song_lst_added = idxs[:5]
-            else:
-                self.tag_song_lst_added = []
-            self.tag_satisfy = randint(1, 10)
-            self.tag_novelty = randint(1, 10)
-            self.tag_diversity = randint(1, 10)
-
-            self.tags = choices(range(10), k=3)
+        self.tags = choices(range(10), k=3)
 
 
 class SecondStageTestingUser(User):

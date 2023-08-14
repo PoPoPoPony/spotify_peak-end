@@ -58,7 +58,8 @@ def updateArtistInfos(Infos: ArtistsInfos, db: Session = Depends(get_db)):
             )
 
             db.add(newArtist)
-        db.commit()
+            db.commit()
+            db.refresh(newArtist)
 
 
 

@@ -17,7 +17,7 @@
                     </h3>
                 </el-row>
                 <el-row style="padding-bottom: 20px">
-                    <el-input placeholder="請輸入常用信箱" v-model="userEmail" clearable  @change="userEmailChanged"></el-input>
+                    <el-input placeholder="請輸入註冊在 Spotify 上的信箱" v-model="userEmail" clearable  @change="userEmailChanged"></el-input>
                 </el-row>
                 <el-row>
                     <el-col :xs="{'span':'5', 'offset': '3'}" :sm="{'span':'5', 'offset': '6'}" :lg="{'span': '5', 'offset': '7'}">

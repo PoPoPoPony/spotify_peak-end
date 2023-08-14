@@ -21,7 +21,7 @@
             </el-col>
             <el-col :span='4'>
                 <el-affix v-if="hint_show" position="bottom" :offset="20">
-                    <div id="hint" type="success">剩餘可收藏<br>數量 : {{ max_added_count-addSongLstLen }}</div>
+                    <div id="hint" type="success">已收藏 {{ addSongLstLen }} 首</div>
                 </el-affix>
             </el-col>
         </el-row>
@@ -53,10 +53,10 @@ import {GetDiscoverWeekly} from '@/apis/SpotifyAPIs/get_discover_weekly'
 import {GetSongList} from '@/apis/SpotifyAPIs/get_song_list'
 import {GetRecommendations} from '@/apis/SpotifyAPIs/get_recommendations'
 import {GetTopN} from '@/apis/SpotifyAPIs/get_topN'
-import {UpdateSongListElem, UpdateSongListElems} from '@/apis/backendAPIs/songListElem/update_songList_elem'
+import {UpdateSongListElems} from '@/apis/backendAPIs/songListElem/update_songList_elem'
 import {UpdateUserAudioFeatures} from '@/apis/backendAPIs/userAudioFeatures/update_user_audio_features'
 import {UpdateBasicInfo} from '@/utils/functools'
-import { ElLoading } from 'element-plus'
+import {ElLoading} from 'element-plus'
 
 
 export default {
@@ -170,7 +170,7 @@ export default {
             addSongLstLen:0,
             currentPlayingIdx:-1,
             hint_show: false,
-            max_added_count: 5,
+            max_added_count: 20,
             recommend_from_tags_ua_length: 0,
         }
     },
@@ -364,6 +364,11 @@ export default {
                         } else {
                             reject()
                         }
+                    })
+                } else {
+                    // didnt have any song
+                    return new Promise((resolve, reject) => {
+                        resolve()
                     })
                 }
             }

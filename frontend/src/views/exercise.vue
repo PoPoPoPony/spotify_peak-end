@@ -323,10 +323,13 @@ export default {
                         objs.push(obj)
                     }
                 }
-                await UpdateBasicInfo(this.$store.state.access_token, objs)
-                let saved_song_ids = objs.map(x=>x['song_id'])
-                let saved_song_ids_str = saved_song_ids.join(',')
-                await UpdateUserSavedTracks(this.$store.state.userID, saved_song_ids_str)
+                if (objs.length>0) {
+                    await UpdateBasicInfo(this.$store.state.access_token, objs)
+                    let saved_song_ids = objs.map(x=>x['song_id'])
+                    let saved_song_ids_str = saved_song_ids.join(',')
+                    await UpdateUserSavedTracks(this.$store.state.userID, saved_song_ids_str)
+                }
+
 
             }
         },

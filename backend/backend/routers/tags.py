@@ -62,8 +62,8 @@ def updateTagsInfo(tags: SeveralTags, db: Session = Depends(get_db)):
             )
 
             db.add(newTag)
-    db.commit()
-    db.refresh(newTag)
+            db.commit()
+            db.refresh(newTag)
 
 
 @router.post("/updateTagStatus")

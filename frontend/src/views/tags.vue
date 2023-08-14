@@ -610,7 +610,7 @@ export default {
 
             await Promise.all(promise)
             Promise.all([this.processing_artists(artists, related_artists_retv), this.processing_genres(artists, related_artists_retv)]).then(()=>{
-                return new Promise((resolve, reject)=>{resolve()})
+                return new Promise((resolve, )=>{resolve()})
             })
         },
 
@@ -627,7 +627,7 @@ export default {
 
         processing_artists(artists, related_artist_retv) {
             // deepcopy
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve,) => {
                 artists = JSON.parse(JSON.stringify(artists))
                 related_artist_retv = JSON.parse(JSON.stringify(related_artist_retv))
 
@@ -664,7 +664,7 @@ export default {
         },
 
         processing_genres(artists, related_artist_retv) {
-            return new Promise((resolve, reject)=>{
+            return new Promise((resolve,)=>{
                 // deepcopy
                 artists = JSON.parse(JSON.stringify(artists))
                 related_artist_retv = JSON.parse(JSON.stringify(related_artist_retv))
