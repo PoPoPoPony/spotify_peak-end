@@ -35,10 +35,12 @@ export default {
         // 原本有show播放元件，所以用這個方法(刪除播放元件後，可改用下面的方法)
         // this.$refs.plyr.player.currentTime> 29
         updateTimeCallback() {
-            if(this.$refs.plyr.player.currentTime>0 && !this.ifReternedListened) {
+            if(this.$refs.plyr.player.currentTime>29 && !this.ifReternedListened) {
                 this.$emit("song_listened", this.idx)
+
+
                 // 測試用，聽1秒就直接下一首
-                this.$emit("song_ended", this.idx)
+                // this.$emit("song_ended", this.idx)
 
                 this.ifReternedListened = true
             }
