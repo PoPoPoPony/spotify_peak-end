@@ -38,7 +38,7 @@ def SpotifyAuth(redirect_page: int, between_subject_type: str, within_subject_ty
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     URL = "https://accounts.spotify.com/authorize?"
     URL += "response_type=code&client_id="+ID
-    URL += "&redirect_uri=http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuthCallback&scope="
+    URL += "&redirect_uri=http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuthCallback&scope="
 
     authScpoe = [
         'user-read-private',
@@ -67,7 +67,7 @@ def SpotifyAuthCallback(code: str):
 
     data = {
         "code": code,
-        "redirect_uri": "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuthCallback",
+        "redirect_uri": "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuthCallback",
         "grant_type": 'authorization_code'
     }
     appInfo = ID+":"+SECRET
@@ -100,9 +100,9 @@ def SpotifyAuthCallback(code: str):
         "secondaryType": random_sencondary_type()
     }
 
-    r = requests.post(url="http://ponyia.ddns.net:8080/api/v1/user/initUser", json=data)
+    r = requests.post(url="http://ponylis.ddns.net:8080/api/v1/user/initUser", json=data)
 
-    redirectPageURL='http://ponyia.ddns.net:8081/exercise'
+    redirectPageURL='http://ponylis.ddns.net:8081/exercise'
     redirectPageURL+="?access_token=" + accessToken
     redirectPageURL+="&between_subject_type="+betweenSubjectType
     redirectPageURL+="&within_subject_type="+withinSubjectType
@@ -125,7 +125,7 @@ def SpotifyAuth2(user_email: str, period: str):
     ID = os.getenv("SPOTIFY_CLIENT_ID")
     URL = "https://accounts.spotify.com/authorize?"
     URL += "response_type=code&client_id="+ID
-    URL += "&redirect_uri=http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuthCallback2&scope="
+    URL += "&redirect_uri=http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuthCallback2&scope="
 
     authScpoe = [
         'user-read-private',
@@ -154,7 +154,7 @@ def SpotifyAuthCallback2(code: str):
 
     data = {
         "code": code,
-        "redirect_uri": "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuthCallback2",
+        "redirect_uri": "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuthCallback2",
         "grant_type": 'authorization_code'
     }
     appInfo = ID+":"+SECRET
@@ -171,7 +171,7 @@ def SpotifyAuthCallback2(code: str):
     refreshToken = r['refresh_token']
     global Period
 
-    res = requests.get(url='http://ponyia.ddns.net:8080/api/v1/user/getUser', params={"email": userEmail})
+    res = requests.get(url='http://ponylis.ddns.net:8080/api/v1/user/getUser', params={"email": userEmail})
     userInfo = res.json()
     print(userInfo['secondaryType'])
     if userInfo['secondaryType'] in [0, 1]:
@@ -179,7 +179,7 @@ def SpotifyAuthCallback2(code: str):
     else:
         list_type = 1
 
-    redirectPageURL='http://ponyia.ddns.net:8081/second_test'
+    redirectPageURL='http://ponylis.ddns.net:8081/second_test'
     redirectPageURL+="?access_token=" + accessToken
     redirectPageURL+="&userID="+str(userInfo['userID'])
     redirectPageURL+="&list_type="+ str(list_type) # 0, 1先做WD，2, 3先做Tag
@@ -191,7 +191,7 @@ def SpotifyAuthCallback2(code: str):
 
 
 def random_sencondary_type():
-    res = requests.get(url='http://ponyia.ddns.net:8080/api/v1/user/getAllUser')
+    res = requests.get(url='http://ponylis.ddns.net:8080/api/v1/user/getAllUser')
     res = res.json()
     secondary = [x['secondaryType'] for x in res]
     d = {

@@ -22,7 +22,7 @@
 import secondTestSongTable from '@/components/song_list/second_test_song_table'
 import player from '@/components/song_list/player'
 // import {UpdateSongListElem} from '@/apis/backendAPIs/songListElem/update_songList_elem'
-import {GetSongListElem} from '@/apis/backendAPIs/songListElem/get_songList_elem'
+import {GetSongListElems} from '@/apis/backendAPIs/songListElem/get_songList_elems'
 import {GetSongListInfo} from '@/apis/backendAPIs/songListInfo/get_songList_info'
 import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 import {GetTracksByID} from '@/apis/SpotifyAPIs/get_tracks_by_ID'
@@ -191,10 +191,10 @@ export default {
 
         async GetSongData(song_list_id, order) {
             let trackIDsStr = ''
-            await GetSongListElem(song_list_id, order).then((res)=>{
+            await GetSongListElems(song_list_id, order).then((res)=>{
                 let retv = res.data
                 if (retv) {
-                    trackIDsStr = retv['trackIDsStr']
+                    trackIDsStr = retv.map((x)=>x.trackID).join(',')
                 } else {
                     console.log("No songs in DB")
                 }

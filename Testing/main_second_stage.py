@@ -41,11 +41,10 @@ def main():
 
     # save testing user info
     testing_user_dict = vars(testing_user)
-    print(testing_user_dict)
     with open(os.path.join(f"users_json/second/{testing_user.user_name}.json"), mode='w', encoding='utf-8') as f:
         json.dump(testing_user_dict, f, indent=4, sort_keys=True, ensure_ascii=False)
 
-    driver = webdriver.Chrome("chromedriver")
+    driver = webdriver.Chrome("")
     driver.maximize_window()
     wait = WebDriverWait(driver, 10)
 

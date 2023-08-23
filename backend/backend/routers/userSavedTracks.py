@@ -36,7 +36,8 @@ def updateUserSavedTracks(SavedTracks: UserSavedTracks, db: Session = Depends(ge
             )
 
             db.add(newSavedTrack)
-    db.commit()
+            db.commit()
+            db.refresh(newSavedTrack)
 
 
 @router.get("/checkUserExist")

@@ -53,16 +53,16 @@ def getAllUser(db: Session = Depends(get_db)):
     DB_User = db.query(DBUserInfo).all()
     return DB_User
 
+# [deprecate]
+# @router.get("/getUsers")
+# def getUsers(expTypes: Union[List[str], None] = Query(default=None), db: Session = Depends(get_db)):
+#     expTypes = [x.split('_') for x in expTypes]
+#     retv = []
+#     for expType in expTypes:
+#         DB_User = db.query(DBUserInfo).filter(DBUserInfo.betweenType == expType[0], DBUserInfo.withinType == expType[1]).all()
+#         retv.extend(DB_User)
 
-@router.get("/getUsers")
-def getUsers(expTypes: Union[List[str], None] = Query(default=None), db: Session = Depends(get_db)):
-    expTypes = [x.split('_') for x in expTypes]
-    retv = []
-    for expType in expTypes:
-        DB_User = db.query(DBUserInfo).filter(DBUserInfo.betweenType == expType[0], DBUserInfo.withinType == expType[1]).all()
-        retv.extend(DB_User)
-
-    if len(retv)>0:
-        return retv
-    else:
-        return None
+#     if len(retv)>0:
+#         return retv
+#     else:
+#         return None

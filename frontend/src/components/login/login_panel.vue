@@ -136,7 +136,7 @@ export default {
                 require('@/assets/login/apple.png')
             ],
             // backend_url: "http://localhost:8888/login",
-            backend_url: "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth",
+            backend_url: "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuth",
             exp_type: 0,
             GroupSelected: false,
             // for testing
@@ -229,7 +229,7 @@ export default {
         },
 
         setBackendURL() {
-            this.backend_url = "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth"
+            this.backend_url = "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuth"
             // this.backend_url = "http://localhost:8888/login"
 
             // 0, 1 for doing discover weekly first
@@ -252,7 +252,7 @@ export default {
                 let retv = res.data
                 if(retv) {
                     window.location.assign(
-                        "http://ponyia.ddns.net:8080/api/v1/auth/SpotifyAuth2?user_email=" + this.userEmail.trim() + "&period=second"
+                        "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuth2?user_email=" + this.userEmail.trim() + "&period=second"
                     )
                 } else {
                     ElNotification({

@@ -8,7 +8,7 @@ axios.defaults.retry = 3
 axios.defaults.retryDelay = 2000;
 
 const axios_instance = axios.create({
-    baseURL: "http://ponyia.ddns.net:8080/api/v1",
+    baseURL: "http://ponylis.ddns.net:8080/api/v1",
     timeout: 5000,
 })
 

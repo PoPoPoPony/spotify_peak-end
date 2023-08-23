@@ -3,7 +3,7 @@ import {GetSeveralArtists} from '@/apis/SpotifyAPIs/get_several_artists'
 // import {UpdateArtistsInfo} from '@/apis/backendAPIs/artistsInfo/update_artistsInfo'
 import {UpdateArtistsInfos} from '@/apis/backendAPIs/artistsInfo/update_artistsInfo'
 // import {UpdateTracksInfo} from '@/apis/backendAPIs/tracks/update_tracksInfo'
-import {UpdateTracksInfos} from '@/apis/backendAPIs/tracks/update_tracksInfo'
+import {UpdateTrackInfos} from '@/apis/backendAPIs/tracks/update_trackInfos'
 
 
 export async function UpdateBasicInfo(access_token, objs) {
@@ -80,6 +80,6 @@ export async function UpdateBasicInfo(access_token, objs) {
         //     await UpdateTracksInfo(song_ids[i], titles[i], artist_ids[i], tracks_popularity[i], audio_features[i], song_preview_urls[i])
         // }
 
-        await UpdateTracksInfos(track_objs)
+        await UpdateTrackInfos(track_objs)
     }
 }

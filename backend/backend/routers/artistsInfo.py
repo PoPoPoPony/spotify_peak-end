@@ -22,26 +22,26 @@ def get_db():
     finally:
         db.close()
 
+# [deprecate]
+# @router.post("/updateArtistInfo", response_model=ArtistsInfo)
+# def updateArtistInfo(Artist: ArtistsInfo, db: Session = Depends(get_db)):
+#     DB_artist = db.query(DBArtistsInfo).filter(DBArtistsInfo.artistID == Artist.artistID).first()
 
-@router.post("/updateArtistInfo", response_model=ArtistsInfo)
-def updateArtistInfo(Artist: ArtistsInfo, db: Session = Depends(get_db)):
-    DB_artist = db.query(DBArtistsInfo).filter(DBArtistsInfo.artistID == Artist.artistID).first()
+#     if not DB_artist:
+#         newArtist = DBArtistsInfo(
+#             artistID = Artist.artistID,
+#             artistName = Artist.artistName,
+#             popularity = Artist.popularity,
+#             genres = Artist.genres
+#         )
 
-    if not DB_artist:
-        newArtist = DBArtistsInfo(
-            artistID = Artist.artistID,
-            artistName = Artist.artistName,
-            popularity = Artist.popularity,
-            genres = Artist.genres
-        )
+#         db.add(newArtist)
+#         db.commit()
+#         db.refresh(newArtist)
 
-        db.add(newArtist)
-        db.commit()
-        db.refresh(newArtist)
-
-        return newArtist
-    else:
-        return DB_artist
+#         return newArtist
+#     else:
+#         return DB_artist
 
 
 @router.post("/updateArtistInfos")
@@ -65,13 +65,18 @@ def updateArtistInfos(Infos: ArtistsInfos, db: Session = Depends(get_db)):
 
 @router.get("/getArtistInfos")
 def getArtistInfos(artistIDs: Union[List[str], None] = Query(default=None), db: Session = Depends(get_db)):
-    DB_artists = db.query(DBArtists).filter(DBArtistsInfo.artistID.in_(artistIDs)).all()
+    DB_artists = []
+    for artistID in artistIDs:
+        DB_artists.append(db.query(DBArtistsInfo).filter(DBArtistsInfo.artistID == artistID).first())
+
 
     return DB_artists
 
 
-@router.get("/getArtistInfo")
-def getArtistInfo(artistID: str, db: Session = Depends(get_db)):
-    DB_artist = db.query(DBArtistsInfo).filter(DBArtistsInfo.artistID==artistID).first()
 
-    return DB_artist
+# [deprecate]
+# @router.get("/getArtistInfo")
+# def getArtistInfo(artistID: str, db: Session = Depends(get_db)):
+#     DB_artist = db.query(DBArtistsInfo).filter(DBArtistsInfo.artistID==artistID).first()
+
+#     return DB_artist

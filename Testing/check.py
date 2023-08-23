@@ -22,55 +22,55 @@ def check_group(testing_user: FirstStageTestingUser):
 
 
 def check_song_lst_elem(testing_user: FirstStageTestingUser):
-    DB_elem = backend_utils.get_song_lst_elem(testing_user.WD_ID, rule_type='order', order=0)
+    DB_elems = backend_utils.get_song_lst_elems(testing_user.WD_ID, rule_type='order', order=0)
     
     # WD like score
-    DB_like_scores = [x['likeScore'] for x in DB_elem]
+    DB_like_scores = [x['likeScore'] for x in DB_elems]
     IN_like_scores = testing_user.weekly_like_scores
 
     compare(IN_like_scores, DB_like_scores, "WD like score")
 
     # WD splendid score
-    DB_splendid_scores = [x['splendidScore'] for x in DB_elem]
+    DB_splendid_scores = [x['splendidScore'] for x in DB_elems]
     IN_splendid_scores = testing_user.weekly_splendid_scores
 
     compare(IN_splendid_scores, DB_splendid_scores, "WD splendid score")
 
     # WD listened
-    DB_listened = [i for i in range(len(DB_elem)) if DB_elem[i]['beforeListened']]
+    DB_listened = [i for i in range(len(DB_elems)) if DB_elems[i]['beforeListened']]
     IN_listened = sorted(testing_user.weekly_listened)
 
     compare(IN_listened, DB_listened, "WD listened")
 
     # WD added
-    DB_added = [i for i in range(len(DB_elem)) if DB_elem[i]['addSongList']]
+    DB_added = [i for i in range(len(DB_elems)) if DB_elems[i]['addSongList']]
     IN_added = sorted(testing_user.weekly_song_lst_added)
 
     compare(IN_added, DB_added, "WD added")
 
 
-    DB_elem = backend_utils.get_song_lst_elem(testing_user.T_ID, rule_type='order', order=0)
+    DB_elems = backend_utils.get_song_lst_elems(testing_user.T_ID, rule_type='order', order=0)
     
     # WD like score
-    DB_like_scores = [x['likeScore'] for x in DB_elem]
+    DB_like_scores = [x['likeScore'] for x in DB_elems]
     IN_like_scores = testing_user.tag_like_scores
 
     compare(IN_like_scores, DB_like_scores, "T like score")
 
     # WD splendid score
-    DB_splendid_scores = [x['splendidScore'] for x in DB_elem]
+    DB_splendid_scores = [x['splendidScore'] for x in DB_elems]
     IN_splendid_scores = testing_user.tag_splendid_scores
 
     compare(IN_splendid_scores, DB_splendid_scores, "T splendid score")
 
     # WD listened
-    DB_listened = [i for i in range(len(DB_elem)) if DB_elem[i]['beforeListened']]
+    DB_listened = [i for i in range(len(DB_elems)) if DB_elems[i]['beforeListened']]
     IN_listened = sorted(testing_user.tag_listened)
 
     compare(IN_listened, DB_listened, "T listened")
 
     # WD added
-    DB_added = [i for i in range(len(DB_elem)) if DB_elem[i]['addSongList']]
+    DB_added = [i for i in range(len(DB_elems)) if DB_elems[i]['addSongList']]
     IN_added = sorted(testing_user.tag_song_lst_added)
 
     compare(IN_added, DB_added, "T added")

@@ -8,8 +8,8 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 import json
-from ..routers.trackInfo import getTrackInfo
-from ..routers.artistsInfo import getArtistInfo
+from ..routers.trackInfo import getTrackInfos
+from ..routers.artistsInfo import getArtistInfos
 from typing import Union, List
 
 
@@ -25,21 +25,21 @@ def get_db():
     finally:
         db.close()
 
-
-@router.post("/updateUserRecentTrack")
-def updateUserRecentTrack(RecentTrack: UserRecentTrack, db: Session = Depends(get_db)):
-    DB_RecentTrack = db.query(DBUserRecentTracks).filter(DBUserRecentTracks.userID == RecentTrack.userID, DBUserRecentTracks.trackID == RecentTrack.trackID).first()
+# [deprecate]
+# @router.post("/updateUserRecentTrack")
+# def updateUserRecentTrack(RecentTrack: UserRecentTrack, db: Session = Depends(get_db)):
+#     DB_RecentTrack = db.query(DBUserRecentTracks).filter(DBUserRecentTracks.userID == RecentTrack.userID, DBUserRecentTracks.trackID == RecentTrack.trackID).first()
     
-    if not DB_RecentTrack:
-        newRecentTrack = DBUserRecentTracks(
-            userID = RecentTrack.userID,
-            trackID = RecentTrack.trackID,
-            times = RecentTrack.times
-        )
+#     if not DB_RecentTrack:
+#         newRecentTrack = DBUserRecentTracks(
+#             userID = RecentTrack.userID,
+#             trackID = RecentTrack.trackID,
+#             times = RecentTrack.times
+#         )
 
-        db.add(newRecentTrack)
-        db.commit()
-        # db.refresh(newRecentTrack)
+#         db.add(newRecentTrack)
+#         db.commit()
+#         db.refresh(newRecentTrack)
 
 
 @router.post("/updateUserRecentTracks")
@@ -58,8 +58,8 @@ def updateUserRecentTracks(RecentTracks: UserRecentTracks, db: Session = Depends
             )
 
             db.add(newRecentTrack)
-    db.commit()
-    # db.refresh(newRecentTrack)
+            db.commit()
+            db.refresh(newRecentTrack)
 
 
 @router.get("/checkUserExist")
@@ -73,34 +73,39 @@ def checkUserExist(userID: str, db: Session = Depends(get_db)):
         return False
 
 
-@router.get("/getUserRecentTrack")
-def getUserRecentTrack(userID: str, db: Session = Depends(get_db)):
+@router.get("/getUserRecentTracks")
+def getUserRecentTracks(userID: str, db: Session = Depends(get_db)):
     retv = []
-    
+
     userID = uuid.UUID(userID)
     DB_RecentTracks = db.query(DBUserRecentTracks).filter(DBUserRecentTracks.userID == userID).all()
-    
-    if DB_RecentTracks:
-        for track in DB_RecentTracks:
-            trackInfo = getTrackInfo(track.trackID, db)
-            artistInfo = getArtistInfo(trackInfo.artistID, db)
-            genres = artistInfo.genres.split(",") if len(artistInfo.genres)>0 else []
 
+    if DB_RecentTracks:
+        trackInfos = getTrackInfos([track.trackID for track in DB_RecentTracks], db)
+        artistInfos = getArtistInfos([trackInfo.artistID for trackInfo in trackInfos], db)
+        genres = [artistInfo.genres.split(",") if len(artistInfo.genres)>0 else [] for artistInfo in artistInfos]
+
+        for i in range(len(DB_RecentTracks)):
             retv.append({
-                'trackID': track.trackID,
-                'times': track.times,
-                'artistID': artistInfo.artistID,
-                'artistName': artistInfo.artistName,
-                'genres': genres,
-                'trackName': trackInfo.trackName,
-                'danceability': trackInfo.danceability,
-                'acousticness': trackInfo.acousticness,
-                'instrumentalness': trackInfo.instrumentalness,
-                'energy': trackInfo.energy,
-                'liveness': trackInfo.liveness,
-                'key': trackInfo.key,
-                'tempo': trackInfo.tempo,
-                'valence': trackInfo.valence
+                'trackID': trackInfos[i].trackID,
+                'times': DB_RecentTracks[i].times,
+                'artistID': artistInfos[i].artistID,
+                'artistName': artistInfos[i].artistName,
+                'genres': genres[i],
+                'trackName': trackInfos[i].trackName,
+                'danceability': trackInfos[i].danceability,
+                'acousticness': trackInfos[i].acousticness,
+                'instrumentalness': trackInfos[i].instrumentalness,
+                'energy': trackInfos[i].energy,
+                'liveness': trackInfos[i].liveness,
+                'key': trackInfos[i].key,
+                'tempo': trackInfos[i].tempo,
+                'valence': trackInfos[i].valence,
+                'track_popularity': trackInfos[i].popularity,
+                'artist_popularity': artistInfos[i].popularity,
+                'mode': trackInfos[i].mode,
+                'speechiness': trackInfos[i].speechiness,
+                'time_signature': trackInfos[i].timeSignature
             })
 
         return retv

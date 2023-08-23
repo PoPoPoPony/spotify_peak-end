@@ -21,46 +21,46 @@ def get_db():
     finally:
         db.close()
 
+# [deprecate]
+# @router.post("/updateSongListElem", response_model=SongListElem)
+# def updateSongListElem(elem: SongListElem, db: Session = Depends(get_db)):
+#     #elem.userID = uuid.UUID(elem.userID)
+#     # elem.songListID = uuid.UUID(elem.songListID)
 
-@router.post("/updateSongListElem", response_model=SongListElem)
-def updateSongListElem(elem: SongListElem, db: Session = Depends(get_db)):
-    #elem.userID = uuid.UUID(elem.userID)
-    # elem.songListID = uuid.UUID(elem.songListID)
+#     DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == elem.songListID, DBSongListElem.trackID == elem.trackID).first()
 
-    DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == elem.songListID, DBSongListElem.trackID == elem.trackID).first()
+#     if not DB_songListElem:
+#         newSongListElem = DBSongListElem(
+#             songListID = elem.songListID,
+#             userID = elem.userID,
+#             trackID = elem.trackID,
+#             splendidScore = elem.splendidScore,
+#             likeScore = elem.likeScore,
+#             addSongList = elem.addSongList,
+#             order = elem.order,
+#             beforeListened = elem.beforeListened,
+#             recommend = elem.recommend
+#         )
 
-    if not DB_songListElem:
-        newSongListElem = DBSongListElem(
-            songListID = elem.songListID,
-            userID = elem.userID,
-            trackID = elem.trackID,
-            splendidScore = elem.splendidScore,
-            likeScore = elem.likeScore,
-            addSongList = elem.addSongList,
-            order = elem.order,
-            beforeListened = elem.beforeListened,
-            recommend = elem.recommend
-        )
+#         db.add(newSongListElem)
+#         db.commit()
+#         db.refresh(newSongListElem)
 
-        db.add(newSongListElem)
-        db.commit()
-        db.refresh(newSongListElem)
+#         return newSongListElem
+#     else:
+#         DB_songListElem.songListID = elem.songListID
+#         DB_songListElem.userID = elem.userID
+#         DB_songListElem.trackID = elem.trackID
+#         DB_songListElem.splendidScore = elem.splendidScore
+#         DB_songListElem.likeScore = elem.likeScore
+#         DB_songListElem.addSongList = elem.addSongList
+#         DB_songListElem.order = elem.order
+#         DB_songListElem.beforeListened = elem.beforeListened
 
-        return newSongListElem
-    else:
-        DB_songListElem.songListID = elem.songListID
-        DB_songListElem.userID = elem.userID
-        DB_songListElem.trackID = elem.trackID
-        DB_songListElem.splendidScore = elem.splendidScore
-        DB_songListElem.likeScore = elem.likeScore
-        DB_songListElem.addSongList = elem.addSongList
-        DB_songListElem.order = elem.order
-        DB_songListElem.beforeListened = elem.beforeListened
+#         db.commit()
+#         db.refresh(DB_songListElem)
 
-        db.commit()
-        db.refresh(DB_songListElem)
-
-        return DB_songListElem
+#         return DB_songListElem
 
 
 @router.post("/updateSongListElems")
@@ -86,69 +86,22 @@ def updateSongListElems(elems: SongListElems, db: Session = Depends(get_db)):
             db.refresh(newSongListElem)
 
 
-@router.get("/getSongListElem")
-# order : 0: ascending, 1: descending, other: ignore
-def getSongListElem(songListID: str, order: int, db: Session = Depends(get_db)):
-    if order == 0:
-        DB_songListElem = db.query(DBSongListElem.trackID).filter(DBSongListElem.songListID == songListID).order_by(DBSongListElem.likeScore.asc()).all()
-    elif order == 1:
-        DB_songListElem = db.query(DBSongListElem.trackID).filter(DBSongListElem.songListID == songListID).order_by(DBSongListElem.likeScore.desc()).all()
-    else:
-        DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID).all()
 
-    if DB_songListElem:
-        return {"trackIDsStr": ','.join([x[0] for x in DB_songListElem])}
+@router.get("/getSongListElems")
+# order : 0: ascending, 1: descending, other: ignore
+# ruleType must be the column of the SongListElem
+def getSongListElems(songListID: str, ruleType: str, order: int, db: Session = Depends(get_db)):
+    col_names = [x for x in DBSongListElem.__dict__ if '_' not in x]
+    if ruleType not in col_names:
+        return None
+    if order == 0:
+        DB_songListElems = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID).order_by(DBSongListElem.__dict__[ruleType].asc()).all()
+    elif order == 1:
+        DB_songListElems = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID).order_by(DBSongListElem.__dict__[ruleType].desc()).all()
+    else:
+        DB_songListElems = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID).all()
+
+    if DB_songListElems:
+        return DB_songListElems
     else:
         return None
-
-
-@router.get("/getElemByRule")
-# 目前暫定計分方式 : 只看like
-def getElemByRule(songListID: str, ruleType:str, num: int, order:int, db: Session = Depends(get_db)):
-    DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID).all()
-
-    # 除order之外皆是舊的code，不知道在寫三小
-    #  0718 改寫like (Analyze那邊可能有用到需再修正)
-    # rulType : like、dislike、end
-    # order : 0: ascending, 1: descending, other: ignore
-    if ruleType=='like_original':
-        likeScores = [x.likeScore for x in DB_songListElem]
-        likeScores.sort(reverse=True)
-        return likeScores[:num]
-
-    elif ruleType=='dislike':
-        likeScores = [x.likeScore for x in DB_songListElem]
-        likeScores.sort()
-        return likeScores[:num]
-    elif ruleType=='end':
-        DB_songListElem.sort(key=lambda x: x.order)
-        likeScores = [x.likeScore for x in DB_songListElem]
-        return likeScores[-num:]
-    elif ruleType=='order':
-        if order == 0:
-            elems = sorted(DB_songListElem, key=lambda x:x.order)
-        elif order == 1:
-            elems = sorted(DB_songListElem, key=lambda x:x.order, reverse=True)
-        else:
-            elems = sorted(DB_songListElem, key=lambda x:x.order)
-        return elems[:num]
-    elif ruleType=='like':
-        if order == 0:
-            elems = sorted(DB_songListElem, key=lambda x:x.likeScore)
-        elif order == 1:
-            elems = sorted(DB_songListElem, key=lambda x:x.likeScore, reverse=True)
-        else:
-            elems = sorted(DB_songListElem, key=lambda x:x.likeScore)
-
-        return elems[:num]
-
-
-
-@router.get("/getAllSongs")
-def getAllSongs(songListID: str, containDelete:bool, db: Session = Depends(get_db)):
-    if containDelete:
-        DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID).all()
-    else:
-        DB_songListElem = db.query(DBSongListElem).filter(DBSongListElem.songListID == songListID, DBSongListElem.trackShowType=='onList').all()
-
-    return DB_songListElem

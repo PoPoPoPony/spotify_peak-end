@@ -367,7 +367,7 @@ export default {
                     })
                 } else {
                     // didnt have any song
-                    return new Promise((resolve, reject) => {
+                    return new Promise((resolve, ) => {
                         resolve()
                     })
                 }

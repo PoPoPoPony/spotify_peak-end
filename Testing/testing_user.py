@@ -143,24 +143,24 @@ class SecondStageTestingUser(User):
 
         if self.secondaryType == 0:
             self.list_type = ['WD', 'T']
-            WD_elems = backend_utils.get_song_lst_elem(self.WD_ID, rule_type='like', order=1)
-            T_elems = backend_utils.get_song_lst_elem(self.T_ID, rule_type='like', order=0)
+            WD_elems = backend_utils.get_song_lst_elems(self.WD_ID, rule_type='likeScore', order=1)
+            T_elems = backend_utils.get_song_lst_elems(self.T_ID, rule_type='likeScore', order=0)
         elif self.secondaryType == 1:
             self.list_type = ['WD', 'T']
-            WD_elems = backend_utils.get_song_lst_elem(self.WD_ID, rule_type='like', order=0)
-            T_elems = backend_utils.get_song_lst_elem(self.T_ID, rule_type='like', order=1)
+            WD_elems = backend_utils.get_song_lst_elems(self.WD_ID, rule_type='likeScore', order=0)
+            T_elems = backend_utils.get_song_lst_elems(self.T_ID, rule_type='likeScore', order=1)
         elif self.secondaryType == 2:
             self.list_type = ['T', 'WD']
-            WD_elems = backend_utils.get_song_lst_elem(self.WD_ID, rule_type='like', order=0)
-            T_elems = backend_utils.get_song_lst_elem(self.T_ID, rule_type='like', order=1)
+            WD_elems = backend_utils.get_song_lst_elems(self.WD_ID, rule_type='likeScore', order=0)
+            T_elems = backend_utils.get_song_lst_elems(self.T_ID, rule_type='likeScore', order=1)
         elif self.secondaryType == 3:
             self.list_type = ['T', 'WD']
-            WD_elems = backend_utils.get_song_lst_elem(self.WD_ID, rule_type='like', order=1)
-            T_elems = backend_utils.get_song_lst_elem(self.T_ID, rule_type='like', order=0)
+            WD_elems = backend_utils.get_song_lst_elems(self.WD_ID, rule_type='likeScore', order=1)
+            T_elems = backend_utils.get_song_lst_elems(self.T_ID, rule_type='likeScore', order=0)
 
-        self.DB_WD_names = [backend_utils.get_song_name_by_ID(x['trackID'])['trackName'] for x in WD_elems]
+        self.DB_WD_names = [trackInfo['trackName'] for trackInfo in backend_utils.get_track_infos([x['trackID'] for x in WD_elems])]
         self.DB_WD_likes = [x['likeScore'] for x in WD_elems]
-        self.DB_T_names = [backend_utils.get_song_name_by_ID(x['trackID'])['trackName'] for x in T_elems]
+        self.DB_T_names = [trackInfo['trackName'] for trackInfo in backend_utils.get_track_infos([x['trackID'] for x in T_elems])]
         self.DB_T_likes = [x['likeScore'] for x in T_elems]
 
 

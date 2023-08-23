@@ -23,39 +23,39 @@ def get_db():
     finally:
         db.close()
 
+# [deprecate]
+# @router.post("/updateTrackInfo", response_model=TracksInfo)
+# def updateTrackInfo(Track: TracksInfo, db: Session = Depends(get_db)):
+#     DB_track = db.query(DBTracksInfo).filter(DBTracksInfo.trackID == Track.trackID).first()
 
-@router.post("/updateTrackInfo", response_model=TracksInfo)
-def updateTrackInfo(Track: TracksInfo, db: Session = Depends(get_db)):
-    DB_track = db.query(DBTracksInfo).filter(DBTracksInfo.trackID == Track.trackID).first()
+#     if not DB_track:
+#         newTrack = DBTracksInfo(
+#             trackID = Track.trackID,
+#             trackName = Track.trackName,
+#             artistID = Track.artistID,
+#             popularity = Track.popularity,
+#             acousticness = Track.acousticness,
+#             danceability = Track.danceability,
+#             energy = Track.energy,
+#             instrumentalness = Track.instrumentalness,
+#             key = Track.key,
+#             liveness = Track.liveness,
+#             loudness = Track.loudness,
+#             mode = Track.mode,
+#             speechiness = Track.speechiness,
+#             tempo = Track.tempo,
+#             timeSignature = Track.timeSignature,
+#             valence = Track.valence,
+#             preview = Track.preview
+#         )
 
-    if not DB_track:
-        newTrack = DBTracksInfo(
-            trackID = Track.trackID,
-            trackName = Track.trackName,
-            artistID = Track.artistID,
-            popularity = Track.popularity,
-            acousticness = Track.acousticness,
-            danceability = Track.danceability,
-            energy = Track.energy,
-            instrumentalness = Track.instrumentalness,
-            key = Track.key,
-            liveness = Track.liveness,
-            loudness = Track.loudness,
-            mode = Track.mode,
-            speechiness = Track.speechiness,
-            tempo = Track.tempo,
-            timeSignature = Track.timeSignature,
-            valence = Track.valence,
-            preview = Track.preview
-        )
+#         db.add(newTrack)
+#         db.commit()
+#         db.refresh(newTrack)
 
-        db.add(newTrack)
-        db.commit()
-        db.refresh(newTrack)
-
-        return newTrack
-    else:
-        return DB_track
+#         return newTrack
+#     else:
+#         return DB_track
 
 
 
@@ -87,20 +87,24 @@ def updateTrackInfos(Infos: TracksInfos, db: Session = Depends(get_db)):
             )
 
             db.add(newTrack)
-    db.commit()
+            db.commit()
+            db.refresh(newTrack)
 
 
 # Union[List[str], None] = Query(default=None) <- 接受[str1, str2, ...]
 @router.get("/getTrackInfos")
-def getTrackInfos(trackIDs: str, db: Session = Depends(get_db)):
-    trackIDs = trackIDs.split(',')
-    DB_tracks = db.query(DBTracksInfo).filter(DBTracksInfo.trackID.in_(trackIDs)).all()
+def getTrackInfos(trackIDs: Union[List[str], None] = Query(default=None), db: Session = Depends(get_db)):
+    DB_tracks = []
+    for trackID in trackIDs:
+        DB_tracks.append(db.query(DBTracksInfo).filter(DBTracksInfo.trackID == trackID).first())
+
 
     return DB_tracks
 
 
-@router.get("/getTrackInfo")
-def getTrackInfo(trackID: str, db: Session = Depends(get_db)):
-    DB_track = db.query(DBTracksInfo).filter(DBTracksInfo.trackID==trackID).first()
+# [deprecate]
+# @router.get("/getTrackInfo")
+# def getTrackInfo(trackID: str, db: Session = Depends(get_db)):
+#     DB_track = db.query(DBTracksInfo).filter(DBTracksInfo.trackID==trackID).first()
 
-    return DB_track
+#     return DB_track

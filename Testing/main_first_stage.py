@@ -35,7 +35,7 @@ def main():
         json.dump(testing_user_dict, f, indent=4, sort_keys=True, ensure_ascii=False)
 
 
-    driver = webdriver.Chrome("chromedriver")
+    driver = webdriver.Chrome("")
     driver.maximize_window()
     wait = WebDriverWait(driver, 10)
 

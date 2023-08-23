@@ -21,33 +21,36 @@ def get_db():
     finally:
         db.close()
 
+
+# [deprecate]
 # add one tag
-@router.post("/updateTags", response_model=Tags)
-def updateTagInfo(tag: Tags, db: Session = Depends(get_db)):
-    DB_tag = db.query(DBTags).filter(DBTags.userID == tag.userID, DBTags.tagID == tag.tagID).first()
+# @router.post("/updateTags", response_model=Tags)
+# def updateTagInfo(tag: Tags, db: Session = Depends(get_db)):
+#     DB_tag = db.query(DBTags).filter(DBTags.userID == tag.userID, DBTags.tagID == tag.tagID).first()
 
-    if not DB_tag:
-        newTag = DBTags(
-            userID = tag.userID, 
-            tagID = tag.tagID,
-            tagType = tag.tagType,
-            tagFreq = tag.tagFreq,
-            order = tag.order,
-            tagSelected = tag.tagSelected,
-        )
+#     if not DB_tag:
+#         newTag = DBTags(
+#             userID = tag.userID, 
+#             tagID = tag.tagID,
+#             tagType = tag.tagType,
+#             tagFreq = tag.tagFreq,
+#             order = tag.order,
+#             tagSelected = tag.tagSelected,
+#         )
 
-        db.add(newTag)
-        db.commit()
-        db.refresh(newTag)
+#         db.add(newTag)
+#         db.commit()
+#         db.refresh(newTag)
 
-        return newTag
-    else:
-        DB_tag.tagSelected = tag.tagSelected
-        return DB_tag
+#         return newTag
+#     else:
+#         DB_tag.tagSelected = tag.tagSelected
+#         return DB_tag
 
-# add several tags
+
+# initially add tags (default status)
 @router.post("/updateSeveralTags")
-def updateTagsInfo(tags: SeveralTags, db: Session = Depends(get_db)):
+def initTagsInfo(tags: SeveralTags, db: Session = Depends(get_db)):
     for tag in tags.tags:
         DB_tag = db.query(DBTags).filter(DBTags.userID == tag.userID, DBTags.tagID == tag.tagID).first()
 
@@ -84,15 +87,24 @@ def updateTagStatus(userID: str, tagID: str, db: Session = Depends(get_db)):
 
 @router.get("/getTags",)
 # order : 0: ascending, 1: descending, other: ignore
-def getTags(userID: str, tag_type: str, order: int, db: Session = Depends(get_db)):
+# is_select(str) : true / false / * (all)
+def getTags(userID: str, tag_type: str, order: int, is_select: str, db: Session = Depends(get_db)):
+    if is_select not in ['true', 'false', "*"]:
+        return None
+    
     if tag_type == '*':
         DB_tags = db.query(DBTags).filter(DBTags.userID == userID).all()
     else:
         DB_tags = db.query(DBTags).filter(DBTags.userID == userID, DBTags.tagType == tag_type).all()
 
+    if is_select != '*':
+        is_select = is_select=='true'
+        DB_tags = [x for x in DB_tags if x.tagSelected == is_select]
+
     if order == 0:
         DB_tags = sorted(DB_tags, key=lambda x: x.order)
     elif order == 1:
         DB_tags = sorted(DB_tags, key=lambda x: x.order, reverse=True)
+
 
     return DB_tags

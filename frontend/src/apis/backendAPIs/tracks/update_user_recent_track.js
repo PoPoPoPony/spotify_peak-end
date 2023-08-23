@@ -1,27 +1,27 @@
 import request from '../../../utils/requestBackend'
 
 
+// [deprecate]
+// export function UpdateUserRecentTrack(userID, trackID, times) {
+//     var data = JSON.stringify({
+//         "userID": userID,
+//         "trackID": trackID,
+//         "times": times
+//     });
 
-export function UpdateUserRecentTrack(userID, trackID, times) {
-    var data = JSON.stringify({
-        "userID": userID,
-        "trackID": trackID,
-        "times": times
-    });
 
-
-    let config = {
-        url: '/userRecentTracks/updateUserRecentTrack',
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        data: data
-    }
+//     let config = {
+//         url: '/userRecentTracks/updateUserRecentTrack',
+//         method: 'POST',
+//         headers: {
+//             "Content-Type": "application/json"
+//         },
+//         data: data
+//     }
     
 
-    return request(config)
-}
+//     return request(config)
+// }
 
 
 // trackIDs -> [ID1, ID2, ..., IDn]

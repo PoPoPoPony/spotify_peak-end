@@ -1,31 +1,31 @@
 import request from '../../../utils/requestBackend'
 
 
+// [deprecate]
+// export function UpdateSongListElem(ElemObj) {
+//     let data = JSON.stringify({
+//         songListID: ElemObj.songListID,
+//         userID: ElemObj.userID,
+//         trackID: ElemObj.trackID,
+//         splendidScore: ElemObj.splendidScore,
+//         likeScore: ElemObj.likeScore,
+//         addSongList: ElemObj.addSongList,
+//         order: ElemObj.order,
+//         beforeListened: ElemObj.beforeListened,
+//         recommend: ElemObj.recommend
+//     })
 
-export function UpdateSongListElem(ElemObj) {
-    let data = JSON.stringify({
-        songListID: ElemObj.songListID,
-        userID: ElemObj.userID,
-        trackID: ElemObj.trackID,
-        splendidScore: ElemObj.splendidScore,
-        likeScore: ElemObj.likeScore,
-        addSongList: ElemObj.addSongList,
-        order: ElemObj.order,
-        beforeListened: ElemObj.beforeListened,
-        recommend: ElemObj.recommend
-    })
 
-
-    let config = {
-        url: '/songListElem/updateSongListElem',
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        data:data
-    }
-    return request(config)
-}
+//     let config = {
+//         url: '/songListElem/updateSongListElem',
+//         method: 'POST',
+//         headers: {
+//             "Content-Type": "application/json"
+//         },
+//         data:data
+//     }
+//     return request(config)
+// }
 
 
 export function UpdateSongListElems(elemObjs) {

@@ -8,7 +8,7 @@ import utils
 
 
 def first_stage_login(driver, wait, testing_user):
-    driver.get("http://ponyia.ddns.net:8081/")
+    driver.get("http://ponylis.ddns.net:8081/")
 
     user_email_input = wait.until(EC.element_to_be_clickable((
         By.XPATH,
@@ -311,7 +311,7 @@ def select_tags(driver, wait, testing_user):
 
 
 def second_stage_login(driver, wait, testing_user):
-    driver.get("http://ponyia.ddns.net:8081/")
+    driver.get("http://ponylis.ddns.net:8081/")
 
     user_email_input = wait.until(EC.element_to_be_clickable((
         By.XPATH,

@@ -2,17 +2,15 @@ import request from '../../../utils/requestBackend'
 
 
 
-export function GetSongListElem(songListID, order) {
+export function GetUserRecentTracks(userID) {
     let config = {
-        url: '/songListElem/getSongListElem',
+        url: '/userRecentTracks/getUserRecentTracks?userID='+userID,
         method: 'GET',
         headers: {
             "Content-Type": "application/json"
         },
-        params: {
-            'songListID': songListID,
-            'order': order
-        }
     }
+    
+
     return request(config)
 }
