@@ -31,6 +31,7 @@ import {GetSavedTracks} from '@/apis/SpotifyAPIs/get_saved_tracks'
 import {UpdateUserRecentTracks} from '@/apis/backendAPIs/tracks/update_user_recent_track'
 import {CheckRecent, CheckSaved} from '@/apis/backendAPIs/tracks/check_user_exist'
 import {UpdateUserSavedTracks} from '@/apis/backendAPIs/tracks/update_user_saved_track'
+import {InitUser} from '@/apis/backendAPIs/user/init_user'
 import {UpdateBasicInfo} from '@/utils/functools'
 import {ElLoading} from 'element-plus'
 
@@ -42,27 +43,10 @@ export default {
         player,
     },
     created(){
-        
         this.$store.isExercise = true
         let urlParams = new URLSearchParams(window.location.search)
+        this.$store.dispatch("initUserAccessToken", urlParams.get("access_token"))
 
-        let userObj = {
-            "userID": urlParams.get('uuid'),
-            "access_token": urlParams.get('access_token')
-        }
-
-        this.$store.dispatch("initUserData", userObj)
-
-        let expType = {
-            "within": urlParams.get('within_subject_type'),
-            "between": urlParams.get('between_subject_type')
-        }
-
-        this.$store.dispatch("initExpType", expType)
-        this.$store.dispatch("initPeriod", urlParams.get('period'))
-
-        this.redirectPage = urlParams.get('redirect_page')
-        
         this.song_lst = [
             {
                 listened: 0,
@@ -101,7 +85,7 @@ export default {
         
     },
 
-    mounted() {
+    async mounted() {   
         const loadingInstance = ElLoading.service({
             'lock': false,
             'fullscreen': true,
@@ -111,6 +95,14 @@ export default {
         setTimeout(() => {
             loadingInstance.close()
         }, 1000)
+        
+        await InitUser(
+            this.$store.state.userID,
+            this.$store.state.userEmail,
+            this.$store.state.between_subject_type,
+            this.$store.state.within_subject_type
+        )      
+        
         // 3000
         // 收集近3個月聆聽的歌曲
         CheckRecent(this.$store.state.userID).then((res)=>{
@@ -154,7 +146,6 @@ export default {
 
             ct: 0,
             startRerender: 0,
-            redirectPage: '',
             song_not_complete: Array(3).fill(true),
             currentPlayingIdx: -1,
 
@@ -206,7 +197,7 @@ export default {
 
         startHandler() {
             this.$store.isExercise = false
-            if(this.redirectPage=='0') {
+            if(this.$store.state.exercise_redirect_page=='0') {
                 this.$router.push({
                     name: 'create_list',
                 })

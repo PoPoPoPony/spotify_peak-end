@@ -11,7 +11,7 @@ from fastapi import HTTPException, status
 
 router = APIRouter(
     prefix='/api/v1/songListScore',
-    tags = ["for songListScore init DB data"]
+    tags = ["SongListScore"]
 )
 
 def get_db():
@@ -53,13 +53,7 @@ def getSongListScoreLen(userID:uuid.UUID, db: Session = Depends(get_db)):
 
 @router.get("/getSongListScore")
 def getSongListScore(songListID:uuid.UUID, db: Session = Depends(get_db)):
-    songList = db.query(DBSongListScore).filter(DBSongListScore.songListID == songListID).first()
+    songList = db.query(DBSongListScore.satisfyScore, DBSongListScore.diversityScore, DBSongListScore.noveltyScore).filter(DBSongListScore.songListID == songListID).first()
 
-    obj = {
-        'satisfyScore': songList.satisfyScore,
-        'diversityScore': songList.diversityScore,
-        'noveltyScore ': songList.noveltyScore 
-    }
-
-    return obj
+    return songList
 

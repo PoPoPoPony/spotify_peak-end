@@ -1,5 +1,4 @@
-from ctypes.wintypes import INT
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
 import requests
 import uuid as uuidPkg
 from ..models.user import UserInfo
@@ -8,11 +7,12 @@ from ..db_model.models import DBUserInfo
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from typing import List, Union
+from random import choice
 
 
 router = APIRouter(
     prefix='/api/v1/user',
-    tags = ["for user init DB data"]
+    tags = ["User"]
 )
 
 def get_db():
@@ -23,24 +23,53 @@ def get_db():
         db.close()
 
 
-@router.post("/initUser", response_model=UserInfo)
+
+
+def random_sencondary_type():
+    res = requests.get(url='http://ponylis.ddns.net:8080/api/v1/user/getAllUser')
+    res = res.json()
+    secondary = [x['secondaryType'] for x in res]
+    d = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+    }
+    for s in secondary:
+        d[s]+=1
+
+    candidate = []
+    for group in d.keys():
+        if d[group] == min(d.values()):
+            candidate.append(group)
+
+    return choice(candidate)
+
+
+@router.post("/initUser")
 def initUser(User: UserInfo, db: Session = Depends(get_db)):
-    
-    newUser = DBUserInfo(
-        userID = User.userID,
-        userEmail = User.userEmail,
-        betweenType = User.betweenType,
-        withinType = User.withinType,
-        secondaryType = User.secondaryType
-    )
+    DB_User = db.query(DBUserInfo).filter(DBUserInfo.userID == User.userID).first()
 
-    db.add(newUser)
-    db.commit()
+    if not DB_User:
+        newUser = DBUserInfo(
+            userID = User.userID,
+            userEmail = User.userEmail,
+            betweenType = User.betweenType,
+            withinType = User.withinType,
+            secondaryType = random_sencondary_type()
+        )
 
-    return newUser
+        db.add(newUser)
+        db.commit()
+        db.refresh(newUser)
+
+        return newUser
+    else:
+        raise HTTPException(status_code=404, detail="userID exist!")
 
 
-@router.get("/getUser", response_model=UserInfo)
+
+@router.get("/getUser")
 def getUser(email: str, db: Session = Depends(get_db)):
     DB_User = db.query(DBUserInfo).filter(DBUserInfo.userEmail == email).first()
     if DB_User:

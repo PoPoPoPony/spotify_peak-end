@@ -17,7 +17,7 @@
                     </h3>
                 </el-row>
                 <el-row style="padding-bottom: 20px">
-                    <el-input placeholder="請輸入註冊在 Spotify 上的信箱" v-model="userEmail" clearable  @change="userEmailChanged"></el-input>
+                    <el-input placeholder="請輸入常用信箱" v-model="userEmail" clearable  @change="userEmailChanged"></el-input>
                 </el-row>
                 <el-row>
                     <el-col :xs="{'span':'5', 'offset': '3'}" :sm="{'span':'5', 'offset': '6'}" :lg="{'span': '5', 'offset': '7'}">
@@ -115,6 +115,7 @@
 import { ElNotification } from 'element-plus'
 import { ArrowRightBold } from '@element-plus/icons'
 import { GetUser } from '@/apis/backendAPIs/user/get_user'
+import { uuid } from 'vue-uuid'
 // import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 
 export default {
@@ -124,11 +125,6 @@ export default {
     },
     data() {
         return {
-            account: '',
-            user: {
-                account: '',
-                pwd: '',
-            },
             spotify_logo: require('@/assets/login/spotify_logo.png'),
             third_login_src: [
                 require('@/assets/login/google.png'),
@@ -148,11 +144,15 @@ export default {
                 "within": "0",
                 "between":"0",
             },
-            second_test_disable: true
+            second_test_disable: true,
+            user_uuid: '',
         }
     },
     created() {
 
+    },
+    mounted() {
+        this.user_uuid = uuid.v4()
     },
     methods: {
         GroupSelect() {
@@ -228,31 +228,35 @@ export default {
             }
         },
 
+        // 在vuex中存入使用者的信息
         setBackendURL() {
             this.backend_url = "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuth"
-            // this.backend_url = "http://localhost:8888/login"
 
             // 0, 1 for doing discover weekly first
             // 2, 3 for doing seed first
             if(["0", "1"].includes(this.$store.state.within_subject_type)) {
-                this.backend_url+="?redirect_page=0"
+                this.$store.dispatch("initExerciseRedirectPage", "0")
             } else {
-                this.backend_url+="?redirect_page=1"
+                this.$store.dispatch("initExerciseRedirectPage", "1")
             }
-            let params="&between_subject_type=" + this.$store.state.between_subject_type
-            params += "&within_subject_type=" + this.$store.state.within_subject_type
-            params += "&user_email=" + this.userEmail
-            params += "&period=first"
-            this.backend_url+=params
+
+            this.$store.dispatch("initUserID", this.user_uuid)
+            this.$store.dispatch("initUserEmail", this.userEmail.trim())
+            this.$store.dispatch("initPeriod", "first")
+
             // console.log(this.backend_url)
         },
         // 做第二次的實驗
+        // [TODO] 需修改
         onSecondTest() {
-            GetUser(this.userEmail).then((res)=>{
+            this.$store.dispatch("initUserEmail", this.userEmail.trim())
+            this.$store.dispatch("initPeriod", "second")
+
+            GetUser(this.userEmail.trim()).then((res)=>{
                 let retv = res.data
                 if(retv) {
                     window.location.assign(
-                        "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuth2?user_email=" + this.userEmail.trim() + "&period=second"
+                        "http://ponylis.ddns.net:8080/api/v1/auth/SpotifyAuth2"
                     )
                 } else {
                     ElNotification({

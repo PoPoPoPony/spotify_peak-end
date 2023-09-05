@@ -12,7 +12,7 @@ import json
 
 router = APIRouter(
     prefix='/api/v1/userSavedTracks',
-    tags = ["userSavedTracks"]
+    tags = ["UserSavedTracks"]
 )
 
 def get_db():
@@ -49,3 +49,13 @@ def checkUserExist(userID: str, db: Session = Depends(get_db)):
         return True
     else:
         return False
+    
+@router.get("/getUserSavedTrackInfos")
+def getUserSavedTrackInfos(userID: str, db: Session = Depends(get_db)):
+    userID = uuid.UUID(userID)
+    DB_SavedTracks = db.query(DBUserSavedTracks).filter(DBUserSavedTracks.userID == userID).all()
+
+    if DB_SavedTracks:
+        return DB_SavedTracks
+    else:
+        return None

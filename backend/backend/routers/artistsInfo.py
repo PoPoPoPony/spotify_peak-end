@@ -12,7 +12,7 @@ import json
 
 router = APIRouter(
     prefix='/api/v1/artistInfo',
-    tags = ["for artist init DB data"]
+    tags = ["ArtistInfo"]
 )
 
 def get_db():
@@ -56,10 +56,12 @@ def updateArtistInfos(Infos: ArtistsInfos, db: Session = Depends(get_db)):
                 popularity = data['popularity'],
                 genres = data['genres']
             )
-
-            db.add(newArtist)
-            db.commit()
-            db.refresh(newArtist)
+            try:
+                db.add(newArtist)
+                db.commit()
+                db.refresh(newArtist)
+            except Exception as e:
+                continue
 
 
 

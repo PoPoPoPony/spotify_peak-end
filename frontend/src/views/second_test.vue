@@ -23,11 +23,12 @@ import secondTestSongTable from '@/components/song_list/second_test_song_table'
 import player from '@/components/song_list/player'
 // import {UpdateSongListElem} from '@/apis/backendAPIs/songListElem/update_songList_elem'
 import {GetSongListElems} from '@/apis/backendAPIs/songListElem/get_songList_elems'
-import {GetSongListInfo} from '@/apis/backendAPIs/songListInfo/get_songList_info'
+import {GetSongListID} from '@/apis/backendAPIs/songListInfo/get_songList_id'
 import {UpdateSongListInfo} from '@/apis/backendAPIs/songListInfo/update_songList_info'
 import {GetTracksByID} from '@/apis/SpotifyAPIs/get_tracks_by_ID'
 import {GetSongListScoreLen} from '@/apis/backendAPIs/songListScore/get_songList_score'
 import {GetTrackInfos} from '@/apis/backendAPIs/tracks/get_track_infos'
+import {GetUser} from '@/apis/backendAPIs/user/get_user'
 
 export default {
     name: 'second_test',
@@ -37,37 +38,12 @@ export default {
     },
     async created(){
         let urlParams = new URLSearchParams(window.location.search)
-        this.list_type = urlParams.get('list_type')
-        this.secondaryType = urlParams.get('secondaryType')
+        this.$store.dispatch("initUserAccessToken", urlParams.get('access_token'))
 
-        let userObj = {
-            "userID": urlParams.get('userID'),
-            "access_token": urlParams.get('access_token')
-        }
-
-        this.$store.dispatch("initUserData", userObj)
-        this.$store.dispatch("initPeriod", urlParams.get('period'))
-
-        // 在資料庫中init新歌單
-        if(this.list_type==0) {
-            this.first_type = "Weekly_Discovery"
-            UpdateSongListInfo(this.$store.state.userID, this.first_type, this.$store.state.period).then((res)=> {
-                let retv = res.data
-                this.$store.dispatch("initWD_ID", retv.songListID)
-            })
-        } else {
-            this.first_type = "Tags"
-            UpdateSongListInfo(this.$store.state.userID, this.first_type, this.$store.state.period).then((res)=> {
-                let retv = res.data
-                this.$store.dispatch("initT_ID", retv.songListID)
-                
-            })
-        }
-
-        // 獲取第一次實驗歌單
-        await GetSongListInfo(this.$store.state.userID, this.first_type, "first").then((res)=>{
+        await GetUser(this.$store.state.userEmail).then((res)=>{
             let retv = res.data
-            this.firstTestSongListID = retv['songListID']
+            this.$store.dispatch("initUserID", retv.userID)
+            this.secondaryType = retv.secondaryType
         })
 
         await GetSongListScoreLen(this.$store.state.userID).then((res)=>{
@@ -75,7 +51,60 @@ export default {
             // pass_exp_num=2 -> 正在進行第二次的第一個歌單
             // pass_exp_num=3 -> 正在進行第二次的第二個歌單
             this.pass_exp_num = retv
+
+            // secondary type
+            // 0: week(高->低) -> tag(低->高)
+            // 1: week(低->高) -> tag(高->低)
+            // 2: tag(高->低) -> week(低->高)
+            // 3: tag(低->高) -> week(高->低)
+
+            if (retv==2) {
+                if ([0, 1].indexOf(this.secondaryType)>=0) {
+                    this.list_type = 0
+                } else {
+                    this.list_type = 1
+                }
+            } else {
+                if ([0, 1].indexOf(this.secondaryType)>=0) {
+                    this.list_type = 1
+                } else {
+                    this.list_type = 0
+                }
+            }
+
+            // 在資料庫中init新歌單
+            if(this.list_type==0) {
+                this.first_type = "Weekly_Discovery"
+                UpdateSongListInfo(this.$store.state.userID, this.first_type, this.$store.state.period).then((res)=> {
+                    let retv = res.data
+                    this.$store.dispatch("initWD_ID", retv.songListID)
+                })
+            } else {
+                this.first_type = "Tags"
+                UpdateSongListInfo(this.$store.state.userID, this.first_type, this.$store.state.period).then((res)=> {
+                    let retv = res.data
+                    this.$store.dispatch("initT_ID", retv.songListID)
+                    
+                })
+            }
         })
+
+        // this.list_type = urlParams.get('list_type')
+        // this.secondaryType = urlParams.get('secondaryType')
+
+        // let userObj = {
+        //     "userID": urlParams.get('userID'),
+            // "access_token": urlParams.get('access_token')
+        // }
+
+        // this.$store.dispatch("initUserData_original", userObj)
+
+        // 獲取第一次實驗歌單
+        await GetSongListID(this.$store.state.userID, this.first_type, "first").then((res)=>{
+            let retv = res.data
+            this.firstTestSongListID = retv['songListID']
+        })
+
 
         // console.log(this.firstTestSongListID, this.pass_exp_num)
         // console.log("st", this.secondaryType, "pen", this.pass_exp_num)
@@ -83,13 +112,13 @@ export default {
 
         // 獲取排序後的歌單Str
         if (this.pass_exp_num==2) {
-            if (["1", "3"].indexOf(this.secondaryType)>=0) {
+            if ([1, 3].indexOf(this.secondaryType)>=0) {
                 this.GetSongData(this.firstTestSongListID, 0)
             } else {
                 this.GetSongData(this.firstTestSongListID, 1)
             }
         } else {
-            if (["1", "3"].indexOf(this.secondaryType)>=0) {
+            if ([1, 3].indexOf(this.secondaryType)>=0) {
                 this.GetSongData(this.firstTestSongListID, 1)
             } else {
                 this.GetSongData(this.firstTestSongListID, 0)
@@ -123,6 +152,7 @@ export default {
 
             // playlist 相關參數
             list_id:'',
+            list_type: -1,
 
             // 測試暫時用3首，之後改成20
             tags_obj: {},
@@ -161,7 +191,6 @@ export default {
                 name: 'list_credit', 
                 query: {
                     list_type: this.list_type,
-                    secondaryType: this.secondaryType
                 },
             })
         },

@@ -12,7 +12,7 @@ from fastapi import HTTPException, status
 
 router = APIRouter(
     prefix='/api/v1/songListInfo',
-    tags = ["for songList init DB data"]
+    tags = ["SongListInfo"]
 )
 
 def get_db():
@@ -50,12 +50,33 @@ def updateSongListInfo(userID: str, listType: str, period: str, db: Session = De
         return DB_songList
 
 
-@router.get("/getSongListInfo")
-def getSongListInfo(userID: str, listType: str, period: str, db: Session = Depends(get_db)):
+@router.get("/getSongListID")
+def getSongListID(userID: str, listType: str, period: str, db: Session = Depends(get_db)):
     userID = uuid.UUID(userID)
-    DB_songList = db.query(DBSongListInfo).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType == listType, DBSongListInfo.period == period).first()
+    DB_songList = db.query(DBSongListInfo.songListID).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType == listType, DBSongListInfo.period == period).first()
 
     if DB_songList:
-        return {"songListID": DB_songList.songListID}
+        return DB_songList
     else:
         return None
+    
+@router.get("/getSongListInfos")
+def getSongListInfos(userID: str, listType: str, period: str, db: Session = Depends(get_db)):
+    userID = uuid.UUID(userID)
+    if listType == '*':
+        listType=["Weekly_Discovery", "Tags"]
+    else:
+        listType=listType.split(',')
+
+    if period == '*':
+        period=["first", "second"]
+    else:
+        period=period.split(',')
+
+    DB_songLists = db.query(DBSongListInfo).filter(DBSongListInfo.userID == userID, DBSongListInfo.listType.in_(listType), DBSongListInfo.period.in_(period)).all()
+
+    if DB_songLists:
+        return DB_songLists
+    else:
+        return None
+    

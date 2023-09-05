@@ -11,7 +11,7 @@ from fastapi import HTTPException, status
 
 router = APIRouter(
     prefix='/api/v1/tags',
-    tags = ["for tags init DB data"]
+    tags = ["Tags"]
 )
 
 def get_db():

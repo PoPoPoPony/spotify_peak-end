@@ -15,7 +15,7 @@ def get_users(email: str) -> List:
 
 
 def get_song_lst_id(user_id: str, list_type:str, period: str) -> List:
-    data = requests.get(baseURL+'songListInfo/getSongListInfo', params={'userID': user_id, 'listType': list_type, 'period': period})
+    data = requests.get(baseURL+'songListInfo/getSongListID', params={'userID': user_id, 'listType': list_type, 'period': period})
 
     return data.json()
 

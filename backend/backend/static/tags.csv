@@ -1,0 +1,31 @@
+user_email,between_type,within_type,secondary_type,tag_name,tag_type,tag_freq,tag_order,is_select
+selenium_test0@gmail.com,1,1,0,白玫瑰,track,2,0,True
+selenium_test0@gmail.com,1,1,0,徐佳瑩,artist,5,0,False
+selenium_test0@gmail.com,1,1,0,綿綿,track,2,1,False
+selenium_test0@gmail.com,1,1,0,mandopop,genre,198,0,False
+selenium_test0@gmail.com,1,1,0,戴佩妮,artist,5,1,False
+selenium_test0@gmail.com,1,1,0,taiwan pop,genre,98,1,False
+selenium_test0@gmail.com,1,1,0,想和你看五月的晚霞,track,2,2,False
+selenium_test0@gmail.com,1,1,0,陳綺貞,artist,5,2,False
+selenium_test0@gmail.com,1,1,0,無人之境,track,2,3,False
+selenium_test0@gmail.com,1,1,0,taiwan singer-songwriter,genre,84,2,False
+selenium_test0@gmail.com,1,1,0,莫文蔚,artist,4,3,False
+selenium_test0@gmail.com,1,1,0,taiwan indie,genre,74,3,False
+selenium_test0@gmail.com,1,1,0,vampire,track,1,4,False
+selenium_test0@gmail.com,1,1,0,艾怡良,artist,4,4,True
+selenium_test0@gmail.com,1,1,0,Cruel Summer,track,1,5,False
+selenium_test0@gmail.com,1,1,0,pop,genre,73,4,False
+selenium_test0@gmail.com,1,1,0,郁可唯,artist,4,5,False
+selenium_test0@gmail.com,1,1,0,mainland chinese pop,genre,43,5,False
+selenium_test0@gmail.com,1,1,0,"What Was I Made For? [From The Motion Picture ""Barbie""]",track,1,6,False
+selenium_test0@gmail.com,1,1,0,原子邦妮,artist,4,6,False
+selenium_test0@gmail.com,1,1,0,Single Soon,track,1,7,False
+selenium_test0@gmail.com,1,1,0,cantopop,genre,41,6,False
+selenium_test0@gmail.com,1,1,0,鄭宜農,artist,4,7,False
+selenium_test0@gmail.com,1,1,0,alt z,genre,27,7,False
+selenium_test0@gmail.com,1,1,0,乘著無人光影的遠行,track,1,8,False
+selenium_test0@gmail.com,1,1,0,陳華,artist,3,8,False
+selenium_test0@gmail.com,1,1,0,Lonely Christmas,track,1,9,False
+selenium_test0@gmail.com,1,1,0,chinese viral pop,genre,24,8,True
+selenium_test0@gmail.com,1,1,0,守夜人,artist,3,9,False
+selenium_test0@gmail.com,1,1,0,chinese indie,genre,22,9,False

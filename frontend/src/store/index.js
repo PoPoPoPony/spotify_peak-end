@@ -5,13 +5,15 @@ const store = new Vuex.Store({
   plugins: [createPersistedState()],
   
   state: {
-    between_subject_type: '',
+    within_subject_typ: '',
     within_subject_type:'',
     userID: '',
     access_token:'',
     WD_ID: '',
     T_ID: '',
     period: '',
+    exercise_redirect_page: '',
+    userEmail:'',
   },
   mutations: {
     setWithinType(state, within) {
@@ -35,12 +37,37 @@ const store = new Vuex.Store({
     setPeriod(state, period) {
       state.period = period
     },
+    setExerciseRedirectPage (state, page) {
+      state.exercise_redirect_page = page
+    },
+    setUserEmail(state, email) {
+      state.userEmail = email
+    }
   },
   actions: {
-    initUserData(context, userData) {
-      context.commit("setAccessToken", userData.access_token)
-      context.commit("setUserID", userData.userID)
+    // initUserData(context, userData) {
+    //   context.commit("setUserID", userData.userID)
+    //   context.commit("setUserEmail", userData.userEmail)
+    // },
+
+    initUserID(context, id) {
+      context.commit("setUserID", id)
     },
+
+    initUserEmail(context, email) {
+      context.commit("setUserEmail", email)
+    },
+
+    // second test
+    // initUserData_original(context, userData) {
+    //   context.commit("setUserID", userData.userID)
+    //   context.commit("setAccessToken", userData.access_token)
+    // },
+
+    initUserAccessToken(context, access_token){
+      context.commit("setAccessToken", access_token)
+    },
+
     initExpType(context, expType) {
       context.commit("setWithinType", expType.within)
       context.commit("setBetweenType", expType.between)
@@ -55,7 +82,11 @@ const store = new Vuex.Store({
 
     initPeriod(context, period) {
       context.commit("setPeriod", period)
-    }
+    },
+
+    initExerciseRedirectPage(context, page) {
+      context.commit("setExerciseRedirectPage", page)
+    },
 
     // initUserID(context, userID) {
     //   context.commit("setUserID", userID.userID)

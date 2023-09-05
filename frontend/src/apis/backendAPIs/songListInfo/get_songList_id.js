@@ -2,9 +2,9 @@ import request from '../../../utils/requestBackend'
 
 
 
-export function GetSongListInfo(userID, listType, period) {
+export function GetSongListID(userID, listType, period) {
     let config = {
-        url: '/songListInfo/getSongListInfo',
+        url: '/songListInfo/getSongListID',
         method: 'GET',
         headers: {
             "Content-Type": "application/json"

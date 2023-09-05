@@ -1,0 +1,41 @@
+user_email,between_type,within_type,secondary_type,track_name,artist_name,artist_popularity,genres,track_popularity,acousticness,danceability,energy,instrumentalness,key,liveness,loudness,mode,speechiness,tempo,timeSignature,valence,like_score,splendid_score,is_add,songlist_elem_order,is_before_listened,recommend,list_type,period,satisfy_score,diversity_score,novelty_score
+selenium_test0@gmail.com,1,1,0,drunk text,Henry Moodie,59,singer-songwriter pop,74,0.286,0.382,0.401,0.0,0,0.0851,-8.955,1,0.0851,185.636,3,0.145,1,8,True,0,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,字字句句,卢卢快闭嘴,49,chinese viral pop,70,0.732,0.488,0.452,0.0,2,0.108,-8.957,1,0.0456,138.072,4,0.368,1,10,False,1,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,Just Say Hello - Acoustic Version,甘草片r,38,,60,0.522,0.631,0.355,0.0,4,0.131,-8.189,1,0.0295,143.985,4,0.336,9,7,True,2,True,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,First Date,Adib Sin,33,,46,0.698,0.504,0.529,2.94e-06,0,0.105,-8.027,1,0.0679,180.14,4,0.368,3,2,False,3,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,Honest,rei brown,49,,54,0.825,0.798,0.44,0.0107,5,0.111,-8.96,1,0.0319,94.961,4,0.429,1,6,True,4,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,我要你,老狼,29,chinese minyao,34,0.731,0.621,0.318,0.000226,4,0.199,-10.746,1,0.0307,127.878,4,0.27,1,8,True,5,True,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,南山南,張磊,27,chinese drama ost,33,0.664,0.526,0.0543,0.0,0,0.742,-25.963,1,0.0362,129.912,4,0.22,5,4,False,6,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,阿拉斯加海湾,蓝心羽,43,chinese viral pop,48,0.729,0.589,0.388,1.11e-05,10,0.625,-10.467,1,0.044,114.652,4,0.249,7,2,False,7,True,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,The Way I Still Love You,Reynard Silva,27,deep r&b,32,0.624,0.361,0.703,0.0,8,0.104,-4.347,1,0.0549,83.72,4,0.487,9,3,False,8,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,Letting Go,吉克隽逸,33,,52,0.444,0.563,0.704,0.0,9,0.0671,-6.313,0,0.0355,135.978,4,0.435,7,5,False,9,True,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,0321,space x,49,chinese viral pop,66,0.625,0.658,0.417,0.0,2,0.132,-6.485,1,0.0366,171.974,4,0.0748,2,6,False,10,True,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,Last Dance,伍佰,53,"mandopop,taiwan singer-songwriter",57,0.0158,0.463,0.62,1.26e-06,6,0.195,-7.27,0,0.0289,151.311,4,0.492,9,10,False,11,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,当想你成为习惯,KeyKey,41,chinese viral pop,61,0.891,0.679,0.398,0.0,3,0.118,-12.373,1,0.0774,77.953,4,0.499,6,5,False,12,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,給女兒,滅火器,46,"mandopop,taiwan indie,taiwan pop,taiwan punk",46,0.0232,0.49,0.734,0.0,3,0.222,-5.66,1,0.0283,179.998,4,0.441,4,5,False,13,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,从前说,小阿七,50,chinese viral pop,69,0.666,0.616,0.688,0.0,4,0.367,-5.182,1,0.0338,115.959,4,0.444,4,3,False,14,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,Casualties,Ethan Dufault,41,cedm,52,0.846,0.647,0.306,0.0,3,0.1,-10.392,1,0.0321,143.932,4,0.348,1,3,True,15,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,晚风告白,星野,42,chinese viral pop,61,0.801,0.656,0.512,0.0,3,0.113,-8.897,1,0.0316,111.998,4,0.347,4,3,False,16,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,若把你,Kirsty刘瑾睿,28,,49,0.927,0.713,0.256,0.0,4,0.117,-9.507,1,0.0288,107.99,4,0.259,2,10,False,17,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,April,Anja Kotar,28,,40,0.31,0.778,0.404,0.0,7,0.336,-6.973,1,0.0919,100.003,4,0.594,9,3,False,18,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,企好,李幸倪,44,"cantopop,malaysian mandopop",57,0.817,0.669,0.408,0.0,7,0.124,-7.757,1,0.0349,125.0,4,0.64,5,4,False,19,False,WD,Weekly_Discovery,first,6,2,3
+selenium_test0@gmail.com,1,1,0,不怪他 feat.棉花糖,鄭興,32,"mandopop,taiwan pop,taiwan singer-songwriter",28,0.478,0.498,0.401,0.0,4,0.255,-9.344,0,0.0364,126.175,4,0.424,2,1,False,0,True,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,框不住的愛,王艷薇,33,mandopop,39,0.622,0.497,0.493,0.0,4,0.0779,-6.859,1,0.025,141.977,4,0.323,5,9,False,1,True,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,青春住了誰,楊丞琳,50,mandopop,48,0.5,0.474,0.532,0.0,4,0.126,-6.31,1,0.0343,147.994,4,0.26,7,10,False,2,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,世间美好与你环环相扣,柏松,24,,45,0.748,0.519,0.465,0.0,4,0.0744,-10.083,1,0.0333,139.958,4,0.392,5,3,True,3,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,我懷念的,孫燕姿,57,"mandopop,singaporean mandopop,singaporean pop,singaporean singer-songwriter",62,0.755,0.434,0.391,0.0,4,0.109,-8.016,1,0.0341,139.972,4,0.283,3,8,False,4,True,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,油尖旺金毛玲,Serrini,42,"cantopop,hk-pop,hong kong indie",39,0.565,0.472,0.524,0.00196,8,0.178,-7.15,1,0.0267,143.946,4,0.318,9,9,False,5,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,秋鄉,魏如昀,35,mandopop,40,0.611,0.549,0.488,0.0,5,0.111,-9.543,1,0.0332,124.875,4,0.321,3,1,True,6,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,大開眼戒,陳奕迅,63,"c-pop,cantopop,mandopop",48,0.264,0.483,0.462,0.0,4,0.117,-7.247,1,0.0273,115.326,4,0.263,2,3,False,7,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,時光機,小肥,37,cantopop,54,0.345,0.588,0.465,0.0,1,0.0763,-7.488,1,0.0293,126.898,4,0.392,2,5,False,8,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,情人知己,葉蒨文,44,"c-pop,cantopop,classic cantopop,classic mandopop",50,0.662,0.443,0.462,0.0,8,0.111,-5.205,1,0.0329,120.999,4,0.239,8,3,False,9,True,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,時光正好 (電影《夏有喬木雅望天堂》推廣曲),郁可唯,48,"mainland chinese pop,mandopop",35,0.45,0.559,0.508,8.04e-06,1,0.118,-7.912,1,0.0296,125.87,4,0.282,4,5,True,10,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,清明雨上,許嵩,45,"mainland chinese pop,zhongguo feng",45,0.385,0.492,0.475,1.25e-05,1,0.136,-8.774,1,0.03,145.237,4,0.32,8,10,False,11,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,我不要再比了,劉明湘,36,mandopop,30,0.515,0.426,0.374,0.0,2,0.0999,-8.703,1,0.0344,125.251,4,0.245,6,2,False,12,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,Repeated Practice,佛跳牆,30,"chinese indie,taiwan indie",18,0.619,0.526,0.499,0.00183,3,0.103,-9.619,1,0.0376,127.967,4,0.433,1,7,True,13,True,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,分開,楊乃文,45,"mandopop,taiwan pop,taiwan singer-songwriter",24,0.67,0.489,0.473,1.92e-06,1,0.0859,-7.216,0,0.0275,119.974,4,0.3,9,4,False,14,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,秋分,麥浚龍,45,cantopop,34,0.725,0.532,0.509,4.31e-05,5,0.132,-6.624,0,0.0304,129.979,4,0.256,9,6,False,15,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,多喝水,鄭融,39,cantopop,44,0.332,0.531,0.484,3.06e-06,6,0.103,-7.215,1,0.0326,139.944,4,0.335,3,3,False,16,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,不痛,張韶涵,49,mandopop,37,0.572,0.494,0.574,0.0,5,0.118,-5.415,0,0.028,135.93,4,0.317,10,7,False,17,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,東京下雨了,棉花糖,31,"mandopop,taiwan pop",31,0.557,0.587,0.443,1.25e-06,5,0.111,-9.258,1,0.0312,131.878,4,0.237,3,8,False,18,False,T_A,Tags,first,4,2,7
+selenium_test0@gmail.com,1,1,0,I Need You,艾怡良,43,"mandopop,taiwan singer-songwriter",17,0.386,0.472,0.411,0.0,5,0.126,-8.674,1,0.0356,131.85,4,0.238,6,5,True,19,False,T_A,Tags,first,4,2,7

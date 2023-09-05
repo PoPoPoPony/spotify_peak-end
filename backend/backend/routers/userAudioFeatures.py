@@ -12,7 +12,7 @@ import json
 
 router = APIRouter(
     prefix='/api/v1/userAudioFeatures',
-    tags = ["userAudioFeatures"]
+    tags = ["UserAudioFeatures"]
 )
 
 def get_db():
@@ -70,3 +70,13 @@ def updateUserAudioFeatures(userID: uuid.UUID, score_obj: str, db: Session = Dep
         return newAudioFeatures
     else:
         return DB_AudioFeatures
+    
+@router.get("/getUserAudioFeatures")
+def getUserAudioFeatures(userID: str, db: Session = Depends(get_db)):
+    userID = uuid.UUID(userID)
+    DB_UserAudioFeatures = db.query(DBUserAudioFeatures).filter(DBUserAudioFeatures.userID == userID).first()
+
+    if DB_UserAudioFeatures:
+        return DB_UserAudioFeatures
+    else:
+        return None

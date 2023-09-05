@@ -7,7 +7,6 @@ class UserInfo(BaseModel):
     userEmail: str
     betweenType: int
     withinType: int
-    secondaryType: int
 
     class Config:
         orm_mode=True

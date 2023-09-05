@@ -1,0 +1,4 @@
+user_email,between_type,within_type,secondary_type,track_name,artist_name,artist_popularity,genres,track_popularity,acousticness,danceability,energy,instrumentalness,key,liveness,loudness,mode,speechiness,tempo,timeSignature,valence
+selenium_test0@gmail.com,1,1,0,静悄悄,大泫,43,chinese viral pop,64,0.645,0.672,0.472,0.0,6,0.102,-7.148,1,0.0324,131.925,4,0.561
+selenium_test0@gmail.com,1,1,0,Strawberries & Cigarettes,Troye Sivan,75,"australian pop,pop,viral pop",81,0.162,0.578,0.537,0.0,9,0.076,-8.676,1,0.0832,83.909,4,0.25
+selenium_test0@gmail.com,1,1,0,"Steal The Show - From ""Elemental""",Lauv,75,pop,77,0.341,0.62,0.64,0.00125,7,0.14,-7.308,1,0.0305,92.522,4,0.409

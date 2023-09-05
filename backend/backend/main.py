@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth, songListInfo, trackInfo, user, artistsInfo, songListElem, songListScore, tags, userAudioFeatures, userSavedTracks, userRecentTracks
+from .routers import auth, songListInfo, trackInfo, user, artistsInfo, songListElem, songListScore, tags, userAudioFeatures, userSavedTracks, userRecentTracks, temp
 
 
 app = FastAPI()
@@ -31,6 +31,7 @@ app.include_router(tags.router)
 app.include_router(userAudioFeatures.router)
 app.include_router(userSavedTracks.router)
 app.include_router(userRecentTracks.router)
+app.include_router(temp.router)
 
 @app.get("/")
 def read_root():

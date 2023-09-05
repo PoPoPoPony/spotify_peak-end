@@ -1,0 +1,80 @@
+user_email,between_type,within_type,secondary_type,track_name,artist_name,artist_popularity,genres,track_popularity,acousticness,danceability,energy,instrumentalness,key,liveness,loudness,mode,speechiness,tempo,timeSignature,valence
+mindyling.c@gmail.com,1,2,3,静悄悄,大泫,42,chinese viral pop,64,0.645,0.672,0.472,0.0,6,0.102,-7.148,1,0.0324,131.925,4,0.561
+mindyling.c@gmail.com,1,2,3,Strawberries & Cigarettes,Troye Sivan,75,"australian pop,pop,viral pop",81,0.162,0.578,0.537,0.0,9,0.076,-8.676,1,0.0832,83.909,4,0.25
+mindyling.c@gmail.com,1,2,3,"Steal The Show - From ""Elemental""",Lauv,74,pop,77,0.341,0.62,0.64,0.00125,7,0.14,-7.308,1,0.0305,92.522,4,0.409
+koctober1012@gmail.com,1,2,0,星月夜,YU-KA,46,,66,0.278,0.339,0.49,3.7e-05,9,0.0661,-8.431,1,0.0505,84.385,4,0.0706
+koctober1012@gmail.com,1,2,0,雨蝶,李翊君,38,"classic mandopop,mandopop",50,0.196,0.404,0.503,2.73e-05,10,0.187,-7.588,0,0.0424,191.329,3,0.245
+koctober1012@gmail.com,1,2,0,THERE IS A REASON,Konomi Suzuki,48,"anime,j-pixie",47,0.186,0.556,0.817,0.0,6,0.0876,-3.92,0,0.0485,134.015,4,0.327
+koctober1012@gmail.com,1,2,0,This game,Konomi Suzuki,48,"anime,j-pixie",58,0.0477,0.477,0.924,0.0,11,0.0571,-2.997,0,0.0758,146.964,4,0.269
+koctober1012@gmail.com,1,2,0,翼,PIZZALI,39,taiwan hip hop,46,0.00402,0.63,0.506,0.0,9,0.421,-8.987,1,0.0397,129.98,4,0.309
+koctober1012@gmail.com,1,2,0,YELLOW,Yoh kamiyama,50,japanese teen pop,63,0.0144,0.786,0.719,0.000638,7,0.0887,-4.77,0,0.0353,117.981,4,0.686
+koctober1012@gmail.com,1,2,0,Careless Whisper,George Michael,71,new wave pop,82,0.13,0.574,0.628,0.0,2,0.271,-8.815,0,0.036,153.119,4,0.803
+koctober1012@gmail.com,1,2,0,ギラギラ,Ado,70,"j-pop,japanese teen pop",58,0.052,0.651,0.861,0.0,2,0.0878,-4.128,1,0.0568,96.014,4,0.731
+koctober1012@gmail.com,1,2,0,2002,Anne-Marie,78,pop,83,0.0372,0.697,0.683,0.0,1,0.137,-2.881,0,0.117,96.133,4,0.603
+koctober1012@gmail.com,1,2,0,We Found Love,Rihanna,87,"barbadian pop,pop,urban contemporary",85,0.025,0.734,0.766,0.00138,1,0.108,-4.485,1,0.0383,127.986,4,0.6
+koctober1012@gmail.com,1,2,0,說愛你,蔡依林,57,mandopop,58,0.186,0.747,0.855,2.61e-06,0,0.0885,-2.6,0,0.0288,101.996,4,0.6
+koctober1012@gmail.com,1,2,0,これが私の生きる道,Puffy AmiYumi,43,"classic j-pop,j-pop girl group",31,0.572,0.573,0.895,0.0,4,0.157,-2.785,1,0.0382,134.975,4,0.757
+koctober1012@gmail.com,1,2,0,粉雪,中島美嘉,49,j-pop,21,0.972,0.577,0.169,1.01e-05,0,0.111,-10.725,1,0.0298,73.829,4,0.289
+koctober1012@gmail.com,1,2,0,恋におちて -Fall in love 2013-,小林明子,23,,42,0.986,0.5,0.136,7.86e-06,0,0.114,-13.27,1,0.0529,73.352,4,0.275
+koctober1012@gmail.com,1,2,0,Way Back Home (feat. Conor Maynard) - Sam Feldt Edit,SHAUN,57,k-pop,73,0.269,0.737,0.747,0.0,10,0.219,-4.818,1,0.0323,105.943,4,0.447
+koctober1012@gmail.com,1,2,0,"Steal The Show - From ""Elemental""",Lauv,74,pop,77,0.341,0.62,0.64,0.00125,7,0.14,-7.308,1,0.0305,92.522,4,0.409
+koctober1012@gmail.com,1,2,0,Midori,CHEHON,48,j-reggae,25,0.272,0.723,0.671,0.0,11,0.193,-4.3,1,0.0763,152.064,4,0.849
+koctober1012@gmail.com,1,2,0,And I Love You So,AK-69,51,j-rap,22,0.0301,0.613,0.753,0.0,6,0.0738,-4.227,0,0.0289,144.001,4,0.285
+koctober1012@gmail.com,1,2,0,ギフト,ET-KING,39,j-pop,53,0.358,0.63,0.731,0.0,1,0.106,-4.483,1,0.0273,99.972,4,0.549
+koctober1012@gmail.com,1,2,0,ワンルーム,yutori,28,,32,0.000719,0.497,0.916,0.000132,2,0.335,-3.226,0,0.0452,95.029,4,0.516
+koctober1012@gmail.com,1,2,0,Calm Down (with Selena Gomez),Rema,77,"afrobeats,nigerian pop",92,0.382,0.801,0.806,0.000669,11,0.114,-5.206,1,0.0381,106.999,4,0.802
+koctober1012@gmail.com,1,2,0,봄이 좋냐?? What The Spring??,10公分,54,korean pop,53,0.597,0.865,0.37,0.0,1,0.117,-5.739,1,0.0327,94.027,4,0.841
+koctober1012@gmail.com,1,2,0,summertime,cinnamons,40,,60,0.104,0.688,0.704,0.0,3,0.0672,-6.315,1,0.0303,131.969,4,0.849
+koctober1012@gmail.com,1,2,0,Take Me Away,Avril Lavigne,73,"canadian pop,candy pop,pop",55,0.00138,0.511,0.892,0.00029,4,0.198,-2.489,0,0.0343,99.101,4,0.255
+koctober1012@gmail.com,1,2,0,Farewell,Bernth,43,,55,0.949,0.681,0.412,0.835,10,0.112,-9.935,1,0.0366,120.075,4,0.22
+koctober1012@gmail.com,1,2,0,Because Of You,Ne-Yo,77,"dance pop,pop,r&b,urban contemporary",77,0.528,0.81,0.538,0.0,0,0.0951,-5.784,0,0.0356,109.97,4,0.828
+koctober1012@gmail.com,1,2,0,下一個天亮,郭靜,43,mandopop,49,0.594,0.517,0.534,0.0,0,0.128,-5.695,1,0.0292,121.895,4,0.224
+koctober1012@gmail.com,1,2,0,情非得已,庾澄慶,45,"classic mandopop,mandopop",63,0.436,0.686,0.48,0.0,9,0.0879,-7.59,0,0.0241,106.908,4,0.729
+koctober1012@gmail.com,1,2,0,喜欢你,陳潔儀,43,"c-pop,classic mandopop,singaporean mandopop,singaporean pop,xinyao",52,0.835,0.658,0.416,0.0,6,0.122,-8.22,1,0.0416,119.941,3,0.273
+koctober1012@gmail.com,1,2,0,如果有一天,梁靜茹,55,"malaysian mandopop,mandopop",50,0.16,0.54,0.506,0.0,2,0.0932,-6.873,1,0.025,99.008,4,0.157
+koctober1012@gmail.com,1,2,0,情歌,梁靜茹,55,"malaysian mandopop,mandopop",60,0.747,0.486,0.411,0.0,6,0.342,-5.623,1,0.0374,139.914,4,0.364
+koctober1012@gmail.com,1,2,0,LAST DANCE,BIGBANG,62,"k-pop,k-pop boy group",59,0.455,0.614,0.666,0.0,1,0.23,-3.087,0,0.0541,143.858,4,0.299
+koctober1012@gmail.com,1,2,0,Haru Haru,BIGBANG,62,"k-pop,k-pop boy group",63,0.166,0.687,0.914,0.0,6,0.0858,-5.02,1,0.0437,126.001,4,0.675
+koctober1012@gmail.com,1,2,0,LET'S NOT FALL IN LOVE,BIGBANG,62,"k-pop,k-pop boy group",61,0.103,0.68,0.846,0.0,0,0.115,-4.217,1,0.0498,124.984,4,0.659
+koctober1012@gmail.com,1,2,0,残響散歌,Aimer,65,"anime,anime rock,j-pixie,j-pop,j-poprock",76,0.000627,0.367,0.896,0.0,11,0.207,-4.002,1,0.091,170.863,4,0.38
+koctober1012@gmail.com,1,2,0,一途,King Gnu,64,"j-pop,j-rock",71,0.00723,0.5,0.964,6.2e-05,2,0.0557,-4.19,1,0.124,159.971,4,0.662
+koctober1012@gmail.com,1,2,0,逆夢,King Gnu,64,"j-pop,j-rock",69,0.442,0.204,0.708,0.0,1,0.319,-5.425,1,0.0458,83.443,4,0.278
+koctober1012@gmail.com,1,2,0,Haru wo Tsugeru,yama,61,"j-pop,japanese teen pop",64,0.0397,0.548,0.871,0.0,11,0.357,-5.377,1,0.123,120.009,4,0.487
+koctober1012@gmail.com,1,2,0,Lemon,米津玄師,71,"anime,j-pop",72,0.304,0.525,0.646,0.0,11,0.297,-4.963,1,0.0268,86.957,4,0.373
+koctober1012@gmail.com,1,2,0,無與倫比的美麗,蘇打綠,53,mandopop,55,0.815,0.389,0.399,0.0,0,0.105,-7.937,1,0.0357,122.99,4,0.155
+koctober1012@gmail.com,1,2,0,無眠,蘇打綠,53,mandopop,53,0.904,0.46,0.29,0.0,11,0.103,-10.357,1,0.0318,143.899,4,0.371
+koctober1012@gmail.com,1,2,0,以後別做朋友,周興哲,63,mandopop,64,0.728,0.423,0.36,0.0,3,0.105,-9.458,1,0.0372,130.576,4,0.291
+koctober1012@gmail.com,1,2,0,怎麼了,周興哲,63,mandopop,64,0.696,0.502,0.565,5.55e-05,9,0.156,-7.779,1,0.0358,139.926,4,0.253
+koctober1012@gmail.com,1,2,0,永不失聯的愛,周興哲,63,mandopop,67,0.624,0.289,0.43,0.0,10,0.101,-6.818,1,0.0332,169.511,4,0.531
+koctober1012@gmail.com,1,2,0,刻在我心底的名字,五月天,60,"mandopop,taiwan pop",48,0.258,0.349,0.593,0.0,10,0.0849,-7.8,1,0.043,133.642,4,0.233
+koctober1012@gmail.com,1,2,0,溫柔,五月天,60,"mandopop,taiwan pop",52,0.0191,0.499,0.713,0.0,7,0.109,-4.491,1,0.0243,148.078,4,0.419
+koctober1012@gmail.com,1,2,0,突然好想你,五月天,60,"mandopop,taiwan pop",63,0.226,0.462,0.465,7.7e-06,2,0.196,-6.485,1,0.0262,140.112,4,0.409
+koctober1012@gmail.com,1,2,0,手心的薔薇,林俊傑,63,"mandopop,singaporean mandopop,singaporean pop",62,0.849,0.422,0.499,0.0,7,0.276,-5.702,1,0.0278,86.948,4,0.17
+koctober1012@gmail.com,1,2,0,背叛,曹格,43,"malaysian mandopop,mandopop",56,0.729,0.368,0.449,0.0,11,0.132,-7.049,1,0.0298,133.974,4,0.273
+koctober1012@gmail.com,1,2,0,惡作劇,王藍茵,39,"malaysian mandopop,mandopop",60,0.581,0.684,0.683,9.52e-06,10,0.123,-6.374,1,0.028,135.978,4,0.676
+koctober1012@gmail.com,1,2,0,痴心絕對,李聖傑,48,mandopop,58,0.226,0.629,0.56,0.0,11,0.344,-4.95,1,0.0247,106.764,4,0.224
+koctober1012@gmail.com,1,2,0,小情歌,蘇打綠,53,mandopop,66,0.775,0.527,0.522,0.0,2,0.0847,-9.29,1,0.0314,132.066,4,0.272
+koctober1012@gmail.com,1,2,0,親愛的那不是愛情,張韶涵,49,mandopop,57,0.516,0.549,0.588,0.0,9,0.0895,-5.97,1,0.0256,149.852,4,0.331
+koctober1012@gmail.com,1,2,0,髮如雪,Jay Chou,70,"c-pop,mandopop,taiwan pop,zhongguo feng",49,0.576,0.716,0.699,1.35e-06,11,0.364,-5.288,1,0.0492,116.068,4,0.376
+koctober1012@gmail.com,1,2,0,珊瑚海,Jay Chou,70,"c-pop,mandopop,taiwan pop,zhongguo feng",57,0.75,0.459,0.567,0.0,8,0.136,-5.529,1,0.0271,145.816,4,0.156
+koctober1012@gmail.com,1,2,0,說好的幸福呢,Jay Chou,70,"c-pop,mandopop,taiwan pop,zhongguo feng",53,0.36,0.545,0.45,0.0,9,0.131,-7.964,0,0.0288,117.749,4,0.225
+koctober1012@gmail.com,1,2,0,七里香,Jay Chou,70,"c-pop,mandopop,taiwan pop,zhongguo feng",57,0.386,0.48,0.585,9.9e-05,0,0.243,-6.922,0,0.028,142.171,4,0.457
+koctober1012@gmail.com,1,2,0,不是因為天氣晴朗才愛你,理想混蛋,54,"mandopop,taiwan indie",66,0.753,0.507,0.271,1.23e-06,8,0.0883,-13.185,1,0.0347,135.783,4,0.399
+koctober1012@gmail.com,1,2,0,好きだから。,『ユイカ』,50,japanese teen pop,66,0.239,0.607,0.498,4.04e-06,0,0.313,-6.363,1,0.0311,164.993,4,0.714
+koctober1012@gmail.com,1,2,0,Overdose,natori,61,japanese teen pop,80,0.0307,0.733,0.598,1.7e-05,4,0.218,-9.453,0,0.0377,118.012,4,0.831
+koctober1012@gmail.com,1,2,0,アンコール,YOASOBI,76,"j-pop,japanese teen pop",66,0.283,0.682,0.669,1e-06,2,0.145,-4.741,1,0.0275,81.999,4,0.831
+koctober1012@gmail.com,1,2,0,ラブレター,YOASOBI,76,"j-pop,japanese teen pop",63,0.447,0.662,0.86,0.0,7,0.339,-3.534,1,0.0286,100.016,4,0.69
+koctober1012@gmail.com,1,2,0,ハルカ,YOASOBI,76,"j-pop,japanese teen pop",63,0.0717,0.712,0.817,7.21e-06,1,0.146,-5.123,1,0.0279,100.016,4,0.679
+koctober1012@gmail.com,1,2,0,Say Yes,Loco,57,"k-pop,k-rap,korean r&b",70,0.352,0.696,0.778,0.0,1,0.329,-4.653,0,0.0585,94.996,4,0.41
+koctober1012@gmail.com,1,2,0,Another Day,Monday Kiz,40,korean pop,58,0.682,0.506,0.608,1.85e-06,6,0.191,-3.868,1,0.0282,143.962,4,0.462
+koctober1012@gmail.com,1,2,0,There's Nothing Holdin' Me Back,Shawn Mendes,81,"canadian pop,pop,viral pop",88,0.38,0.866,0.813,0.0,11,0.0779,-4.063,0,0.0554,121.998,4,0.969
+koctober1012@gmail.com,1,2,0,Crush on,李浩瑋 Howard Lee,50,chinese r&b,47,0.634,0.475,0.522,0.0,7,0.153,-6.351,1,0.118,74.755,4,0.571
+koctober1012@gmail.com,1,2,0,晴天,Jay Chou,70,"c-pop,mandopop,taiwan pop,zhongguo feng",61,0.224,0.543,0.564,0.000819,7,0.101,-7.275,1,0.0242,137.128,4,0.411
+koctober1012@gmail.com,1,2,0,I Like Me Better,Lauv,74,pop,84,0.534,0.753,0.505,2.58e-06,9,0.104,-7.621,1,0.255,91.972,4,0.419
+koctober1012@gmail.com,1,2,0,If I Can't Have You,Shawn Mendes,81,"canadian pop,pop,viral pop",75,0.487,0.691,0.823,0.0,2,0.134,-4.197,1,0.0623,123.935,4,0.87
+koctober1012@gmail.com,1,2,0,Style,Taylor Swift,100,pop,91,0.00245,0.588,0.791,0.00258,7,0.118,-5.595,1,0.0402,94.933,4,0.487
+koctober1012@gmail.com,1,2,0,Red,Taylor Swift,100,pop,66,0.0773,0.602,0.896,8.87e-05,1,0.0911,-4.267,0,0.0437,124.978,4,0.641
+koctober1012@gmail.com,1,2,0,Love Story,Taylor Swift,100,pop,81,0.131,0.617,0.741,0.0,2,0.0772,-3.97,1,0.0311,118.984,4,0.306
+koctober1012@gmail.com,1,2,0,I Knew You Were Trouble.,Taylor Swift,100,pop,81,0.00454,0.622,0.469,2.25e-06,3,0.0335,-6.798,0,0.0363,77.019,4,0.679
+koctober1012@gmail.com,1,2,0,Pink Lemonade - feat. The Attire,AmPm,40,japanese dance pop,40,0.562,0.824,0.59,0.0,8,0.0894,-6.263,1,0.0515,115.035,4,0.537
+koctober1012@gmail.com,1,2,0,Checklist (feat. Chromeo),MAX,66,"singer-songwriter pop,viral pop",55,0.0709,0.791,0.792,0.0,7,0.196,-4.023,0,0.0349,123.059,4,0.873

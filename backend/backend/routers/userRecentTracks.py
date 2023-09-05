@@ -15,7 +15,7 @@ from typing import Union, List
 
 router = APIRouter(
     prefix='/api/v1/userRecentTracks',
-    tags = ["userRecentTracks"]
+    tags = ["UserRecentTracks"]
 )
 
 def get_db():
@@ -73,6 +73,8 @@ def checkUserExist(userID: str, db: Session = Depends(get_db)):
         return False
 
 
+# 這裡寫得很爛==
+# 不該又去call其他api的==
 @router.get("/getUserRecentTracks")
 def getUserRecentTracks(userID: str, db: Session = Depends(get_db)):
     retv = []
@@ -109,5 +111,16 @@ def getUserRecentTracks(userID: str, db: Session = Depends(get_db)):
             })
 
         return retv
+    else:
+        return None
+    
+#  Union[List[str], None] = Query(default=None)
+@router.get("/getUserRecentTrackInfos")
+def getUserRecentTrackInfos(userID: str, db: Session = Depends(get_db)):
+    userID = uuid.UUID(userID)
+    DB_RecentTracks = db.query(DBUserRecentTracks).filter(DBUserRecentTracks.userID == userID).all()
+
+    if DB_RecentTracks:
+        return DB_RecentTracks
     else:
         return None

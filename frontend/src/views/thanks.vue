@@ -18,11 +18,15 @@
 </template>
 
 <script>
+import {Update} from '@/apis/backendAPIs/statistics/update_statistics'
 
 export default {
     name: 'thanks',
     components: {
 
+    },
+    mounted() {
+        Update()
     },
     data(){
         return {

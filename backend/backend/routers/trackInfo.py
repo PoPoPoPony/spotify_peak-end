@@ -13,7 +13,7 @@ import json
 
 router = APIRouter(
     prefix='/api/v1/trackInfo',
-    tags = ["for trackInfo init DB data"]
+    tags = ["TrackInfo"]
 )
 
 def get_db():

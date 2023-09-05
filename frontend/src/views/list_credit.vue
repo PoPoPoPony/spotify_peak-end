@@ -55,7 +55,6 @@ export default {
     created() {
         let urlParams = new URLSearchParams(window.location.search)
         this.list_type = urlParams.get('list_type')
-        this.secondaryType = urlParams.get('secondaryType')
 
     },
     data() {
@@ -68,7 +67,6 @@ export default {
             unauth_show: false,
             exp_num : 0,
             promise: '',
-            secondaryType: -1,
         }
     },
     methods: {
@@ -132,21 +130,10 @@ export default {
                     name: 'thanks',
                 })
             } else if (pass_exp_num == 3) { // 相當於第二次做了一次
-                let list_type=0
-                if (["0", "1"].indexOf(this.secondaryType)>=0) {
-                    list_type=1
-                } else {
-                    list_type=0
-                }
-
                 this.$router.push({
                     name: 'second_test',
                     query: {
-                        userID: this.$store.state.userID,
                         access_token: this.$store.state.access_token,
-                        list_type: list_type,
-                        secondaryType: this.secondaryType,
-                        period: 'second'
                     }
                 })
             } else if (pass_exp_num == 4) {
