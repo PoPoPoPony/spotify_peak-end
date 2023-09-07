@@ -112,8 +112,9 @@ export default {
                 }
             }
 
+            // [0907 更新] related artist只取前50個artist的realted artist(防止請求過多)
             let related_artists_retv = []
-            for(let artistID of Object.keys(artists)) {
+            for(let artistID of Object.keys(artists).slice(0, 50)) {
                 let related_artist_retv = await GetRelatedArtist(this.$store.state.access_token, artistID)
                 related_artists_retv.push(...related_artist_retv.data['artists'])
             }

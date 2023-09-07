@@ -21,7 +21,7 @@ const app = createApp(App)
 app.use(VueAxios, axios)
 app.use(VuePlyr, {plyr: {
     "autoplay": true,
-    "volume": 0.3,
+    "volume": 0.03,
     "speed": { selected: 1, options: [0.75, 1, 1.25] },
     "controls":[
         // 'play-large',
